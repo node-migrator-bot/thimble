@@ -1,15 +1,16 @@
 express = require "express" 
 path = require "path"
 app = express.createServer()
+lib = __dirname
 
 serve = exports.serve = (appDir, port) ->
-  plugin = require("#{__dirname}/middleware.coffee")
+  # middle = require("#{__dirname}/middleware.coffee")
 
   app.configure ->
     app.use express.methodOverride()
     app.use express.bodyParser()
     app.use express.favicon()
-    app.use plugin.middleware(appDir)
+    app.use require(lib + "/middleware.coffee")(appDir)
     app.use express['static'](appDir)
 
   app.register '.html',

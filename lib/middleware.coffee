@@ -1,17 +1,8 @@
 path = require "path"
 fs = require "fs"
-pluginPath = "#{__dirname}/../plugins/"
 mime = require "mime"
-
-# Load the plugins
-files = fs.readdirSync pluginPath
-plugins = {}
-
-for file in files
-  fileArr = file.split "."
-  fileArr.pop()
-  ext = fileArr.join "."
-  plugins[ext] = file
+lib = __dirname
+plugin = require(lib + "/plugin.coffee")
 
 # Reason you do middleware = exports.middleware is that it lets you 
 # use functions like setHeader in callback functions. 
@@ -19,28 +10,28 @@ for file in files
 
 middleware = exports.middleware = (appDir) ->
   return (req, res, next) ->
-    url = req.url
-    ext = url.split(".").pop()
     root = appDir
-
-    if !plugins[ext]
-      next()
-      return
-
-    plugin = require pluginPath + plugins[ext]
+    url = req.url
     assetPath = path.resolve(root + url)
 
+
+    Plugin = plugin url
+
+    if Plugin is false
+      next()
+      return
+        
     fs.readFile assetPath, "utf8", (err, contents) ->
       throw err if err
 
       output = (out) ->
         if not res.getHeader "content-type"
           # Name doesn't matter. mime just cares about .css, .js, .png, etc. not the name or if file exists
-          header = getHeader "blah.#{plugin.type}"
+          header = getHeader "blah.#{Plugin.type}"
           res.setHeader('Content-Type', header);
         res.send out
       
-      plugin.render contents, assetPath, output
+      Plugin.render contents, assetPath, output
 
 # Implementation pulled from static.js in Connect
 getHeader = exports.getHeader = (assetPath) ->
@@ -49,5 +40,5 @@ getHeader = exports.getHeader = (assetPath) ->
   charset = if charset then "; charset=#{charset}" else ""
   return (type + charset)
   
-module.exports = exports
+module.exports = exports.middleware
 
