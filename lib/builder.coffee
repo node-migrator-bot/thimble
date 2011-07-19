@@ -32,7 +32,7 @@ parseAssets = (assets, public, emitter) ->
   # -- Return null if success, true if failure **
   
   callback = (err, filepath) ->
-    throw "Unable to build..." if err
+    throw err if err
     
     if finished()
       emitter.emit "built"
