@@ -13,7 +13,8 @@ if action is "server" or action is "serve"
   
 else if action is "build"
   buildDir = path.resolve options[0] or "."
-  options = options[1..] or {}
+  publicDir = path.resolve options[1] or "./public"
+  options = options[2..] or {}
   builder = require "#{lib}/builder.coffee"
-  builder.build buildDir, options
+  builder.build buildDir, publicDir, options
 
