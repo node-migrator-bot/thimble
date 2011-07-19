@@ -1,1 +1,1 @@
-alert "oh herro!"
+console.log "oh herro!"
