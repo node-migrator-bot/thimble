@@ -24,7 +24,9 @@ middleware = exports.middleware = (appDir) ->
     fs.readFile assetPath, "utf8", (err, contents) ->
       throw err if err
 
-      output = (out) ->
+      output = (err, out) ->
+        throw err if err
+        
         if not res.getHeader "content-type"
           # Name doesn't matter. mime just cares about .css, .js, .png, etc. not the name or if file exists
           header = getHeader "blah.#{Plugin.type}"
