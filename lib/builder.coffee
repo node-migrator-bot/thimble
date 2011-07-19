@@ -5,34 +5,52 @@ fs = require "fs"
 path = require "path"
 pluginPath = "#{__dirname}/../plugins/"
 
-# Load the plugins
-files = fs.readdirSync pluginPath
-plugins = {}
-
-for file in files
-  fileArr = file.split "."
-  fileArr.pop()
-  ext = fileArr.join "."
-  plugins[ext] = file
-
-build = exports.build = (main, options) ->
+build = exports.build = (main, public, options) ->
 
   emitter.once "read", (code) ->
     document = jsdom(code)
-    scripts = pullJavascript document
-    stylesheets = pullCSS document
-    images = pullImages document
+    pullAssets document
     
-    console.log images
-    console.log scripts
-    console.log stylesheets
+  emitter.once "pulled", (assets) ->
+    buildAssets assets, main, public
     
-  if main.split("/").pop() is not "app.html"
-    main += "/app.html"
+  emitter.once "built", () ->
+    console.log "Successfully built the files"
+    
+  read main
+ 
+buildAssets = (assets, main, public) ->
+  console.log "hi"
 
+read = (main) ->
+  emitter.once "read", (code) ->
+    document = jsdom code
+    emitter.emit "parsed", document
+  
+  if main.split("/").pop() isnt "app.html"
+    main += "/app.html"
+    
   fs.readFile main, "utf8", (err, code) ->
     throw "#{main} doesn't exist!" if err
     emitter.emit "read", code
+
+pullAssets = (document) ->
+  assets = {}
+  
+  assets["js"] = pullJavascript document
+  assets["css"] = pullCSS document
+  assets["images"] = pullImages document
+  assets["embeds"] = pullEmbeds document
+  
+  emitter.emit "pulled", assets
+
+pullEmbeds = (document) ->
+  embeds = document.getElementsByTagName "embed"
+  sources = []
+  for embed in embeds
+    sources.push embed.src
+  
+  return sources
 
 pullImages = (document) ->
   images = document.getElementsByTagName "img"
@@ -57,6 +75,7 @@ pullCSS = (document) ->
     sources.push stylesheet.href
   
   return sources
+
 
 module.exports = exports
 
