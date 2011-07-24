@@ -60,10 +60,16 @@ countdown = exports.countdown = (length) ->
     else
       return false
 
+# Fill an array with a given value
+fillArray = exports.fillArray = (length, value) ->
+  value for num in [0...length]
+
 mkdir = exports.mkdir = (path) ->
   fs.mkdir path, 0777, (err)
 
 module.exports = exports
+
+# console.log fillArray 5, "hi"
 
 # files = 
 #   [
