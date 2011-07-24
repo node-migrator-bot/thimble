@@ -29,9 +29,16 @@ build = exports.build = (file, publicDir, options = {}) ->
     
   emitter.once "pulled", (assets) ->
     parse assets, emitter
+  
+  emitter.once "parsed", (assets) ->
+    push assets, emitter
+    
+  emitter.once "pushed", ->
+    emitter.emit "built"
     
   emitter.once "built", () ->
     console.log "Successfully built #{file}"
+    console.log exports.document.innerHTML
     
   readFile file, emitter
 
@@ -44,12 +51,8 @@ parse = (assets, emitter) ->
   
   # Returns false if nothing should be replaced. Otherwise { asset1 : content1, asset2 : content2, asset3 : content3 }
   # Content can either be a string or an object (jsdom DOMElement)
-
   callback = (err, output) ->
     throw err if err
-    
-    if output
-      push output
     
     if finished()
       emitter.emit "built"
@@ -59,10 +62,19 @@ parse = (assets, emitter) ->
     parser.build assets[type], public, exports.directory, callback
 
 
-push = (content) ->
+push = (assets) ->
   document = exports.document
-  if not document
-    throw "No document found!"
+  $ = require "jquery"
+  
+  prev = exports.test
+  curr = assets[assets.length-1]
+
+  # console.log prev
+  # Not sure if this will work...
+  console.log curr.parentNode.nodeName
+  console.log document.innerHTML
+  # $(prev, document).replaceWith(curr)
+  
   
 pull = (document, emitter) ->
   assets = {} 

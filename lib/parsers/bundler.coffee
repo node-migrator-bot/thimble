@@ -77,16 +77,19 @@ class Bundler
 
   # Modify the DOMElements to replace 
   modify : (assets, emitter) ->
-    assetLength = assets.length
+    # assetLength = assets.length
   
-    output = utils.fillArray assetLength, null
-
-    asset = _.last assets
-    asset[@attribute] = @buildName
-
-    output[assetLength-1] = asset
+    # output = utils.fillArray assetLength, null
+    for asset, i in assets
+      if i is assets.length - 1
+        asset[@attribute] = @buildName
+      else
+        if asset?.parentNode
+          asset.parentNode.removeChild asset
+        
+    # output[assetLength-1] = asset
     
-    emitter.emit "modified", output
+    emitter.emit "modified"
   
 
 module.exports = (buildName, publicDir, mainDir) ->
