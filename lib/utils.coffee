@@ -60,6 +60,9 @@ countdown = exports.countdown = (length) ->
     else
       return false
 
+mkdir = exports.mkdir = (path) ->
+  fs.mkdir path, 0777, (err)
+
 module.exports = exports
 
 # files = 
