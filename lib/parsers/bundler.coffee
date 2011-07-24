@@ -1,12 +1,13 @@
+# ** Used for both CSS and JS **
 # DRY class for css and javascript files
 # They both get merged together and moved
 
-# Read Files, Render them if necessary, merge them, write them
+# Read Files, Render them if necessary, merges them, writes them to public
 
 _ = require "underscore"
 path = require "path"
 
-lib = "#{__dirname}"
+lib = "#{__dirname}/.."
 utils = require "#{lib}/utils.coffee"
 plugin = require "#{lib}/plugin.coffee"
 EventEmitter = require("events").EventEmitter
@@ -27,10 +28,7 @@ bundle = exports.bundle = (assets, public, callback) ->
     
   read assets, emitter
 
-read = exports.read = (assets, emitter) ->
-  buildFile = utils.toKeys assets
-  finished = utils.countdown assets.length
-  
+read = exports.read = (assets, emitter) ->  
   utils.readFiles assets, (err, files) ->
     throw err if err
     emitter.emit "read", files
@@ -50,10 +48,7 @@ render = exports.render = (files, emitter) ->
     else
       buildFile[file] = code  
       if finished()
-        emitter.emit "rendered", buildFile
-
-merge = exports.merge = (files, emitter) ->
-  
+        emitter.emit "rendered", buildFile  
 
 # Writes the filestream to a given location
 write = exports.write = (content, to, emitter) ->
