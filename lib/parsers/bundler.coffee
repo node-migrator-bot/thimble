@@ -14,8 +14,9 @@ EventEmitter = require("events").EventEmitter
 emitter = new EventEmitter()
 fs = require "fs"
 
-bundle = exports.bundle = (assets, public, callback) ->
-
+bundle = exports.bundle = (assets, public, output) ->
+  buildName = exports.buildName
+  
   emitter.once "read", (files) ->
     render files, emitter
   
@@ -24,7 +25,13 @@ bundle = exports.bundle = (assets, public, callback) ->
     write buildFile, public, emitter
     
   emitter.once "written", (buildPath) ->
-    callback null, buildPath
+    out = {}
+    numAssets = assets.length
+    
+    for asset, i in assets
+      out[asset] = if numAssets is i+1 then buildName else ""
+      
+    output null, buildPath
     
   read assets, emitter
 
