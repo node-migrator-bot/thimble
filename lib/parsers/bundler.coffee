@@ -77,15 +77,14 @@ class Bundler
 
   # Modify the DOMElements to replace 
   modify : (assets, emitter) ->
-    # assetLength = assets.length
+    assetsLength = assets.length
   
     # output = utils.fillArray assetLength, null
     for asset, i in assets
-      if i is assets.length - 1
+      if i is assetsLength - 1
         asset[@attribute] = @buildName
       else
-        if asset?.parentNode
-          asset.parentNode.removeChild asset
+        asset.parentNode.removeChild(asset) if asset.parentNode
         
     # output[assetLength-1] = asset
     
