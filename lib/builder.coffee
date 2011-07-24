@@ -1,56 +1,84 @@
-jsdom = require("jsdom").jsdom
 EventEmitter = require("events").EventEmitter
 _ = require "underscore"
 emitters = {}
 fs = require "fs"
 path = require "path"
 lib = __dirname
+jsdom = require "jsdom"
+patcher = require lib + "/patcher.coffee"
 parserPath = lib + "/parsers"
 utils = require lib + "/utils.coffee"
 
-build = exports.build = (file, public, options = {}) ->
+# Patch jsdom to work with html5 tags
+jsdom = patcher.patch jsdom
+
+assetTypes = 
+  js : "script"
+  css : ["link", "href"]
+  images : "img"
+  embeds : "embed"
+
+build = exports.build = (file, publicDir, options = {}) ->
   fileDir = path.dirname file
   emitter = emitters[file] = new EventEmitter()
-
+  public = exports.public = publicDir
+  
   emitter.once "read", (code) ->
-    document = jsdom(code)
-    pullAssets document, fileDir, emitter
+    document = exports.document = jsdom(code)
+    pullAssets fileDir, emitter
     
   emitter.once "pulled", (assets) ->
-    parseAssets assets, public, emitter
+    console.log assets
+    parseAssets assets, emitter
     
   emitter.once "built", () ->
     console.log "Successfully built the files"
     
   readFile file, emitter
 
-parseAssets = (assets, public, emitter) ->
-  assetTypes = _.keys(assets)
-  finished = utils.countdown assetTypes.length
+parseAssets = (assets, elements, emitter) ->
+  public = exports.public
+  document = exports.document
+  
+  types = _.keys assets
+  finished = utils.countdown types.length
 
   # ** All assets get bundled together so maybe we can just build the whole js and css files, then move all the assets together
   # -- Return null if success, true if failure **
   
-  callback = (err, filepath) ->
+  callback = (err, asset, content) ->
     throw err if err
+    
+    if content
+      push content
     
     if finished()
       emitter.emit "built"
   
-  for type in assetTypes
+  for type in types
     parser = require parserPath + "/#{type}.coffee"
     parser.build assets[type], public, callback
 
 
-pullAssets = (document, fileDir, emitter) ->
-  assets = {}
+push = (content) ->
+  document = exports.document
+  if not document
+    throw "No document found!"
   
   
-  assets["js"] = pullAssetType "script", document
-  assets["embeds"] = pullAssetType "embed", document
-  assets["css"] = pullAssetType "link", document, "href"
-  assets["images"] = pullAssetType "img", document
 
+pullAssets = (fileDir, emitter) ->
+  document = exports.document
+  assets = {}
+  elements = {}
+  
+  for type, tag of assetTypes
+    if _.isArray tag then [tag, attr] = tag else attr = "src"
+    [assets[type], elems] = pullAssetType document, tag, attr
+    elements = _.extend elements, elems
+
+  console.log elements
+  
   # Remove empty objects
   assets = removeEmpties assets
   
@@ -59,14 +87,21 @@ pullAssets = (document, fileDir, emitter) ->
 
   emitter.emit "pulled", assets
 
-pullAssetType = (tag, document, attr = "src") ->
+pullAssetType = (document, tag, attr = "src") ->
   tags = document.getElementsByTagName tag
 
   sources = []
+  elements = {}
+  
   for t in tags
     sources.push t[attr]
+    # Add to global sources
+    elements[t[attr]] = t
     
-  return sources
+  return [sources, elements]
+
+getElementBySrc = (source) ->
+  if _sources[source] then _sources[source] else null
 
 removeEmpties = (assets) ->
   for type, asset of assets
@@ -116,13 +151,13 @@ readFile = (file, emitter) ->
 #   
 #   emitter.emit "pulled", assets
 # 
-pullEmbeds = (document) ->
-  embeds = document.getElementsByTagName "embed"
-  sources = []
-  for embed in embeds
-    sources.push embed.src
-  
-  return sources
+# pullEmbeds = (document) ->
+#   embeds = document.getElementsByTagName "embed"
+#   sources = []
+#   for embed in embeds
+#     sources.push embed.src
+#   
+#   return sources
 # 
 # pullImages = (document) ->
 #   images = document.getElementsByTagName "img"
