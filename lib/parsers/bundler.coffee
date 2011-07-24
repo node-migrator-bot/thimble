@@ -14,9 +14,19 @@ EventEmitter = require("events").EventEmitter
 emitter = new EventEmitter()
 fs = require "fs"
 
-bundle = exports.bundle = (assets, public, output) ->
+
+
+bundle = exports.bundle = (assets, public, main, output) ->
   buildName = exports.buildName
-  
+
+  # Use the buildName to determine whether to use href (css) or src (js) attribute
+  ext = path.extname(buildName).substring 1
+  attribute = exports.attribute = if ext is "css" then "href" else "src"
+
+  # Pull out the sources and make them absolute
+  sources = (main + "/" + elem[attribute] for elem in assets) 
+
+  # Set up the listeners
   emitter.once "read", (files) ->
     render files, emitter
   
@@ -25,15 +35,12 @@ bundle = exports.bundle = (assets, public, output) ->
     write buildFile, public, emitter
     
   emitter.once "written", (buildPath) ->
-    out = {}
-    numAssets = assets.length
-    
-    for asset, i in assets
-      out[asset] = if numAssets is i+1 then buildName else ""
-      
-    output null, buildPath
-    
-  read assets, emitter
+    modify assets, emitter
+
+  emitter.once "modified", (assets) ->
+    output null, assets
+
+  read sources, emitter
 
 read = exports.read = (assets, emitter) ->  
   utils.readFiles assets, (err, files) ->
@@ -64,6 +71,21 @@ write = exports.write = (content, to, emitter) ->
   fs.writeFile fullPath, content, "utf8", (err) ->
    throw err if err
    emitter.emit "written", fullPath
+
+# Modify the DOMElements to replace 
+modify = exports.modify = (assets, emitter) ->
+  assetLength = assets.length
+  attribute = exports.attribute
+  
+  out = utils.fillArray assetLength, null
+
+  asset = _.last assets
+  console.log exports.buildName
+  console.log asset[attribute]
+  asset[attribute] = exports.buildName
+  console.log asset[attribute]
+
+  
 
 module.exports = (buildName) ->
   exports.buildName = buildName

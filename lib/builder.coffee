@@ -27,16 +27,17 @@ build = exports.build = (file, publicDir, options = {}) ->
     document = exports.document = jsdom(code)
     pull document, emitter
     
-  emitter.once "pulled", (assets, elements) ->
-    parse assets, elements, emitter
+  emitter.once "pulled", (assets) ->
+    parse assets, emitter
     
   emitter.once "built", () ->
     console.log "Successfully built #{file}"
     
   readFile file, emitter
 
-parse = (assets, elements, emitter) ->
+parse = (assets, emitter) ->
   document = exports.document
+  public = exports.public
   finished = utils.countdown _.size(assets)
 
   # Pass in the actual elements themselves to replace the old elements. Have the parsers obtain the necessary src, href, etc. they need to read the files.
@@ -52,10 +53,10 @@ parse = (assets, elements, emitter) ->
     
     if finished()
       emitter.emit "built"
-  
+    
   for type of assets
     parser = require parserPath + "/#{type}.coffee"
-    parser.build assets[type], public, callback
+    parser.build assets[type], public, exports.directory, callback
 
 
 push = (content) ->
@@ -64,23 +65,38 @@ push = (content) ->
     throw "No document found!"
   
 pull = (document, emitter) ->
-  elements = {} # {src : element}
-  assets = {} # {type : [srcs]}
+  assets = {} 
+  
+  ### Assets
+  {
+    js : [
+      DOMElement,
+      ...
+    ]
+    
+    css : [
+      DOMElement,
+      ...
+    ]
+  }
+  
+  ###
   
   for type, tag of assetTypes
     if _.isArray tag then [tag, attr] = tag else attr = "src"
     elems = document.getElementsByTagName tag
-    sources = []
+
+    continue if elems.length is 0
+    
+    elements = {}
     for elem in elems
       source = elem[attr]
       source = exports.directory + "/" + source
       elements[source] = elem
-      sources.push source
     
-    if elems.length
-      assets[type] = sources
-      
-  emitter.emit "pulled", assets, elements
+    assets[type] = elems
+    
+  emitter.emit "pulled", assets
 
 readFile = (file, emitter) ->
   fs.readFile file, "utf8", (err, code) ->

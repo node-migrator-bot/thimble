@@ -2,7 +2,7 @@ lib = "#{__dirname}/.."
 EventEmitter = require("events").EventEmitter
 emitter = new EventEmitter()
 
-build = exports.build = (assets, public, callback) ->
+build = exports.build = (assets, public, main, callback) ->
   
   emitter.once "read", (files) ->
     
