@@ -28,7 +28,7 @@ class Bundler
 
     # Pull out the sources and make them absolute
     sources = (@main + "/" + elem[@attribute] for elem in assets) 
-    console.log sources
+
     # Set up the listeners
     emitter.once "read", (files) =>
       @render files, emitter
