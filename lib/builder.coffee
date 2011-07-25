@@ -24,7 +24,7 @@ class Builder
     @directory = path.dirname file
     @emitter = new EventEmitter()
     
-  build : () ->
+  build : (callback) ->
     emitter = @emitter
     
     emitter.once "read", (code) =>
@@ -38,8 +38,7 @@ class Builder
       @push assets, emitter
       
     emitter.once "built", =>
-      console.log "Successfully built #{@file}"
-      console.log @document.innerHTML
+      callback null, @document.innerHTML
       
     @read @file
   

@@ -16,5 +16,7 @@ else if action is "build"
   publicDir = path.resolve options[1] or "./public"
   options = options[2..] or {}
   builder = require("#{lib}/builder.coffee")(appPath, publicDir, options)
-  builder.build()
+  builder.build (err, html) ->
+    throw err if err
+    console.log html
 
