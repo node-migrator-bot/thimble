@@ -23,6 +23,7 @@ class Builder
   constructor : (@file, @public, @options = {}) ->
     @directory = path.dirname file
     @emitter = new EventEmitter()
+    @root = if options.root then file else false    
     
   build : (callback) ->
     emitter = @emitter
@@ -36,7 +37,10 @@ class Builder
       
     emitter.once "parsed", (assets) =>
       @push assets, emitter
-      
+    
+    emitter.once "bundled", ()->
+      emitter.emit "built"
+    
     emitter.once "built", =>
       callback null, @document.innerHTML
       
@@ -99,7 +103,6 @@ class Builder
     for type of assets
       parser = require parserPath + "/#{type}.coffee"
       parser.build assets[type], public, @directory, callback
-      
 
-module.exports = (file, public, options) ->
-  return new Builder file, public, options
+
+module.exports = Builder
