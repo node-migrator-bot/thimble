@@ -1,54 +1,25 @@
 lib = "#{__dirname}/.."
 EventEmitter = require("events").EventEmitter
 emitter = new EventEmitter()
+utils = require lib + "/utils.coffee"
+build = require(lib + "/builder.coffee")
+$ = require "jquery"
 
-build = exports.build = (assets, public, main, output) ->
+exports.build = (assets, public, main, output) ->
 
-  # Pull out the sources and make them absolute
-  sources = (main + "/" + elem["src"] for elem in assets) 
-  
-  # Use the first one for now.
-  appPath = sources[0]
-  
-  builder = require(lib + "/builder.coffee")(appPath, public)
+  finished = utils.countdown assets.length
 
-  builder.build (err, html) ->
-    throw err if err
-    modify asset, html
-    
-    output null
-  
-modify = exports.modify = (asset, html) ->
-  # Use the first one for now
-  asset = assets[0]
-  $ = require "jquery"
-  
-  $(asset).replaceWith(html)
+  for asset in assets
+    appPath = main + "/" + asset.src
+    builder = new build(appPath, public, {})
 
-  
-  # frag = document.createDocumentFragment(fragment.innerHTML)
-
-  # console.log asset
-
-  # console.log fragment.createDocumentFragment()
-
-  # console.log fragment
-  
-  
-  # asset.appendChild(frag)
-  
-  # console.log frag.childNodes
-  
-  # if next
-  #   for node in frag.childNodes
-  #     next.parentNode.insertBefore(node, next)
-  # else
-  #   parent.appendChild frag.childNodes
-  # 
-  # builder = require lib + "/builder.coffee"
-  
-
-# read = exports.read = (files, emitter)
-
+    do (asset) ->
+      builder.build (err, html) ->
+        throw err if err
+        
+        $(asset).replaceWith html
+        
+        if finished()
+          output null
 
 module.exports = exports
