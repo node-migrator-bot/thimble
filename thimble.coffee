@@ -24,3 +24,5 @@ else if action is "build"
       throw err if err
       console.log "Successfully built #{appPath}"
 
+# Allows thimble to be used as middleware
+exports.middleware = require "#{lib}/middleware.coffee"
