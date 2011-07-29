@@ -40,8 +40,8 @@ class Bundler
     emitter.once "written", (buildPath) =>
       @modify assets, emitter
 
-    emitter.once "modified", (assets) =>
-      output null, assets
+    emitter.once "modified", ->
+      output null
 
     @read sources, emitter
 

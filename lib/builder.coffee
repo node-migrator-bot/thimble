@@ -16,9 +16,8 @@ $ = require "jquery"
 
 assetTypes = 
   js : "script"
-  css : ["link", "href"]
+  css : "link"
   images : "img"
-  embeds : "embed"
 
 class Builder
   
@@ -31,18 +30,19 @@ class Builder
     emitter = @emitter
     
     emitter.once "read", (code) =>
-      @document = jsdom code
       callback = (document) =>
+        @document = document
+        emitter.emit "flattened"
         
-        # emitter.emit "pulled"
+      document = jsdom code
+      
+      @flatten document, @directory, callback
+      
+    emitter.once "flattened", () =>
+      @pull emitter
 
-      @pull code, @directory, callback
-      
-    emitter.once "pulled", (assets) =>      
-      @parse assets, emitter
-      
-    emitter.once "parsed", (assets) =>
-      @bundle emitter
+    emitter.once "pulled", () =>
+      console.log @document.innerHTML
     
     emitter.once "bundled", ()->
       emitter.emit "built"
@@ -57,10 +57,9 @@ class Builder
       throw err if err
       @emitter.emit "read", code
   
-  # Pull in all the embeds and replace them
-  pull : (code, directory, callback) ->
+  # Flatten code by finding all the embeds and replacing them
+  flatten : (document, directory, callback) ->
     builder = this
-    document = jsdom code
     embeds = $("embed", document)
     
     callback(document) if embeds.size() is 0
@@ -72,46 +71,49 @@ class Builder
 
       fs.readFile file, "utf8", (err, contents) ->
         throw err if err
+        
+        documentFragment = jsdom(contents)
+        builder.fixPaths documentFragment, path.dirname(embed.src)
 
         output = (fragment) ->
           $(embed).replaceWith(fragment.innerHTML)
           if finished()
             callback(document)
             
-        builder.pull contents, path.dirname(file), output
+        builder.flatten documentFragment, path.dirname(file), output
+  
+  fixPaths : (document, path) ->
     
+    for type, tag of assetTypes
+      attribute = if type is "css" then "href" else "src"
+      
+      $(tag, document).each (i, element) ->
+        $(element).attr(attribute, path + "/" + element[attribute])
+  
+  # Pull in all the assets and parse them
+  pull : (emitter) ->
+    document = @document
+    finished = utils.countdown _.size(assetTypes)
     
-    # $("embed", document).each ->
-    #   embed = this
-    #   file = directory + "/" + embed.src
-    # 
-    #   fs.readFile file, "utf8", (err, code) ->
-    #     throw err if err
-    #     
-    #     pull jsdom(code), path.dirname(file), 
-
-        
+    callback = (err) =>
+      throw err if err
+      
+      if finished()
+        emitter.emit "pulled"
     
-    # for type, tag of assetTypes
-    #       if _.isArray tag then [tag, attr] = tag else attr = "src"
-    #       elems = document.getElementsByTagName tag
-    # 
-    #       continue if elems.length is 0
-    # 
-    #       elements = {}
-    #       for elem in elems
-    #         source = elem[attr]
-    #         source = @directory + "/" + source
-    #         elements[source] = elem
-    #         
-    #         if type is "css"
-    #           Builder.stylesheets.push source
-    #         else if type is "js"
-    #           Builder.scripts.push source
-    # 
-    #       assets[type] = elems
-    # 
-    #     @emitter.emit "pulled", assets
+    for type, tag of assetTypes
+      elements = $(tag, document).get()
+      
+      if elements.length is 0
+        if finished()
+          emitter.emit "pulled"
+          return
+        else
+          continue
+      
+      parser = require parserPath + "/#{type}.coffee"
+      parser.build elements, @public, @directory, callback
+    
     
   parse : (assets) ->
     document = @document
