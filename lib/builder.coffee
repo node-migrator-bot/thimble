@@ -30,19 +30,16 @@ class Builder
     emitter = @emitter
     
     emitter.once "read", (code) =>
-      callback = (document) =>
+      cb = (document) =>
         @document = document
         emitter.emit "flattened"
         
       document = jsdom code
       
-      @flatten document, @directory, callback
+      @flatten document, @directory, cb
       
     emitter.once "flattened", () =>
-      @pull emitter
-
-    emitter.once "pulled", () =>
-      console.log @document.innerHTML
+      @bundle emitter
     
     emitter.once "bundled", ()->
       emitter.emit "built"
@@ -91,7 +88,7 @@ class Builder
         $(element).attr(attribute, path + "/" + element[attribute])
   
   # Pull in all the assets and parse them
-  pull : (emitter) ->
+  bundle : (emitter) ->
     document = @document
     finished = utils.countdown _.size(assetTypes)
     
@@ -99,14 +96,14 @@ class Builder
       throw err if err
       
       if finished()
-        emitter.emit "pulled"
+        emitter.emit "bundled"
     
     for type, tag of assetTypes
       elements = $(tag, document).get()
       
       if elements.length is 0
         if finished()
-          emitter.emit "pulled"
+          emitter.emit "bundled"
           return
         else
           continue
@@ -114,36 +111,36 @@ class Builder
       parser = require parserPath + "/#{type}.coffee"
       parser.build elements, @public, @directory, callback
     
-    
-  parse : (assets) ->
-    document = @document
-    public = @public
-    finished = utils.countdown _.size(assets)
-  
-    
-  
-    # Pass in the actual elements themselves to replace the old elements. Have the parsers obtain the necessary src, href, etc. they need to read the files.
-
-    # Returns false if nothing should be replaced. Otherwise { asset1 : content1, asset2 : content2, asset3 : content3 }
-    # Content can either be a string or an object (jsdom DOMElement)
-    callback = (err, output) =>
-      throw err if err
-
-      if finished()
-        @emitter.emit "parsed"
-
-    for type of assets
-      parser = require parserPath + "/#{type}.coffee"
-      parser.build assets[type], public, @directory, callback
-
-  bundle : (emitter) ->
-    finished = utils.countdown 2
-    stylesheets = _.uniq Builder.stylesheets
-    scripts = _.uniq Builder.scripts
-
-    bundler = require("#{lib}/parsers/bundler.coffee")
-    bundler("build.css", @public, @directory).bundle stylesheets, () ->
-      console.log "ok"
+  #   
+  # parse : (assets) ->
+  #   document = @document
+  #   public = @public
+  #   finished = utils.countdown _.size(assets)
+  # 
+  #   
+  # 
+  #   # Pass in the actual elements themselves to replace the old elements. Have the parsers obtain the necessary src, href, etc. they need to read the files.
+  # 
+  #   # Returns false if nothing should be replaced. Otherwise { asset1 : content1, asset2 : content2, asset3 : content3 }
+  #   # Content can either be a string or an object (jsdom DOMElement)
+  #   callback = (err, output) =>
+  #     throw err if err
+  # 
+  #     if finished()
+  #       @emitter.emit "parsed"
+  # 
+  #   for type of assets
+  #     parser = require parserPath + "/#{type}.coffee"
+  #     parser.build assets[type], public, @directory, callback
+  # 
+  # bundle : (emitter) ->
+  #   finished = utils.countdown 2
+  #   stylesheets = _.uniq Builder.stylesheets
+  #   scripts = _.uniq Builder.scripts
+  # 
+  #   bundler = require("#{lib}/parsers/bundler.coffee")
+  #   bundler("build.css", @public, @directory).bundle stylesheets, () ->
+  #     console.log "ok"
       
 
 # Global arrays to hold stylesheets and scripts
