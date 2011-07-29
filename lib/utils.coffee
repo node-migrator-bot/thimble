@@ -1,6 +1,6 @@
 fs = require "fs"
 _ = require "underscore"
-
+path = require "path"
 # Reads an array of files and returning them in order
 readFiles = exports.readFiles = (files, callback) ->
   filesLeft = files.length
@@ -17,13 +17,13 @@ readFiles = exports.readFiles = (files, callback) ->
           callback null, files
 
 writeFiles = exports.writeFiles = (files, to, callback) ->
-  filesLeft = _.size files
-  
+  finished = countdown _.size(files)
+
   for file, code of files
     fs.writeFiles to + file, code, "utf8", (err) ->
       throw err if err
-      filesLeft--
-      callback null if filesLeft is 0
+      if finished()
+        callback null
 
 # Turns an array into an hashtable adding the array values to value
 toValues = exports.toValues = (array, prefix = "") ->
@@ -44,9 +44,11 @@ toKeys = exports.toKeys = (array, prefix = "") ->
 
 # Copies a file from one place to another
 copy = exports.copy = (file, to, callback) ->
-  fs.readFile file, "utf8", (err, code) ->
+  fs.readFile file, (err, code) ->
     throw err if err
-    fs.writeFile to + file, code, "utf8", (err) ->
+    filename = path.basename file
+
+    fs.writeFile to + "/" + filename, code, (err) ->
       throw err if err
       callback null
 
