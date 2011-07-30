@@ -30,13 +30,8 @@ class Builder
     emitter = @emitter
     
     emitter.once "read", (code) =>
-      cb = (document) =>
-        @document = document
-        emitter.emit "flattened"
-        
-      document = jsdom code
-      
-      @flatten document, @directory, cb
+      @document = jsdom code
+      @flatten @document, @directory, emitter
       
     emitter.once "flattened", () =>
       @bundle emitter
@@ -55,20 +50,13 @@ class Builder
       @emitter.emit "read", code
   
   # Flatten code by finding all the embeds and replacing them
-  flatten : (document, directory, callback) ->
+  flatten : (document, directory, emitter) ->
     builder = this
-    parser = require(parserPath + "/comments.coffee")(document, @directory)
+    CommentParser = require(parserPath + "/comments.coffee")
+    parser = new CommentParser(@document, @directory)
     
-    comments = parser.parse document, @directory, (document) ->
-      console.log document.innerHTML
-  
-  fixPaths : (document, path) ->
-    
-    for type, tag of assetTypes
-      attribute = if type is "css" then "href" else "src"
-      
-      $(tag, document).each (i, element) ->
-        $(element).attr(attribute, path + "/" + element[attribute])
+    parser.parse @document, @directory, (document) ->
+      emitter.emit "flattened"
   
   # Pull in all the assets and parse them
   bundle : (emitter) ->
