@@ -57,6 +57,8 @@ class Builder
   # Flatten code by finding all the embeds and replacing them
   flatten : (document, directory, callback) ->
     builder = this
+    parser = require(parserPath + "/comments.coffee")(document.innerHTML)
+    
     embeds = $("embed", document)
     
     callback(document) if embeds.size() is 0
