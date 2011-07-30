@@ -112,41 +112,6 @@ class Builder
       
       parser = require parserPath + "/#{type}.coffee"
       parser.build elements, @public, @directory, callback
-    
-  #   
-  # parse : (assets) ->
-  #   document = @document
-  #   public = @public
-  #   finished = utils.countdown _.size(assets)
-  # 
-  #   
-  # 
-  #   # Pass in the actual elements themselves to replace the old elements. Have the parsers obtain the necessary src, href, etc. they need to read the files.
-  # 
-  #   # Returns false if nothing should be replaced. Otherwise { asset1 : content1, asset2 : content2, asset3 : content3 }
-  #   # Content can either be a string or an object (jsdom DOMElement)
-  #   callback = (err, output) =>
-  #     throw err if err
-  # 
-  #     if finished()
-  #       @emitter.emit "parsed"
-  # 
-  #   for type of assets
-  #     parser = require parserPath + "/#{type}.coffee"
-  #     parser.build assets[type], public, @directory, callback
-  # 
-  # bundle : (emitter) ->
-  #   finished = utils.countdown 2
-  #   stylesheets = _.uniq Builder.stylesheets
-  #   scripts = _.uniq Builder.scripts
-  # 
-  #   bundler = require("#{lib}/parsers/bundler.coffee")
-  #   bundler("build.css", @public, @directory).bundle stylesheets, () ->
-  #     console.log "ok"
-      
 
-# Global arrays to hold stylesheets and scripts
-Builder.stylesheets = []
-Builder.scripts = []
 
 module.exports = Builder
