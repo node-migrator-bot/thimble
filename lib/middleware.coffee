@@ -20,17 +20,20 @@ middleware = exports.middleware = (appDir) ->
     if Plugin is false
       next()
       return
-        
+            
     fs.readFile assetPath, "utf8", (err, contents) ->
       throw err if err
 
       output = (err, out) ->
         throw err if err
         
-        if not res.getHeader "content-type"
-          # Name doesn't matter. mime just cares about .css, .js, .png, etc. not the name or if file exists
-          header = getHeader "blah.#{Plugin.type}"
-          res.setHeader('Content-Type', header);
+        # if not res.getHeader "content-type"
+        #   # Name doesn't matter. mime just cares about .css, .js, .png, etc. not the name or if file exists
+        #   header = getHeader "blah.#{Plugin.type}"
+        #   res.setHeader('Content-Type', header)
+        #   console.log header
+          
+        console.log out
         res.send out
       
       Plugin.render contents, assetPath, output
