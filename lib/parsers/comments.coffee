@@ -44,8 +44,8 @@ class CommentParser
     callback(document) if numCommands is 0
     finished = utils.countdown numCommands
     
-    $(commands).each ->
-      comment = this
+    $(commands).each (index, comment) ->
+
       [match, command, source] = comment.nodeValue.match regex
 
       file = directory + "/" + source
