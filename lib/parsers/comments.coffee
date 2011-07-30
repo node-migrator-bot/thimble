@@ -6,11 +6,15 @@ fs = require "fs"
 jsdom = require("jsdom").jsdom
 path = require "path"
 
+assetTypes = 
+  js : "script"
+  css : "link"
+  images : "img"
+
 class CommentParser 
   
   constructor : (@document, @main) ->
-    if isString document
-      @document = jsdom(document)
+    @document = jsdom(document)
   
   pull : (element = @document) ->
     output = []
@@ -53,62 +57,24 @@ class CommentParser
       fs.readFile file, "utf8", (err, contents) ->
         throw err if err
         documentFragment = jsdom(contents)
-        # parser.fixPaths documentFragment, path.dirname(embed.src)
+        parser.fixPaths documentFragment, path.dirname(source)
 
         output = (fragment) ->
           $(comment).replaceWith(fragment.innerHTML)
           if finished()
             callback(document)
 
-        console.log "--"
         parser.parse documentFragment, path.dirname(file), output
-      
-    # for comment in comments
-    #    text = comment.nodeValue
-    #    [match, command, arg] = text.match /(include) ["']?([\w\/.-]+)["']?/
-    #    
-    #    if arg
-    #      sources[arg] = comment
-    #  
-    # 
-    #  
-    # 
-     # sources.each ->
-     #   embed = this
-     #   file = directory + "/" + embed.src
-     #     
-     #   fs.readFile file, "utf8", (err, contents) ->
-     #     throw err if err
-     #     
-     #     documentFragment = jsdom(contents)
-     #     builder.fixPaths documentFragment, path.dirname(embed.src)
-     #     
-     #     output = (fragment) ->
-     #       $(embed).replaceWith(fragment.innerHTML)
-     #       if finished()
-     #         callback(document)
-     #         
-     #     builder.flatten documentFragment, path.dirname(file), output
-    #  
-    #  for source, element of sources
-    #    fs.readFile @main + "/" + 
-    #      
-    #      
-    #  
   
-    # $(element).each (index, node) ->
-    #      children = node.childNodes
-    #      for child in children
-    #        if child.nodeType is 8
-    #          output.push child
-    #        else
-    #          output = output.concat self.pull child
-    #        
-    #    return output
+  fixPaths : (document, path) ->
+
+    for type, tag of assetTypes
+      attribute = if type is "css" then "href" else "src"
+
+      $(tag, document).each (i, element) ->
+        $(element).attr(attribute, path + "/" + element[attribute])
 
 isString = (obj) ->
   !!(obj is '' || (obj && obj.charCodeAt && obj.substr));
 
-module.exports = (html, main) ->
-  # console.log html  
-  return new CommentParser html, main
+module.exports = CommentParser
