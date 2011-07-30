@@ -57,29 +57,10 @@ class Builder
   # Flatten code by finding all the embeds and replacing them
   flatten : (document, directory, callback) ->
     builder = this
-    parser = require(parserPath + "/comments.coffee")(document.innerHTML)
+    parser = require(parserPath + "/comments.coffee")(document, @directory)
     
-    embeds = $("embed", document)
-    
-    callback(document) if embeds.size() is 0
-    finished = utils.countdown embeds.size()
-
-    embeds.each ->
-      embed = this
-      file = directory + "/" + embed.src
-
-      fs.readFile file, "utf8", (err, contents) ->
-        throw err if err
-        
-        documentFragment = jsdom(contents)
-        builder.fixPaths documentFragment, path.dirname(embed.src)
-
-        output = (fragment) ->
-          $(embed).replaceWith(fragment.innerHTML)
-          if finished()
-            callback(document)
-            
-        builder.flatten documentFragment, path.dirname(file), output
+    comments = parser.parse document, @directory, (document) ->
+      console.log document.innerHTML
   
   fixPaths : (document, path) ->
     
