@@ -26,13 +26,13 @@ serve = exports.serve = (appDir, port) ->
     baseDir = appDir + module + "/"
     
     file = baseDir + index
-    
+
     fs.readFile file, "utf8", (err, html) ->
       parser = new CommentParser html, baseDir
       parser.parse null, null, (document) ->
+        console.log document.innerHTML
         res.send document.innerHTML
   
-    res.render baseDir + index, layout : false
   
   app.listen port
   
