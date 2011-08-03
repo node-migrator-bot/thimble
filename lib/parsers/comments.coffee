@@ -10,6 +10,10 @@ assetTypes =
   js : "script"
   css : "link"
   images : "img"
+  embeds : "embed"
+  iframes : "iframe"
+  videos : "video"
+  audio : "audio"
 
 class CommentParser 
   
