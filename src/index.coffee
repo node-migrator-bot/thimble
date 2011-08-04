@@ -15,7 +15,7 @@ mime = require "mime"
 plugin = require "./plugin"
 CommentParser = require "./parsers/comments"
 
-render = exports.render = (app) ->
+render = exports.render = (app, callback) ->
   baseDir = path.dirname app
   
   fs.readFile app, "utf8", (err, html) ->
@@ -23,7 +23,7 @@ render = exports.render = (app) ->
 
     parser = new CommentParser html, baseDir
     parser.parse null, null, (document) ->
-      res.send document.innerHTML
+      callback document.innerHTML
 
 middleware = exports.middleware = (appDir) ->
   return (req, res, next) ->
