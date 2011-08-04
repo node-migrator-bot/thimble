@@ -39,7 +39,7 @@ class CommentParser
   parse : (document = @document, directory = @main, callback) ->
     parser = this
     comments = @pull(document)
-    regex = /(include) ["']([\w\/.-]+)["']/
+    regex = /^=\s*(include) ["']?([\w\/.-]+)["']?/
     commands = []
     for comment in comments
       text = comment.nodeValue

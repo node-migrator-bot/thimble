@@ -1,11 +1,29 @@
+###
+  index.coffee --- Matt Mueller
+  
+  The purpose of this provide an application interface for developing applications.
+  It has two main functions : middleware(appDir), and render(file)
+  
+  middleware - will load all the required assets
+  render - will parse the html comments
+  
+###
+
 path = require "path"
 fs = require "fs"
 mime = require "mime"
 plugin = require "./plugin"
+CommentParser = require "./parsers/comments"
 
-# Reason you do middleware = exports.middleware is that it lets you 
-# use functions like setHeader in callback functions. 
-# This way you don't have to bind "this"
+render = exports.render = (app) ->
+  baseDir = path.dirname app
+  
+  fs.readFile app, "utf8", (err, html) ->
+    throw err if err
+
+    parser = new CommentParser html, baseDir
+    parser.parse null, null, (document) ->
+      res.send document.innerHTML
 
 middleware = exports.middleware = (appDir) ->
   return (req, res, next) ->
@@ -45,5 +63,4 @@ getHeader = (assetPath) ->
   charset = if charset then "; charset=#{charset}" else ""
   return (type + charset)
   
-module.exports = exports.middleware
-
+module.exports = exports

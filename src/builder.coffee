@@ -1,12 +1,25 @@
+###
+  builder.coffee --- Matt Mueller
+  
+  The purpose of builder.coffee is build our application for deployment
+  
+  builder moves and renders all the assets into a build.js and build.css
+  also moving all the images into the public directory
+  
+  Finally it compiles all the html includes into one app.html
+  
+###
+
 EventEmitter = require("events").EventEmitter
-_ = require "underscore"
-emitters = {}
-fs = require "fs"
-path = require "path"
-jsdom = require "jsdom"
-patcher = require "./patcher"
-parserPath = "#{__dirname}/parsers"
-utils = require "./utils"
+_            = require "underscore"
+emitters     = {}
+fs           = require "fs"
+path         = require "path"
+jsdom        = require "jsdom"
+patcher      = require "./patcher"
+parserPath   = "#{__dirname}/parsers"
+utils        = require "./utils"
+
 
 # Patch jsdom to work with certain html5 tags
 jsdom = patcher.patch jsdom

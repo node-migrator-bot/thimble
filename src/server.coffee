@@ -1,10 +1,22 @@
-express = require "express" 
-path = require "path"
-app = express.createServer()
-lib = __dirname
-CommentParser = require "./parsers/comments"
-fs = require "fs"
+###
+  server.coffee --- Matt Mueller
+  
+  The purpose of this provide a way of diving into a specific UI asset.
+  Rather than being required to work with the application in whole, this 
+  lets you work on just the colorpicker, or just the calendar, allowing you
+  to fine-tune your ui to perfection
+  
+  You simply run "thimble server UI_DIR" in the terminal to start fine tuning 
+  your application.
+  
+###
 
+express       = require "express" 
+path          = require "path"
+app           = express.createServer()
+lib           = __dirname
+CommentParser = require "./parsers/comments"
+fs            = require "fs"
 
 serve = exports.serve = (appDir, port) ->
 
@@ -12,7 +24,7 @@ serve = exports.serve = (appDir, port) ->
     app.use express.methodOverride()
     app.use express.bodyParser()
     app.use express.favicon()
-    app.use require("./middleware")(appDir)
+    app.use require("./index").middleware(appDir)
     app.use express['static'](appDir)
 
   app.register '.html',
