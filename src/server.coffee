@@ -5,6 +5,7 @@ lib = __dirname
 CommentParser = require "./parsers/comments"
 fs = require "fs"
 
+
 serve = exports.serve = (appDir, port) ->
 
   app.configure ->
@@ -31,7 +32,7 @@ serve = exports.serve = (appDir, port) ->
       parser.parse null, null, (document) ->
         res.send document.innerHTML
   
-  
+  console.log "Starting thimble server on port #{port}"
   app.listen port
   
 

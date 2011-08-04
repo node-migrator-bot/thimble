@@ -1,14 +1,19 @@
 {
-  "author": "Matt",
-  "name": "Thimble",
-  "version": "0.0.0",
+  "author": "Matt Mueller",
+  "name": "thimble",
+  "version": "0.0.1",
   "repository": {
     "url": ""
   },
-  "bin" : "./bin/thimble.js",
+  
+  "bin" : "./bin/thimble",
+  "main" : "./lib/middleware.js",
+  
   "engines": {
-    "node": ">0.2.5"
+    "node": ">=0.2.5"
   },
-  "dependencies": {},
+  "dependencies": {
+    "mime" : "1.2.2"
+  },
   "devDependencies": {}
 }
