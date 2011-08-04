@@ -8,8 +8,8 @@ _ = require "underscore"
 path = require "path"
 
 lib = "#{__dirname}/.."
-utils = require "#{lib}/utils.coffee"
-plugin = require "#{lib}/plugin.coffee"
+utils = require "#{lib}/utils"
+plugin = require "#{lib}/plugin"
 EventEmitter = require("events").EventEmitter
 fs = require "fs"
 

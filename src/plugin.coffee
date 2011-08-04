@@ -25,5 +25,5 @@ plugin = exports.plugin = (availablePlugins) ->
       return require plugins[ext]
     
 module.exports = do ->
-  plugins = loadPlugins "#{__dirname}/../plugins"
+  plugins = loadPlugins "#{__dirname}/plugins"
   return plugin(plugins)

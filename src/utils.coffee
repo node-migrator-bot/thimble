@@ -75,9 +75,9 @@ module.exports = exports
 
 # files = 
 #   [
-#     "./plugin.coffee"
-#     "./builder.coffee"
-#     "./middleware.coffee"
+#     "./plugin"
+#     "./builder"
+#     "./middleware"
 #   ]
 # 
 # readFiles files, (err, files) ->

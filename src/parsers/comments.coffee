@@ -1,5 +1,4 @@
-lib = "#{__dirname}/.."
-utils = require lib + "/utils.coffee"
+utils = require "../utils"
 _ = require "underscore"
 $ = require "jquery"
 fs = require "fs"

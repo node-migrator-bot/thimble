@@ -1,7 +1,7 @@
 $ = require "jquery"
 
 build = exports.build = (assets, public, main, callback) ->
-  bundler = require("./bundler.coffee")("build.css", public, main)
+  bundler = require("./bundler")("build.css", public, main)
   
   # Capture output just to verify that our css is at the bottom of <head> and not elsewhere in the document
   output = (err) ->

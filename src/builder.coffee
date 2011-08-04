@@ -3,11 +3,10 @@ _ = require "underscore"
 emitters = {}
 fs = require "fs"
 path = require "path"
-lib = __dirname
 jsdom = require "jsdom"
-patcher = require lib + "/patcher.coffee"
-parserPath = lib + "/parsers"
-utils = require lib + "/utils.coffee"
+patcher = require "./patcher"
+parserPath = "#{__dirname}/parsers"
+utils = require "./utils"
 
 # Patch jsdom to work with certain html5 tags
 jsdom = patcher.patch jsdom
@@ -52,7 +51,7 @@ class Builder
   # Flatten code by finding all the embeds and replacing them
   flatten : (document, directory, emitter) ->
     builder = this
-    CommentParser = require(parserPath + "/comments.coffee")
+    CommentParser = require(parserPath + "/comments")
     parser = new CommentParser(@document, @directory)
     
     parser.parse @document, @directory, (document) ->
@@ -79,7 +78,7 @@ class Builder
         else
           continue
       
-      parser = require parserPath + "/#{type}.coffee"
+      parser = require parserPath + "/#{type}"
       parser.build elements, @public, @directory, callback
 
 

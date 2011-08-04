@@ -1,8 +1,7 @@
 path = require "path"
 fs = require "fs"
 mime = require "mime"
-lib = __dirname
-plugin = require(lib + "/plugin.coffee")
+plugin = require "./plugin"
 
 # Reason you do middleware = exports.middleware is that it lets you 
 # use functions like setHeader in callback functions. 
@@ -40,7 +39,7 @@ middleware = exports.middleware = (appDir) ->
       Plugin.render contents, assetPath, output
 
 # Implementation pulled from static.js in Connect
-getHeader = exports.getHeader = (assetPath) ->
+getHeader = (assetPath) ->
   type = mime.lookup assetPath
   charset = mime.charsets.lookup type
   charset = if charset then "; charset=#{charset}" else ""

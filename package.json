@@ -1,0 +1,14 @@
+{
+  "author": "Matt",
+  "name": "Thimble",
+  "version": "0.0.0",
+  "repository": {
+    "url": ""
+  },
+  "bin" : "./bin/thimble.js",
+  "engines": {
+    "node": ">0.2.5"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

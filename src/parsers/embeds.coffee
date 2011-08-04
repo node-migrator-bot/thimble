@@ -1,8 +1,8 @@
 lib = "#{__dirname}/.."
 EventEmitter = require("events").EventEmitter
 emitter = new EventEmitter()
-utils = require lib + "/utils.coffee"
-build = require(lib + "/builder.coffee")
+utils = require lib + "/utils"
+build = require(lib + "/builder")
 $ = require "jquery"
 
 exports.build = (assets, public, main, output) ->

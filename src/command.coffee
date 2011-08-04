@@ -2,8 +2,7 @@ path    = require "path"
 args    = require("optimist").argv
 action  = args._[0]
 options = args._[1..]
-lib     = __dirname + "/lib"
-build   = require("#{lib}/builder.coffee")
+build   = require "./builder"
 fs      = require "fs"
 
 # Command line options
@@ -11,7 +10,7 @@ switch action
   when "server", "serve"
     serverDir = path.resolve options[0] or "."
     serverPort = options[1] or 8080
-    server = require "#{lib}/server.coffee"
+    server = require "./server"
     server.serve(serverDir, serverPort)
   
   when "build"
@@ -25,6 +24,3 @@ switch action
       fs.writeFile publicDir + "/build.html", html, "utf8", (err) ->
         throw err if err
         console.log "Successfully built #{appPath}"
-
-# Allows thimble to be used as middleware
-exports.middleware = require "#{lib}/middleware.coffee"

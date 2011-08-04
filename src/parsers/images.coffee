@@ -1,5 +1,5 @@
 lib = "#{__dirname}/.."
-utils = require lib + "/utils.coffee"
+utils = require lib + "/utils"
 path = require "path"
 
 build = exports.build = (assets, public, main, callback) ->
