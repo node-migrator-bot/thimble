@@ -4,6 +4,9 @@ $ = require "jquery"
 fs = require "fs"
 jsdom = require("jsdom").jsdom
 path = require "path"
+patch = require "../patcher"
+
+# $.fn.domManip = patch.domManip $
 
 assetTypes = 
   js : "script"
@@ -59,11 +62,22 @@ class CommentParser
 
       fs.readFile file, "utf8", (err, contents) ->
         throw err if err
+        
         documentFragment = jsdom(contents)
         parser.fixPaths documentFragment, path.dirname(source)
 
         output = (fragment) ->
-          $(comment).replaceWith(fragment.innerHTML)
+          # Work-around for WRONG DOCUMENT error
+          elems = $(fragment.innerHTML, document).get()
+          parent = comment.parentNode
+          
+          # Need to insert using vanilla JS in order not to invoke 
+          #domManip, which removes <script> tags
+          for elem in elems
+            parent.insertBefore elem, comment
+          
+          $(comment).remove()
+          
           if finished()
             callback(document)
 
@@ -79,5 +93,8 @@ class CommentParser
 
 isString = (obj) ->
   !!(obj is '' || (obj && obj.charCodeAt && obj.substr));
+
+createScript = (src) ->
+  return $("<script>").attr('type', 'text/javascript').attr('src', src)
 
 module.exports = CommentParser
