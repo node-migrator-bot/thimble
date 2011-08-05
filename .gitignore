@@ -1,5 +1,5 @@
 .DS_Store
-/Thimble.tmproj
-/public/
-/ui/*
+Thimble.tmproj
+/public
+/ui
 /lib
