@@ -23,7 +23,7 @@ render = exports.render = (app, callback) ->
 
     parser = new CommentParser html, baseDir
     parser.parse null, null, (document) ->
-      callback document.innerHTML
+      callback document
 
 middleware = exports.middleware = (appDir) ->
   return (req, res, next) ->
