@@ -31,14 +31,18 @@ middleware = exports.middleware = (appDir) ->
     url = req.url
     assetPath = path.resolve(root + url)
 
-    console.log assetPath
 
     Plugin = plugin url
 
+    if Plugin is false
+      next()
+      return
+            
     fs.readFile assetPath, "utf8", (err, contents) ->
-      return next() if err
+      throw err if err
+
       output = (err, out) ->
-        return next() if err
+        throw err if err
         
         if not res.getHeader "content-type"
           # Name doesn't matter. mime just cares about .css, .js, .png, etc. not the name or if file exists
@@ -46,11 +50,11 @@ middleware = exports.middleware = (appDir) ->
           res.setHeader('Content-Type', header)
           # console.log header
           
+        
         # console.log out
         res.send out
       
       Plugin.render contents, assetPath, output
-
 
 # Implementation pulled from static.js in Connect
 getHeader = (assetPath) ->
