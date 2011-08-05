@@ -13,6 +13,10 @@ loadPlugins = (pluginDir) ->
 
   return plugins
 
+genericPlugin = 
+  render : (content, file, output) ->
+    output null, content
+
 plugin = exports.plugin = (availablePlugins) ->
   plugins = availablePlugins
 
@@ -20,7 +24,8 @@ plugin = exports.plugin = (availablePlugins) ->
     ext = path.extname(asset).substring 1
     
     if !plugins[ext]
-      return false 
+      genericPlugin.type = ext
+      return genericPlugin
     else
       return require plugins[ext]
     
