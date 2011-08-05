@@ -1,5 +1,7 @@
 # This is the patch for jsdom to allow for new elements to be defined
 
+
+
 HTMLElements = 
   "HTMLEmbedElement" :
     tagName : "EMBED"
@@ -7,6 +9,44 @@ HTMLElements =
       "src",
       "type"
     ]
+
+exports.domManip = (jQuery) ->
+  rchecked = /checked\s*(?:[^=]|=\s*.checked.)/i
+  (args, table, callback) ->
+    value = args[0]
+    scripts = []
+    if not jQuery.support.checkClone and arguments.length == 3 and typeof value == "string" and rchecked.test(value)
+      return @each(->
+        jQuery(this).domManip args, table, callback, true
+      )
+    if jQuery.isFunction(value)
+      return @each((i) ->
+        self = jQuery(this)
+        args[0] = value.call(this, i, (if table then self.html() else undefined))
+        self.domManip args, table, callback
+      )
+    if this[0]
+      parent = value and value.parentNode
+      if jQuery.support.parentNode and parent and parent.nodeType == 11 and parent.childNodes.length == @length
+        results = fragment: parent
+      else
+        results = jQuery.buildFragment(args, this, scripts)
+      fragment = results.fragment
+      if fragment.childNodes.length == 1
+        first = fragment = fragment.firstChild
+      else
+        first = fragment.firstChild
+      if first
+        table = table and jQuery.nodeName(first, "tr")
+        i = 0
+        l = @length
+        lastIndex = l - 1
+    
+        while i < l
+          callback.call (if table then root(this[i], first) else this[i]), (if results.cacheable or (l > 1 and i < lastIndex) then jQuery.clone(fragment, true, true) else fragment)
+          i++
+          
+    this
 
 patch = exports.patch = (jsdom) ->
   core = exports.core = jsdom.dom.level3.core
