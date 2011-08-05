@@ -20,13 +20,14 @@ fs            = require "fs"
 
 serve = exports.serve = (appDir, port) ->
 
-  app.configure ->
+  app.configure 'development', ->
     app.use express.methodOverride()
     app.use express.bodyParser()
     app.use express.favicon()
     app.use require("./index").middleware(appDir)
     app.use express['static'](appDir)
-
+    app.use express.errorHandler dumpExceptions: true, showStack: true
+    
   app.register '.html',
     compile : (str) ->
       ->
