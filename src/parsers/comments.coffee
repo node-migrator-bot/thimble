@@ -20,7 +20,7 @@ assetTypes =
 class CommentParser 
   
   constructor : (@document, @main) ->
-    @document = jsdom(document)
+    @document = document
   
   pull : (element = @document) ->
     output = []
@@ -38,8 +38,40 @@ class CommentParser
         output = output.concat self.pull child
     
     return output
-         
+  
   parse : (document = @document, directory = @main, callback) ->
+    parser = this
+    regex = /<!--=\s*(include) ["']?([\w\/.-]+)["']?\s*-->/g
+    # console.log document
+    # If there are no includes
+
+    matches = []
+    while match = regex.exec(document)
+      matches.push [match[0], match[1], match[2]]
+
+    numMatches = matches.length
+    callback(document) if numMatches is 0
+    finished = utils.countdown numMatches
+
+    for match in matches
+      do (match) ->
+        [original, command, source] = match
+        file = directory + "/" + source
+      
+        fs.readFile file, "utf8", (err, contents) ->
+          throw err if err
+        
+          contents = parser.fixPaths jsdom(contents), path.dirname(source)
+        
+          output = (fragment) ->
+            document = document.replace(original, fragment)
+          
+            if finished()
+              callback(document)
+        
+          parser.parse contents, path.dirname(file), output
+
+  _parse : (document = @document, directory = @main, callback) ->
     parser = this
     comments = @pull(document)
     regex = /^=\s*(include) ["']?([\w\/.-]+)["']?/
@@ -90,6 +122,8 @@ class CommentParser
 
       $(tag, document).each (i, element) ->
         $(element).attr(attribute, path + "/" + element[attribute])
+        
+    return document.innerHTML
 
 isString = (obj) ->
   !!(obj is '' || (obj && obj.charCodeAt && obj.substr));

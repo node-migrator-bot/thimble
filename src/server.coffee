@@ -42,7 +42,8 @@ serve = exports.serve = (appDir, port) ->
     fs.readFile file, "utf8", (err, html) ->
       parser = new CommentParser html, baseDir
       parser.parse null, null, (document) ->
-        res.send document.innerHTML
+        console.log document
+        res.send document
   
   console.log "Starting thimble server on port #{port}"
   app.listen port
