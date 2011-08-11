@@ -1,6 +1,7 @@
 fs = require "fs"
 _ = require "underscore"
 path = require "path"
+
 # Reads an array of files and returning them in order
 readFiles = exports.readFiles = (files, callback) ->
   filesLeft = files.length

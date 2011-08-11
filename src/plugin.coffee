@@ -24,6 +24,7 @@ plugin = exports.plugin = (availablePlugins) ->
     else
       return require plugins[ext]
     
-module.exports = do ->
-  plugins = loadPlugins "#{__dirname}/plugins"
+module.exports = (pluginDir) ->
+  pluginDir = path.join __dirname, pluginDir
+  plugins = loadPlugins pluginDir
   return plugin(plugins)

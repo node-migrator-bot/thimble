@@ -15,7 +15,7 @@ express       = require "express"
 path          = require "path"
 app           = express.createServer()
 lib           = __dirname
-CommentParser = require "./parsers/comments"
+CommentParser = require "./plugins/document/comments"
 fs            = require "fs"
 
 serve = exports.serve = (appDir, port) ->

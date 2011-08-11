@@ -1,5 +1,4 @@
-lib = "#{__dirname}/.."
-utils = require lib + "/utils"
+utils = require "../utils"
 path = require "path"
 
 build = exports.build = (assets, public, main, callback) ->

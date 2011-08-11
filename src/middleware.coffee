@@ -1,7 +1,7 @@
 path = require "path"
 fs = require "fs"
 mime = require "mime"
-plugin = require "./plugin"
+plugin = require("./plugin")('./plugins/asset')
 
 middleware = exports.middleware = (appDir) ->
   return (req, res, next) ->

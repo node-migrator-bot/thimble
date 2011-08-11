@@ -1,12 +1,9 @@
-utils = require "../utils"
+utils = require "../../utils"
 _ = require "underscore"
 $ = require "jquery"
 fs = require "fs"
 jsdom = require("jsdom").jsdom
 path = require "path"
-patch = require "../patcher"
-
-# $.fn.domManip = patch.domManip $
 
 assetTypes = 
   js : "script"

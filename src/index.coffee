@@ -13,7 +13,7 @@ path = require "path"
 fs = require "fs"
 mime = require "mime"
 plugin = require "./plugin"
-CommentParser = require "./parsers/comments"
+CommentParser = require "./plugins/document/comments"
 
 render = exports.render = (app, callback) ->
   baseDir = path.dirname app
