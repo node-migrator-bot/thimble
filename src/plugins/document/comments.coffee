@@ -10,20 +10,20 @@ assetTypes = require "#{src}/tags/tags"
 
 class CommentParser 
   
-  constructor : (@document, @main) ->
+  constructor : (@html, @main) ->
   
-  parse : (callback, document = @document, directory = @main) ->
+  parse : (callback, html = @html, directory = @main) ->
     parser = this
     regex = /<!--=\s*(include) ["']?([\w\/.-]+)["']?\s*-->/g
-    # console.log document
+    # console.log html
     # If there are no includes
 
     matches = []
-    while match = regex.exec(document)
+    while match = regex.exec(html)
       matches.push [match[0], match[1], match[2]]
 
     numMatches = matches.length
-    callback(document) if numMatches is 0
+    callback(html) if numMatches is 0
     finished = utils.countdown numMatches
 
     for match in matches
@@ -37,10 +37,10 @@ class CommentParser
           contents = parser.fixPaths jsdom(contents), path.dirname(source)
         
           output = (fragment) ->
-            document = document.replace(original, fragment)
+            html = html.replace(original, fragment)
           
             if finished()
-              callback(document)
+              callback(html)
         
           parser.parse output, contents, path.dirname(file)
   
