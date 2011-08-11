@@ -36,24 +36,19 @@ class Builder
   constructor : (@file, @public, @options = {}) ->
     @directory = path.dirname file
     @emitter = new EventEmitter()
-    @root = if options.root then file else false    
 
-  build : (callback) ->
+  build : (output) ->
     emitter = @emitter
     
-    emitter.once "read", (code) =>
-      @document = jsdom code
-      @flatten @document, @directory, emitter
+    emitter.once "read", (html) =>
+      @flatten html, emitter
       
-    emitter.once "flattened", () =>
-      @bundle emitter
+    emitter.once "flattened", (html) =>
+      @bundle html, emitter
     
-    emitter.once "bundled", ()->
-      emitter.emit "built"
-    
-    emitter.once "built", =>
-      callback null, @document.innerHTML
-      
+    emitter.once "bundled", (html) ->
+      output null, html
+          
     @read @file
   
   read : (file) ->
@@ -62,31 +57,31 @@ class Builder
       @emitter.emit "read", code
   
   # Flatten code by finding all the embeds and replacing them
-  flatten : (document, directory, emitter) ->
+  flatten : (html, emitter) ->
     builder = this
     CommentParser = require(parserPath + "/comments")
-    parser = new CommentParser(@document, @directory)
+    parser = new CommentParser(html, @directory)
     
-    parser.parse @document, @directory, (document) ->
-      emitter.emit "flattened"
+    parser.parse (html) ->
+      emitter.emit "flattened", html
   
-  # Pull in all the assets and parse them
-  bundle : (emitter) ->
-    document = @document
+  # Pull in all the assets and parse them, manipulates HTML document if necessary (ie. build.js, build.css)
+  bundle : (html, emitter) ->
+    document = jsdom html
     finished = utils.countdown _.size(assetTypes)
     
     callback = (err) =>
       throw err if err
       
       if finished()
-        emitter.emit "bundled"
+        emitter.emit "bundled", document.innerHTML
     
     for type, tag of assetTypes
       elements = $(tag, document).get()
       
       if elements.length is 0
         if finished()
-          emitter.emit "bundled"
+          emitter.emit "bundled", document.innerHTML
           return
         else
           continue

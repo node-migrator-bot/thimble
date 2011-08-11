@@ -22,7 +22,7 @@ render = exports.render = (app, callback) ->
     throw err if err
 
     parser = new CommentParser html, baseDir
-    parser.parse null, null, (document) ->
+    parser.parse (document) ->
       callback document
 
 middleware = exports.middleware = require('./middleware').middleware

@@ -1,5 +1,3 @@
-$ = require "jquery"
-
 build = exports.build = (assets, public, main, callback) ->
   bundler = require("./bundler")("build.css", public, main)
   

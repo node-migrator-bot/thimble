@@ -20,7 +20,6 @@ assetTypes =
 class CommentParser 
   
   constructor : (@document, @main) ->
-    @document = document
   
   pull : (element = @document) ->
     output = []
@@ -39,7 +38,7 @@ class CommentParser
     
     return output
   
-  parse : (document = @document, directory = @main, callback) ->
+  parse : (callback, document = @document, directory = @main) ->
     parser = this
     regex = /<!--=\s*(include) ["']?([\w\/.-]+)["']?\s*-->/g
     # console.log document
@@ -69,7 +68,7 @@ class CommentParser
             if finished()
               callback(document)
         
-          parser.parse contents, path.dirname(file), output
+          parser.parse output, contents, path.dirname(file)
 
   _parse : (document = @document, directory = @main, callback) ->
     parser = this
