@@ -58,7 +58,6 @@ class Builder
   
   # Flatten code by finding all the embeds and replacing them
   flatten : (html, emitter) ->
-    builder = this
     parser = new CommentParser(html, @directory)
     
     parser.parse (html) ->
