@@ -8,7 +8,10 @@ fs      = require "fs"
 # Command line options
 switch action
   when "server", "serve"
-    serverDir = path.resolve options[0] or "."
+    if !options[0]
+      console.error "Need to specify a directory to serve from (eg. /ui)"
+      process.exit 1
+    serverDir = path.resolve options[0]
     serverPort = options[1] or 8080
     server = require "./server"
     server.serve(serverDir, serverPort)
