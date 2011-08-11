@@ -1,18 +1,12 @@
-utils = require "../../utils"
+src = "../.."
+utils = require "#{src}/utils"
 _ = require "underscore"
 $ = require "jquery"
 fs = require "fs"
 jsdom = require("jsdom").jsdom
 path = require "path"
 
-assetTypes = 
-  js : "script"
-  css : "link"
-  images : "img"
-  embeds : "embed"
-  iframes : "iframe"
-  videos : "video"
-  audio : "audio"
+assetTypes = require "#{src}/tags/tags"
 
 class CommentParser 
   

@@ -29,10 +29,7 @@ jsdom = patcher.patch jsdom
 
 $ = require "jquery"
 
-assetTypes = 
-  js : "script"
-  css : "link"
-  images : "img"
+assetTypes = require "./tags/tags"
 
 class Builder
   
