@@ -70,6 +70,26 @@ fillArray = exports.fillArray = (length, value) ->
 mkdir = exports.mkdir = (path) ->
   fs.mkdir path, 0777, (err)
 
+iterator = exports.iterator = (arr, ptr = 0) ->
+  {
+    array : arr
+    pointer : ptr
+    length : arr.length
+    next : ->
+      @pointer++
+      if @pointer is @length 
+        @pointer = 0
+        @array[0]
+      else
+        @array[@pointer]
+    curr : ->
+      @array[@pointer]
+    reset : ->
+      @pointer = 0
+  }
+
+# trim = exports.trim =L
+
 module.exports = exports
 
 # console.log fillArray 5, "hi"
