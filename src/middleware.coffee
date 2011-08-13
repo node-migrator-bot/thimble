@@ -2,9 +2,10 @@ path = require "path"
 fs = require "fs"
 mime = require "mime"
 plugin = require("./plugin")('./plugins/asset')
+emitter = new (require("events").EventEmitter)()
 
 middleware = exports.middleware = (appDir, options) ->
-  return (req, res, next) ->
+  (req, res, next) ->
     root = appDir
     url = req.url
     assetPath = path.resolve(root + url)
@@ -24,11 +25,8 @@ middleware = exports.middleware = (appDir, options) ->
         if not res.getHeader "content-type"
           # Name doesn't matter. mime just cares about .css, .js, .png, etc. not the name or if file exists
           header = getHeader "blah.#{Plugin.type}"
-          res.setHeader('Content-Type', header)
-          # console.log header
-          
+          res.setHeader('Content-Type', header)          
         
-        # console.log out
         res.send out
       
       Plugin.render contents, assetPath, options or {}, output
