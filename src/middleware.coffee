@@ -3,12 +3,12 @@ fs = require "fs"
 mime = require "mime"
 plugin = require("./plugin")('./plugins/asset')
 
-middleware = exports.middleware = (appDir) ->
+middleware = exports.middleware = (appDir, options) ->
   return (req, res, next) ->
     root = appDir
     url = req.url
     assetPath = path.resolve(root + url)
-
+    
     Plugin = plugin url
 
     if Plugin is false
@@ -31,7 +31,7 @@ middleware = exports.middleware = (appDir) ->
         # console.log out
         res.send out
       
-      Plugin.render contents, assetPath, output
+      Plugin.render contents, assetPath, options or {}, output
 
 # Implementation pulled from static.js in Connect
 getHeader = (assetPath) ->
