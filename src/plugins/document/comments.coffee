@@ -5,53 +5,97 @@ $ = require "jquery"
 fs = require "fs"
 jsdom = require("jsdom").jsdom
 path = require "path"
+emitter = new (require("events").EventEmitter)()
 
 assetTypes = require "#{src}/tags/tags"
 
-class CommentParser 
+###
+  PUBLIC
+###
+
+render = exports.render = (html, file, options = {}, output) ->
+  directory = path.dirname file
+   
+  # If there aren't any options then it's the callback
+  if _.isFunction options
+    output = options
+ 
+  emitter.once "initialized", (html) ->
+    parse output, html, directory
+
+  initialize html, file, options, emitter
+
+###
+  PRIVATE
+###
+
+initialize = (html, file, options, emitter) ->
+  {outer} = options
+
+  if outer
+    emitter.once "wrapped", (html) ->
+      emitter.emit "initialized", html
+
+    wrap(html, outer, emitter)
+
+  else
+    emitter.emit "initialized", html  
   
-  constructor : (@html, @main) ->
-  
-  parse : (callback, html = @html, directory = @main) ->
-    parser = this
-    regex = /<!--=\s*(include) ["']?([\w\/.-]+)["']?\s*-->/g
-    # console.log html
-    # If there are no includes
+parse = (callback, html, directory) ->
+  parser = this
+  regex = /<!--=\s*(include) ["']?([\w\/.-]+)["']?\s*-->/g
+  # console.log html
+  # If there are no includes
 
-    matches = []
-    while match = regex.exec(html)
-      matches.push [match[0], match[1], match[2]]
+  matches = []
+  while match = regex.exec(html)
+    matches.push [match[0], match[1], match[2]]
 
-    numMatches = matches.length
-    callback(html) if numMatches is 0
-    finished = utils.countdown numMatches
+  numMatches = matches.length
+  callback(html) if numMatches is 0
+  finished = utils.countdown numMatches
 
-    for match in matches
-      do (match) ->
-        [original, command, source] = match
-        file = directory + "/" + source
+  for match in matches
+    do (match) ->
+      [original, command, source] = match
+      file = directory + "/" + source
+    
+      fs.readFile file, "utf8", (err, contents) ->
+        throw err if err
       
-        fs.readFile file, "utf8", (err, contents) ->
-          throw err if err
+        contents = fixPaths jsdom(contents), path.dirname(source)
+      
+        output = (fragment) ->
+          html = html.replace(original, fragment)
         
-          contents = parser.fixPaths jsdom(contents), path.dirname(source)
-        
-          output = (fragment) ->
-            html = html.replace(original, fragment)
-          
-            if finished()
-              callback(html)
-        
-          parser.parse output, contents, path.dirname(file)
-  
-  fixPaths : (document, path) ->
+          if finished()
+            callback(html)
+      
+        parse output, contents, path.dirname(file)
 
-    for type, tag of assetTypes
-      attribute = if type is "css" then "href" else "src"
+###
+  OPTIONS
+###
 
-      $(tag, document).each (i, element) ->
-        $(element).attr(attribute, path + "/" + element[attribute])
-        
-    return document.innerHTML
+wrap = (innerHTML, outer, emitter) ->
+  fs.readFile outer, "utf8", (err, html) ->
+    throw err if err
 
-module.exports = CommentParser
+    html = html.replace /<!--=\s*yield\s*-->/, innerHTML
+    emitter.emit "wrapped", html
+
+###
+  UTILITIES
+###
+
+fixPaths = (document, path) ->
+
+  for type, tag of assetTypes
+    attribute = if type is "css" then "href" else "src"
+
+    $(tag, document).each (i, element) ->
+      $(element).attr(attribute, path + "/" + element[attribute])
+      
+  return document.innerHTML
+
+module.exports = exports

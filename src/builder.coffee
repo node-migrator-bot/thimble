@@ -18,11 +18,6 @@ path         = require "path"
 jsdom        = require "jsdom"
 patcher      = require "./patcher"
 utils        = require "./utils"
-CommentParser = require "./plugins/document/comments"
-
-###
-  TODO Pretty sure I can easily refactor plugins to use generic plugin.coffee
-###
 
 # Patch jsdom to work with certain html5 tags
 jsdom = patcher.patch jsdom
@@ -58,9 +53,8 @@ class Builder
   
   # Flatten code by finding all the embeds and replacing them
   flatten : (html, emitter) ->
-    parser = new CommentParser(html, @directory)
-    
-    parser.parse (html) ->
+    commentParser = require "./plugins/document/comments"
+    commentParser.render html, @file, (html) ->
       emitter.emit "flattened", html
   
   # Pull in all the assets and parse them, manipulates HTML document if necessary (ie. build.js, build.css)

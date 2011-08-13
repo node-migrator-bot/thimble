@@ -13,19 +13,20 @@ path = require "path"
 fs = require "fs"
 mime = require "mime"
 plugin = require "./plugin"
-CommentParser = require "./plugins/document/comments"
+commentParser = require "./plugins/document/comments"
 _ = require "underscore"
 
 render = exports.render = (app, locals = {}, callback) ->
-  baseDir = path.dirname app
   
   fs.readFile app, "utf8", (err, html) ->
     throw err if err
     
-    document = new CommentParser html, baseDir
-    document.outer locals.outer if locals.outer
+    options = {}
     
-    document.parse (html) ->
+    if locals.outer
+      options.outer = locals.outer
+    
+    commentParser.render html, app, options, (html) ->
       callback html
 
 middleware = exports.middleware = require('./middleware').middleware
