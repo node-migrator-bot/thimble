@@ -4,18 +4,37 @@ path = require "path"
 
 # Reads an array of files and returning them in order
 readFiles = exports.readFiles = (files, callback) ->
-  filesLeft = files.length
-  files = toKeys files
-  
-  for file, val of files
-    do (file) ->
-      fs.readFile file, "utf8", (err, code) ->
-        throw err if err
-        files[file] = code
 
-        filesLeft--
-        if filesLeft is 0
-          callback null, files
+  read = (files) ->
+    filesLeft = _.size files
+    for file, val of files
+      do (file) ->
+        fs.readFile file, "utf8", (err, code) ->
+          throw err if err
+          files[file] = code
+
+          filesLeft--
+          if filesLeft is 0
+            callback null, files
+            
+  if _.isArray files
+    files = toKeys files  
+    read files
+  else if _.isString files
+    dir = path.dirname files
+    regex = path.basename files
+    regex = regex.replace "*", ".*"
+    regex = new RegExp regex
+
+    fs.readdir dir, (err, files) ->
+      throw err if err
+      files = _(files)
+        .filter (file) ->
+          regex.test file
+        .map (file) ->
+          return dir + "/" + file
+      files = toKeys files  
+      read files
 
 writeFiles = exports.writeFiles = (files, to, callback) ->
   finished = countdown _.size(files)
