@@ -20,7 +20,8 @@ patcher      = require "./patcher"
 utils        = require "./utils"
 
 # Patch jsdom to work with certain html5 tags
-jsdom = patcher.patch jsdom
+# jsdom = patcher.patch jsdom
+jsdom = jsdom.jsdom
 
 $ = require "jquery"
 
@@ -34,7 +35,7 @@ class Builder
 
   build : (output) ->
     emitter = @emitter
-    
+
     emitter.once "read", (html) =>
       @flatten html, emitter
       
@@ -42,6 +43,8 @@ class Builder
       @bundle html, emitter
     
     emitter.once "bundled", (html) ->
+      # Quick fix for jsdom NEVER rendering doctype
+      # html = "<!doctype html>" + html
       output null, html
           
     @read @file
@@ -54,26 +57,34 @@ class Builder
   # Flatten code by finding all the embeds and replacing them
   flatten : (html, emitter) ->
     commentParser = require "./plugins/document/comments"
-    commentParser.render html, @file, (html) ->
+    
+    options = {}
+    options.outer = @options.outer if @options.outer
+    
+    commentParser.render html, @file, options, (html) ->
       emitter.emit "flattened", html
   
   # Pull in all the assets and parse them, manipulates HTML document if necessary (ie. build.js, build.css)
   bundle : (html, emitter) ->
     document = jsdom html
     finished = utils.countdown _.size(assetTypes)
-    
+
+    # When finished, this is called
+    done = () ->
+      html = document.doctype + document.innerHTML
+      emitter.emit "bundled", html
+      
     callback = (err) =>
       throw err if err
-      
       if finished()
-        emitter.emit "bundled", document.innerHTML
+        done()
     
     for type, tag of assetTypes
       elements = $(tag, document).get()
       
       if elements.length is 0
         if finished()
-          emitter.emit "bundled", document.innerHTML
+          done()
           return
         else
           continue
