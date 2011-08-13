@@ -26,8 +26,12 @@ class Bundler
     @attribute = if ext is "css" then "href" else "src"
 
     # Pull out the sources and make them absolute
-    sources = (@main + "/" + elem[@attribute] for elem in assets) 
-
+    sources = []
+    for elem in assets
+      console.log elem[@attribute]
+      if elem[@attribute]
+        sources.push @main + "/" + elem[@attribute]
+      
     # Set up the listeners
     emitter.once "read", (files) =>
       @render files, emitter
