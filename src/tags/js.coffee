@@ -13,6 +13,7 @@ moveJS = (document) ->
   html = document.children[0]
   # Should only be one by now but just in case    
   for script in scripts
+    script.setAttribute "defer", "defer"
     html.appendChild(script)
 
 module.exports = exports
