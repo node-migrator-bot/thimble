@@ -14,16 +14,19 @@ fs = require "fs"
 mime = require "mime"
 plugin = require "./plugin"
 CommentParser = require "./plugins/document/comments"
+_ = require "underscore"
 
-render = exports.render = (app, callback) ->
+render = exports.render = (app, locals = {}, callback) ->
   baseDir = path.dirname app
   
   fs.readFile app, "utf8", (err, html) ->
     throw err if err
-
-    parser = new CommentParser html, baseDir
-    parser.parse (document) ->
-      callback document
+    
+    document = new CommentParser html, baseDir
+    document.outer locals.outer if locals.outer
+    
+    document.parse (html) ->
+      callback html
 
 middleware = exports.middleware = require('./middleware').middleware
   
