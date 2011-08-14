@@ -27,6 +27,7 @@ switch action
     builder = new build(appPath, publicDir, options)
     builder.build (err, html) ->
       throw err if err
-      fs.writeFile publicDir + "/build.html", html, "utf8", (err) ->
+      fs.writeFile publicDir + "/app.js", html, "utf8", (err) ->
         throw err if err
-        console.log "Successfully built #{appPath}"
+        console.log "Successfully build the application:"
+        console.log "#{appPath} --> #{path.resolve publicDir}/app.js"

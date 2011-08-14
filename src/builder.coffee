@@ -41,10 +41,11 @@ class Builder
       
     emitter.once "flattened", (html) =>
       @bundle html, emitter
+          
+    emitter.once "bundled", (html) =>
+      @render html, @file, emitter
     
-    emitter.once "bundled", (html) ->
-      # Quick fix for jsdom NEVER rendering doctype
-      # html = "<!doctype html>" + html
+    emitter.once "rendered", (html) =>
       output null, html
           
     @read @file
@@ -81,7 +82,6 @@ class Builder
     
     for type, tag of assetTypes
       elements = $(tag, document).get()
-      
       if elements.length is 0
         if finished()
           done()
@@ -91,6 +91,20 @@ class Builder
       
       parser = require "./tags/#{type}"
       parser.build elements, @public, @directory, callback
-
-
+  
+  # This will compile the template with the plugin of your choosing
+  render : (html, file, emitter) ->
+    plugin = require("./plugin")("./plugins/document")
+    
+    output = (err, html) ->
+      throw err if err
+      emitter.emit "rendered", html
+      
+    options = {}
+    
+    Plugin = plugin file
+    if Plugin
+      Plugin.render html, file, options, output
+    
+  
 module.exports = Builder
