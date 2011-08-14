@@ -1,15 +1,21 @@
 eco = require "eco"
 _ = require "underscore"
 
-build = exports.build = (content, file, options = {}, output) ->
+build = exports.build = (code, file, options = {}, output) ->
 
   if _.isFunction options
     output = options
 
-  compiled = eco.precompile content
+  compiled = eco.precompile code
   
   compiled = "module.exports = " + compiled
   
   output null, compiled
+
+render = exports.render = (code, file, options = {}, output) ->
+  if _.isFunction options
+    output = options
+  
+  output null, eco.precompile code
 
 module.exports = exports

@@ -1,16 +1,18 @@
 path = require "path"
 fs = require "fs"
-commentParser = require "./plugins/document/comments"
+parser = require "./parser"
+plugins = require("./plugin")("./plugins/document")
 
 render = exports.render = (app, locals = {}, callback) ->
-  
-  fs.readFile app, "utf8", (err, html) ->
-    throw err if err
+  # Always passing in all the locals might screw something up,
+  # Instead add new options here each time. Shouldn't be too many...
+  compilerOptions = {}
+  compilerOptions.outer = locals.outer or ""
+
+  parser.parse app, compilerOptions, (err, code) ->
+    plugin = plugins app
     
-    options = {}
+    plugin.render code, app, locals, (err, templateFunction) ->
+      rendered = templateFunction locals
+      callback null, rendered
     
-    if locals.outer
-      options.outer = locals.outer
-    
-    commentParser.render html, app, options, (html) ->
-      callback html

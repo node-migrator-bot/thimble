@@ -19,7 +19,7 @@ plugin = (availablePlugins) ->
     ext = path.extname(asset).substring 1
     
     if !plugins[ext]
-      return false 
+      throw "Could not find a plugin for: #{asset} with extension: #{ext}."
     else
       return require plugins[ext]
     
