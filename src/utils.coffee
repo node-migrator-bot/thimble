@@ -107,8 +107,14 @@ iterator = exports.iterator = (arr, ptr = 0) ->
       @pointer = 0
   }
 
-# trim = exports.trim =L
+hideTemplateTags = exports.hideTemplateTags = (str, hide = ["<%", "%>"], hideWith = ["<!--%%%", "%%%-->"]) ->
+  str = str.replace hide[0], hideWith[0]
+  str = str.replace hide[1], hideWith[1]
+  return str
 
+unhideTemplateTags = exports.unhideTemplateTags = (str, hide = ["<%", "%>"], hideWith = ["<!--%%%", "%%%-->"]) ->
+  return hideTemplateTags str, hideWith, hide
+  
 module.exports = exports
 
 # console.log fillArray 5, "hi"

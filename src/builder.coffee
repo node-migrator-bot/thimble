@@ -17,7 +17,7 @@ fs           = require "fs"
 path         = require "path"
 jsdom        = require "jsdom"
 patch      = require "./patcher"
-utils        = require "./utils"
+{countdown, hideTemplateTags, unhideTemplateTags} = require "./utils"
 
 # Patch jsdom to work with certain html5 tags
 # jsdom = patcher.patch jsdom
@@ -39,9 +39,13 @@ class Builder
       @flatten html, emitter
       
     emitter.once "flattened", (html) =>
+      # jsdom cannot handle ERB <% ... %> style tags, so we escape
+      html = hideTemplateTags html
       @bundle html, emitter
           
     emitter.once "bundled", (html) =>
+      # unhide escaped ERB <% ... %> style tags
+      html = unhideTemplateTags html
       @compile html, @file, emitter
     
     emitter.once "compiled", (html) =>
@@ -67,7 +71,7 @@ class Builder
   # Pull in all the assets and parse them, manipulates HTML document if necessary (ie. build.js, build.css)
   bundle : (html, emitter) ->
     document = jsdom html
-    finished = utils.countdown _.size(assetTypes)
+    finished = countdown _.size(assetTypes)
 
     # When finished, this is called
     done = () ->

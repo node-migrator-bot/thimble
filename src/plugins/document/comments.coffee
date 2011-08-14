@@ -1,5 +1,5 @@
 src = "../.."
-utils = require "#{src}/utils"
+{countdown, hideTemplateTags, unhideTemplateTags} = require "#{src}/utils"
 _ = require "underscore"
 $ = require "jquery"
 fs = require "fs"
@@ -53,7 +53,7 @@ parse = (callback, html, directory) ->
 
   numMatches = matches.length
   callback(html) if numMatches is 0
-  finished = utils.countdown numMatches
+  finished = countdown numMatches
 
   for match in matches
     do (match) ->
@@ -62,8 +62,10 @@ parse = (callback, html, directory) ->
     
       fs.readFile file, "utf8", (err, contents) ->
         throw err if err
-      
+        
+        contents = hideTemplateTags contents
         contents = fixPaths jsdom(contents), path.dirname(source)
+        contents = unhideTemplateTags contents
       
         output = (fragment) ->
           html = html.replace(original, fragment)
