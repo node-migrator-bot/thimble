@@ -13,10 +13,9 @@ loadPlugins = (pluginDir) ->
 
   return plugins
 
-plugin = exports.plugin = (availablePlugins) ->
+plugin = (availablePlugins) ->
   plugins = availablePlugins
-
-  return (asset) ->
+  (asset) ->
     ext = path.extname(asset).substring 1
     
     if !plugins[ext]
