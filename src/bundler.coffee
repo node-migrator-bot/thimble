@@ -8,7 +8,7 @@ _ = require "underscore"
 path = require "path"
 
 utils = require "./utils"
-plugin = require("./plugin")("./plugins/asset")
+plugins = require("./plugin")("./plugins/asset")
 EventEmitter = require("events").EventEmitter
 fs = require "fs"
 
@@ -54,14 +54,13 @@ class Bundler
     finished = utils.countdown _.size(buildFile)
   
     for file, code of files
-      p = plugin(file)
-
-      if p
-        p.render code, file, (err, code) ->
+      try
+        plugin = plugins file
+        plugin.render code, file, (err, code) ->
           buildFile[file] = code
           if finished()
             emitter.emit "rendered", buildFile
-      else
+      catch e
         buildFile[file] = code  
         if finished()
           emitter.emit "rendered", buildFile  

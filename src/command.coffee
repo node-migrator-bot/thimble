@@ -6,7 +6,7 @@ delete args._
 delete args.$0
 options = args
 
-build   = require "./builder"
+builder   = require "./builder"
 fs      = require "fs"
 
 # Command line options
@@ -21,13 +21,15 @@ switch action
     server.serve(serverDir, serverPort)
   
   when "build"
-    appPath = path.resolve param or "."
-    publicDir = options.public or "./public"
+    app = param
+    public = options.public or "./public"
+    builder.build app, public, options, (err) ->
+      console.log "Successfully build the application:"
+      console.log "#{app} --> #{public}/app.js"
+      
 
-    builder = new build(appPath, publicDir, options)
-    builder.build (err, html) ->
-      throw err if err
-      fs.writeFile publicDir + "/app.js", html, "utf8", (err) ->
-        throw err if err
-        console.log "Successfully build the application:"
-        console.log "#{appPath} --> #{path.resolve publicDir}/app.js"
+    # builder = new build(appPath, publicDir, options)
+    # builder.build (err, html) ->
+    #   throw err if err
+    #   fs.writeFile publicDir + "/app.js", html, "utf8", (err) ->
+    #     throw err if err

@@ -9,109 +9,90 @@
   Finally it compiles all the html includes into one app.html
   
 ###
-
-EventEmitter = require("events").EventEmitter
-_            = require "underscore"
-emitters     = {}
 fs           = require "fs"
 path         = require "path"
+emitter      = new (require("events").EventEmitter)()
+
+parser = require "./parser"
+{countdown, hideTemplateTags, unhideTemplateTags} = require "./utils"
+_            = require "underscore"
 jsdom        = require "jsdom"
 patch      = require "./patcher"
-{countdown, hideTemplateTags, unhideTemplateTags} = require "./utils"
+$         = require "jquery"
+assetTypes = require("./tags/tags").types
+plugins = require("./plugin")("./plugins/document")
 
 # Patch jsdom to work with certain html5 tags
-# jsdom = patcher.patch jsdom
 jsdom = patch(jsdom).jsdom
-$ = require "jquery"
 
-assetTypes = require("./tags/tags").types
+build = exports.build = (app, public, options, callback) ->
+  appDir = path.dirname app
 
-class Builder
+  emitter.once "parsed", (html) ->
+    # jsdom cannot handle ERB <% ... %> style tags, so we escape
+    html = hideTemplateTags html
+    bundle html, appDir, public
+    
+  # Bundle all the STATIC assets, dynamic assets cannot be bundled before runtime. CASE CLOSED.
+  emitter.once "bundled", (html) ->
+    # unhide escaped ERB <% ... %> style tags
+    html = unhideTemplateTags html
+    compile html, app, options
   
-  constructor : (@file, @public, @options = {}) ->
-    @directory = path.dirname file
-    @emitter = new EventEmitter()
-
-  build : (output) ->
-    emitter = @emitter
-
-    emitter.once "read", (html) =>
-      @flatten html, emitter
+  emitter.once "compiled", (code) ->
+    write code, public + "/app.js"
       
-    emitter.once "flattened", (html) =>
-      # jsdom cannot handle ERB <% ... %> style tags, so we escape
-      html = hideTemplateTags html
-      @bundle html, emitter
-    
-    # Bundle all the STATIC assets, dynamic assets cannot be bundled before runtime. CASE CLOSED.
-    emitter.once "bundled", (html) =>
-      # unhide escaped ERB <% ... %> style tags
-      html = unhideTemplateTags html
-      @compile html, @file, emitter
-    
-    emitter.once "compiled", (html) =>
-      output null, html
-
-    @read @file
-  
-  read : (file) ->
-    fs.readFile file, "utf8", (err, code) =>
-      throw err if err
-      @emitter.emit "read", code
-  
-  # Flatten code by finding all the embeds and replacing them
-  flatten : (html, emitter) ->
-    commentParser = require "./plugins/document/comments"
-    
-    options = {}
-    options.outer = @options.outer if @options.outer
-    
-    commentParser.render html, @file, options, (html) ->
-      emitter.emit "flattened", html
-  
-  # Pull in all the assets and parse them, manipulates HTML document if necessary (ie. build.js, build.css)
-  bundle : (html, emitter) ->
-    document = jsdom html
-    finished = countdown _.size(assetTypes)
-
-    # When finished, this is called
-    done = () ->
-      doctype = if document.doctype then document.doctype else ""
-      html = doctype + document.innerHTML
-      emitter.emit "bundled", html
+  emitter.once "written", ->
+    callback null
       
-    callback = (err) =>
-      throw err if err
+  parser.parse app, options, (err, code) ->
+    throw err if err
+    emitter.emit "parsed", code
+
+# Pull in all the assets and parse them, manipulates HTML document if necessary (ie. build.js, build.css)
+bundle = (html, appDir, public) ->
+  document = jsdom html
+  finished = countdown _.size(assetTypes)
+
+  # When finished, this is called
+  done = () ->
+    doctype = if document.doctype then document.doctype else ""
+    html = doctype + document.innerHTML
+    emitter.emit "bundled", html
+    
+  callback = (err) =>
+    throw err if err
+    if finished()
+      done()
+  
+  for type, tag of assetTypes
+    elements = $(tag, document).get()
+    if elements.length is 0
       if finished()
         done()
+        return
+      else
+        continue
     
-    for type, tag of assetTypes
-      elements = $(tag, document).get()
-      if elements.length is 0
-        if finished()
-          done()
-          return
-        else
-          continue
-      
-      parser = require "./tags/#{type}"
-      parser.build elements, @public, @directory, callback
+    assetHandler = require "./tags/#{type}"
+    assetHandler.build elements, public, appDir, callback
   
-  # This will compile the template with the plugin of your choosing
-  compile : (html, file, emitter) ->
-    plugin = require("./plugin")("./plugins/document")
-    
-    output = (err, html) ->
-      throw err if err
-      emitter.emit "compiled", html
-      
-    options = {}
-    
-    Plugin = plugin file
-    if Plugin
-      Plugin.build html, file, options, output
-    else
-      console.log "Could not find #{path.extname file}. This probably won't work for you"
-      output html
+# This will compile the template with the plugin of your choosing
+compile = (html, app, options) ->
+  plugin = plugins app
   
-module.exports = Builder
+  if !plugin
+    ext = path.extname app
+    err = "Couldn't find plugin(#{ext}) for #{file}"
+    callback err
+    
+  plugin.build html, app, options, (err, code) ->
+    throw err if err
+    emitter.emit "compiled", code
+
+write = (code, file) ->
+  fs.writeFile file, code, "utf8", (err) ->
+    throw err if err
+    emitter.emit "written"
+
+module.exports = exports
