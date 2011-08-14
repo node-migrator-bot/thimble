@@ -9,26 +9,9 @@
   
 ###
 
-path = require "path"
-fs = require "fs"
-mime = require "mime"
-plugin = require "./plugin"
-commentParser = require "./plugins/document/comments"
-_ = require "underscore"
 
-render = exports.render = (app, locals = {}, callback) ->
-  
-  fs.readFile app, "utf8", (err, html) ->
-    throw err if err
-    
-    options = {}
-    
-    if locals.outer
-      options.outer = locals.outer
-    
-    commentParser.render html, app, options, (html) ->
-      callback html
+exports.render = require('./render').render
 
-middleware = exports.middleware = require('./middleware').middleware
+exports.middleware = require('./middleware').middleware
   
 module.exports = exports

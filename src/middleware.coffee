@@ -2,7 +2,6 @@ path = require "path"
 fs = require "fs"
 mime = require "mime"
 plugin = require("./plugin")('./plugins/asset')
-emitter = new (require("events").EventEmitter)()
 
 middleware = exports.middleware = (appDir, options) ->
   (req, res, next) ->
