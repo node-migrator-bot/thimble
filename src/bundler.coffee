@@ -27,8 +27,7 @@ class Bundler
 
     # Pull out the sources and make them absolute
     sources = []
-    for elem in assets
-      console.log elem[@attribute]
+    for elem, key in assets
       if elem[@attribute]
         sources.push @main + "/" + elem[@attribute]
       
@@ -41,9 +40,6 @@ class Bundler
       @write buildFile, @public, emitter
     
     emitter.once "written", (buildPath) =>
-      @modify assets, emitter
-
-    emitter.once "modified", ->
       output null
 
     @read sources, emitter

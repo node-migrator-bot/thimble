@@ -1,13 +1,15 @@
 build = exports.build = (assets, public, main, callback) ->
   bundler = require("../bundler")("build.css", public, main)
   
-  # Capture output just to verify that our css is at the bottom of <head> and not elsewhere in the document
-  output = (err) ->
-    if assets[0]
-      moveCSS(assets[0].ownerDocument)
-    callback err
+  bundler.bundle assets, (err) ->
+    if !assets.length callback err
+      
+    for asset in assets
+      if asset.href
+        asset.parentNode.removeChild(asset) if asset.parentNode
   
-  bundler.bundle assets, output
+    moveCSS assets[0].ownerDocument
+    callback err
 
 moveCSS = (document) ->
   links = document.getElementsByTagName("link")
