@@ -12,6 +12,13 @@ render = exports.render = (app, locals = {}, callback) ->
   parser.parse app, compilerOptions, (err, code) ->
     plugin = plugins app
     
+    if !plugin
+      ext = path.extname app
+      callback(
+        "Couldn't find plugin(#{ext}) for #{app}"
+        code
+      )
+    
     plugin.render code, app, locals, (err, templateFunction) ->
       rendered = templateFunction locals
       callback null, rendered
