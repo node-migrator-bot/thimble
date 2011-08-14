@@ -42,7 +42,8 @@ class Builder
       # jsdom cannot handle ERB <% ... %> style tags, so we escape
       html = hideTemplateTags html
       @bundle html, emitter
-          
+    
+    # Bundle all the STATIC assets, dynamic assets cannot be bundled before runtime. CASE CLOSED.
     emitter.once "bundled", (html) =>
       # unhide escaped ERB <% ... %> style tags
       html = unhideTemplateTags html
@@ -75,7 +76,8 @@ class Builder
 
     # When finished, this is called
     done = () ->
-      html = document.doctype + document.innerHTML
+      doctype = if document.doctype then document.doctype else ""
+      html = doctype + document.innerHTML
       emitter.emit "bundled", html
       
     callback = (err) =>
@@ -108,6 +110,8 @@ class Builder
     Plugin = plugin file
     if Plugin
       Plugin.build html, file, options, output
-    
+    else
+      console.log "Could not find #{path.extname file}. This probably won't work for you"
+      output html
   
 module.exports = Builder
