@@ -16,16 +16,15 @@ emitters     = {}
 fs           = require "fs"
 path         = require "path"
 jsdom        = require "jsdom"
-patcher      = require "./patcher"
+patch      = require "./patcher"
 utils        = require "./utils"
 
 # Patch jsdom to work with certain html5 tags
 # jsdom = patcher.patch jsdom
-jsdom = jsdom.jsdom
-
+jsdom = patch(jsdom).jsdom
 $ = require "jquery"
 
-assetTypes = require "./tags/tags"
+assetTypes = require("./tags/tags").types
 
 class Builder
   
@@ -43,11 +42,11 @@ class Builder
       @bundle html, emitter
           
     emitter.once "bundled", (html) =>
-      @render html, @file, emitter
+      @compile html, @file, emitter
     
-    emitter.once "rendered", (html) =>
+    emitter.once "compiled", (html) =>
       output null, html
-          
+
     @read @file
   
   read : (file) ->
@@ -93,18 +92,18 @@ class Builder
       parser.build elements, @public, @directory, callback
   
   # This will compile the template with the plugin of your choosing
-  render : (html, file, emitter) ->
+  compile : (html, file, emitter) ->
     plugin = require("./plugin")("./plugins/document")
     
     output = (err, html) ->
       throw err if err
-      emitter.emit "rendered", html
+      emitter.emit "compiled", html
       
     options = {}
     
     Plugin = plugin file
     if Plugin
-      Plugin.render html, file, options, output
+      Plugin.build html, file, options, output
     
   
 module.exports = Builder

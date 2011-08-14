@@ -7,7 +7,7 @@ jsdom = require("jsdom").jsdom
 path = require "path"
 emitter = new (require("events").EventEmitter)()
 
-assetTypes = require "#{src}/tags/tags"
+assetTypes = require("#{src}/tags/tags").types
 
 ###
   PUBLIC

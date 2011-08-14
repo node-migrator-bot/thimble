@@ -1,61 +1,18 @@
 # This is the patch for jsdom to allow for new elements to be defined
 
+tags = require("./tags/tags").patches
 
-
-HTMLElements = 
-  "HTMLEmbedElement" :
-    tagName : "EMBED"
-    attributes : [
-      "src",
-      "type"
-    ]
-
-exports.domManip = (jQuery) ->
-  rchecked = /checked\s*(?:[^=]|=\s*.checked.)/i
-  (args, table, callback) ->
-    value = args[0]
-    scripts = []
-    if not jQuery.support.checkClone and arguments.length == 3 and typeof value == "string" and rchecked.test(value)
-      return @each(->
-        jQuery(this).domManip args, table, callback, true
-      )
-    if jQuery.isFunction(value)
-      return @each((i) ->
-        self = jQuery(this)
-        args[0] = value.call(this, i, (if table then self.html() else undefined))
-        self.domManip args, table, callback
-      )
-    if this[0]
-      parent = value and value.parentNode
-      if jQuery.support.parentNode and parent and parent.nodeType == 11 and parent.childNodes.length == @length
-        results = fragment: parent
-      else
-        results = jQuery.buildFragment(args, this, scripts)
-      fragment = results.fragment
-      if fragment.childNodes.length == 1
-        first = fragment = fragment.firstChild
-      else
-        first = fragment.firstChild
-      if first
-        table = table and jQuery.nodeName(first, "tr")
-        i = 0
-        l = @length
-        lastIndex = l - 1
+loadPatches = () ->
+  HTMLElements = {}
+  for name, attributes of tags
+    key = "HTML" + name[0].toUpperCase() + name.slice(1) + "Element"
+    HTMLElements[key] = 
+      tagName : name.toUpperCase()
     
-        while i < l
-          callback.call (if table then root(this[i], first) else this[i]), (if results.cacheable or (l > 1 and i < lastIndex) then jQuery.clone(fragment, true, true) else fragment)
-          i++
-          
-    this
-
-patch = exports.patch = (jsdom) ->
-  core = exports.core = jsdom.dom.level3.core
+    for attribute, value of attributes
+      HTMLElements[key][attribute] = value
   
-  for elem, attributes of HTMLElements
-    define elem, attributes
-
-  return jsdom.jsdom
-  
+  return HTMLElements
   
 define = exports.define = (elementClass, def) ->
   core = exports.core
@@ -103,6 +60,12 @@ define = exports.define = (elementClass, def) ->
             s = n.normalize s
           this.setAttribute attr, s
         
-        
 
-module.exports = exports
+patch = module.exports = (jsdom) ->
+  HTMLElements = loadPatches()
+  core = exports.core = jsdom.dom.level3.core
+  
+  for elem, attributes of HTMLElements
+    define elem, attributes
+
+  return jsdom
