@@ -6,7 +6,7 @@ build = exports.build = (code, file, options = {}, output) ->
     output = options
 
   c = _.templateSettings
-  tmpl = "module.exports=function(obj){var __p=[],print=function(){__p.push.apply(__p,arguments);};" + "with(obj||{}){__p.push('" + str.replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(c.interpolate, (match, code) ->
+  tmpl = "module.exports=function(obj){var __p=[],print=function(){__p.push.apply(__p,arguments);};" + "with(obj||{}){__p.push('" + code.replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(c.interpolate, (match, code) ->
       "'," + code.replace(/\\'/g, "'") + ",'"
     ).replace(c.evaluate or null, (match, code) ->
       "');" + code.replace(/\\'/g, "'").replace(/[\r\n\t]/g, " ") + "__p.push('"
