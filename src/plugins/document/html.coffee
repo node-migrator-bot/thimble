@@ -1,6 +1,6 @@
 _ = require "underscore"
 
-render = exports.render = (content, file, options = {}, output) ->
+build = exports.build = (content, file, options = {}, output) ->
 
   if _.isFunction options
     output = options
