@@ -2,39 +2,69 @@ fs = require "fs"
 _ = require "underscore"
 path = require "path"
 
-# Reads an array of files and returning them in order
 readFiles = exports.readFiles = (files, callback) ->
+  _readFiles files, (err, files) ->
+    keys = []
+    
+    for file, code of files
+      if not _.isString code
+        keys = keys.concat _.keys code
+        files[file] = _.toArray code
+      else
+        keys.push file
+    
+    files = _.flatten files
+    
+    if keys.length isnt files.length
+      throw "This can't be good.. our number of filenames don't match the number of files"
+    
+    output = {}
+    for file, i in files
+      output[keys[i]] = file
+    
+    callback null, output
+        
+# Reads an array of files and returning them in order
+_readFiles = (files, callback) ->
+  if _.isString files
+    files = [files]
 
-  read = (files) ->
-    filesLeft = _.size files
-    for file, val of files
-      do (file) ->
+  finished = countdown files.length
+  output = toKeys files
+
+  for file, val of output
+    do (file) ->
+      if file.indexOf("*") >= 0
+        dir = path.dirname file
+        filename = path.basename file
+        filter = filename.replace "*", ".*"
+
+        filterDir dir, filter, (err, files) ->
+          throw err if err
+          files = (dir + "/" + f for f in files)
+          _readFiles files, (err, code) ->
+            throw err if err
+            output[file] = code
+            callback null, output if finished()
+      else
+        # console.log file
         fs.readFile file, "utf8", (err, code) ->
           throw err if err
-          files[file] = code
-
-          filesLeft--
-          if filesLeft is 0
-            callback null, files
+          output[file] = code
+          callback null, output if finished()
+          
             
-  if _.isArray files
-    files = toKeys files  
-    read files
-  else if _.isString files
-    dir = path.dirname files
-    regex = path.basename files
-    regex = regex.replace "*", ".*"
-    regex = new RegExp regex
-
-    fs.readdir dir, (err, files) ->
-      throw err if err
-      files = _(files)
-        .filter (file) ->
-          regex.test file
-        .map (file) ->
-          return dir + "/" + file
-      files = toKeys files  
-      read files
+filterDir = exports.filterDir = (dir, filter, callback) ->
+  regex = new RegExp filter
+  files = []
+  fs.readdir dir, (err, contents) ->
+    return callback err if err
+    for file in contents
+      # Ignore stuff like .DS_STORE, .git, etc.
+      if regex.test(file) and file[0] isnt "." 
+        files.push file
+      
+    callback null, files
 
 writeFiles = exports.writeFiles = (files, to, callback) ->
   finished = countdown _.size(files)
