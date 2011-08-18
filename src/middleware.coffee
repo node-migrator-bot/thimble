@@ -12,8 +12,7 @@ middleware = exports.middleware = (appDir, options) ->
     Plugin = plugin url
 
     if Plugin is false
-      next()
-      return
+      return next()
             
     fs.readFile assetPath, "utf8", (err, contents) ->
       throw err if err
