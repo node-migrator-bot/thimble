@@ -7,7 +7,6 @@ build = exports.build = (code, file, options = {}, output) ->
     output = options
 
   compiled = eco.precompile code
-  
   compiled = "module.exports = " + compiled
   
   output null, compiled
@@ -15,7 +14,7 @@ build = exports.build = (code, file, options = {}, output) ->
 render = exports.render = (code, file, options = {}, output) ->
   if _.isFunction options
     output = options
-  
-  output null, eco.precompile code
+    
+  output null, do new Function "return #{eco.precompile code}"
 
 module.exports = exports
