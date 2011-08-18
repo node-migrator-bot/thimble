@@ -9,16 +9,16 @@ build = exports.build = (assets, public, main, callback) ->
       if asset.href
         asset.parentNode.removeChild(asset) if asset.parentNode
   
-    moveCSS assets[0].ownerDocument
+    createLinkTag assets[0].ownerDocument
+    
     callback err
 
-moveCSS = (document) ->
-  links = document.getElementsByTagName("link")
+createLinkTag = (document) ->
+  link = document.createElement "link"
+  link.href = "build.css"
+  link.rel = "stylesheet"
+
   head = document.getElementsByTagName("head")[0]
-  
-  # Should only be one by now but just in case    
-  for link in links
-    head.appendChild(link)
-  
+  head.appendChild link
  
 module.exports = exports
