@@ -4,25 +4,7 @@ path = require "path"
 
 readFiles = exports.readFiles = (files, callback) ->
   _readFiles files, (err, files) ->
-    keys = []
-    
-    for file, code of files
-      if not _.isString code
-        keys = keys.concat _.keys code
-        files[file] = _.toArray code
-      else
-        keys.push file
-    
-    files = _.flatten files
-    
-    if keys.length isnt files.length
-      throw "This can't be good.. our number of filenames don't match the number of files"
-    
-    output = {}
-    for file, i in files
-      output[keys[i]] = file
-    
-    callback null, output
+    callback null, _.toArray files
         
 # Reads an array of files and returning them in order
 _readFiles = (files, callback) ->
@@ -44,13 +26,16 @@ _readFiles = (files, callback) ->
           files = (dir + "/" + f for f in files)
           _readFiles files, (err, code) ->
             throw err if err
-            output[file] = code
+            output[file] = 
+              file : file
+              code : code
             callback null, output if finished()
       else
-        # console.log file
         fs.readFile file, "utf8", (err, code) ->
           throw err if err
-          output[file] = code
+          output[file] = 
+            file : file
+            code : code
           callback null, output if finished()
           
             
