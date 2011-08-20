@@ -85,7 +85,10 @@ fixPaths = (document, path) ->
     attribute = if type is "css" then "href" else "src"
 
     $(tag, document).each (i, element) ->
-      $(element).attr(attribute, path + "/" + element[attribute])
+      if $(element).attr(attribute)
+        $(element).attr(attribute, path + "/" + element[attribute])
+      else 
+        $(element).attr(attribute, "")
 
   return document.innerHTML
 
