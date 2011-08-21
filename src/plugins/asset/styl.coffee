@@ -1,12 +1,16 @@
 stylus = require "stylus"
 _ = require "underscore"
-
+path = require "path"
 type = exports.type = "css"
 
 render = exports.render = (content, file, options = {}, output) ->
+  dir = path.dirname file
 
-  stylus.render content, (err, css) ->
-    throw err if err
-    output null, css
+  stylus(content)
+    .set("filename", file)
+    .render (err, css) ->
+      throw err if err
+      output null, css
+  
 
 module.exports = exports
