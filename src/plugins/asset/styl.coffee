@@ -4,7 +4,6 @@ path = require "path"
 type = exports.type = "css"
 
 render = exports.render = (content, file, options = {}, output) ->
-  dir = path.dirname file
 
   stylus(content)
     .set("filename", file)
