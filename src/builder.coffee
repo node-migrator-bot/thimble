@@ -65,6 +65,9 @@ bundle = (html, appDir, public) ->
     if finished()
       done()
   
+  # Remove ALL classes that are named "thimble-test"
+  $(".thimble-test", document).remove()
+  
   for type, tag of assetTypes
     elements = $(tag, document).get()
     if elements.length is 0
