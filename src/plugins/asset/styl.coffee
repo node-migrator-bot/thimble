@@ -5,7 +5,15 @@ type = exports.type = "css"
 
 render = exports.render = (content, file, options = {}, output) ->
 
-  stylus(content)
+  styl = stylus(content)
+  
+  try
+    nib = require "nib"
+    styl.use(nib())
+  catch error
+    # Do nothing
+  
+  styl
     .set("filename", file)
     .render (err, css) ->
       throw err if err
