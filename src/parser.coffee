@@ -87,8 +87,6 @@ fixPaths = (document, path) ->
     $(tag, document).each (i, element) ->
       if $(element).attr(attribute)
         $(element).attr(attribute, path + "/" + element[attribute])
-      else 
-        $(element).attr(attribute, "")
 
   return document.innerHTML
 
