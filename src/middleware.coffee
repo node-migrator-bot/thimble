@@ -3,9 +3,8 @@ fs = require "fs"
 mime = require "mime"
 plugin = require("./plugin")('./plugins/asset')
 
-middleware = exports.middleware = (appDir, options) ->
+middleware = exports.middleware = (root, options) ->
   (req, res, next) ->
-    root = appDir
     url = req.url
     assetPath = path.resolve(root + url)
     

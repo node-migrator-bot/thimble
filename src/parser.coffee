@@ -10,18 +10,25 @@ assetTypes = require("./tags/tags").types
 
 parse = exports.parse = (file, options, callback) ->
   directory = path.dirname file
+  relativePath = findRelative directory, options.root
   
   # If there aren't any options then it's the callback
   if _.isFunction options
     callback = options
     
   emitter.once "read", (code) ->
-    if options.outer
-      wrap(code, options.outer)
+    if options.layout
+      wrap(code, options.layout)
     else emitter.emit "wrapped", code
   
   emitter.once "wrapped", (code) ->
-    flatten callback, code, directory
+    flatten done, code, directory
+
+  done = (err, contents) ->
+      contents = hideTemplateTags contents
+      contents = fixPaths jsdom(contents), relativePath
+      contents = unhideTemplateTags contents
+      callback err, contents
 
   read file
 
@@ -79,13 +86,24 @@ flatten = (callback, html, directory) ->
   UTILITIES
 ###
 
+findRelative = (directory, root) ->
+  dir = directory.split "/"
+  r = root.split "/"
+   
+  for d, i in dir
+    if r[i] isnt d
+      return "./" + dir.slice(i).join('/')
+ 
+  return "."
+
 fixPaths = (document, path) ->
 
   for type, tag of assetTypes
     attribute = if type is "css" then "href" else "src"
 
     $(tag, document).each (i, element) ->
-      if $(element).attr(attribute)
+      attr = $(element).attr(attribute)
+      if attr and attr[0] isnt "/"
         $(element).attr(attribute, path + "/" + element[attribute])
 
   return document.innerHTML
