@@ -25,9 +25,10 @@ plugins = require("./plugin")("./plugins/document")
 # Patch jsdom to work with certain html5 tags
 jsdom = patch(jsdom).jsdom
 
-build = exports.build = (app, public, options, callback) ->
+build = exports.build = (app, public, options = {}, callback) ->
   appDir = path.dirname app
-
+  options.root = public
+  
   emitter.once "parsed", (html) ->
     # jsdom cannot handle ERB <% ... %> style tags, so we escape
     html = hideTemplateTags html
