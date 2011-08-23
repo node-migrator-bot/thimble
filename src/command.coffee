@@ -22,10 +22,13 @@ switch action
   
   when "build"
     app = param
-    public = options.public or "./public"
-    builder.build app, public, options, (err) ->
+    options.public ||= "./public"
+    options.root ||= ""
+    options.app = path.dirname app
+    
+    builder.build app, options, (err) ->
       console.log "Successfully build the application:"
-      console.log "#{app} --> #{public}/app.js"
+      console.log "#{app} --> #{options.public}/app.js"
       
 
     # builder = new build(appPath, publicDir, options)

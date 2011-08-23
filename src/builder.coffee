@@ -25,14 +25,12 @@ plugins = require("./plugin")("./plugins/document")
 # Patch jsdom to work with certain html5 tags
 jsdom = patch(jsdom).jsdom
 
-build = exports.build = (app, public, options = {}, callback) ->
-  appDir = path.dirname app
-  options.root = public
-  
+build = exports.build = (app, options = {}, callback) ->
+
   emitter.once "parsed", (html) ->
     # jsdom cannot handle ERB <% ... %> style tags, so we escape
     html = hideTemplateTags html
-    bundle html, appDir, public
+    bundle html, options
     
   # Bundle all the STATIC assets, dynamic assets cannot be bundled before runtime. CASE CLOSED.
   emitter.once "bundled", (html) ->
@@ -41,7 +39,7 @@ build = exports.build = (app, public, options = {}, callback) ->
     compile html, app, options
   
   emitter.once "compiled", (code) ->
-    write code, public + "/app.js"
+    write code, options.public + "/app.js"
       
   emitter.once "written", ->
     callback null
@@ -51,7 +49,7 @@ build = exports.build = (app, public, options = {}, callback) ->
     emitter.emit "parsed", code
 
 # Pull in all the assets and parse them, manipulates HTML document if necessary (ie. build.js, build.css)
-bundle = (html, appDir, public) ->
+bundle = (html, options) ->
   document = jsdom html
   finished = countdown _.size(assetTypes)
 
@@ -79,7 +77,7 @@ bundle = (html, appDir, public) ->
         continue
     
     assetHandler = require "./tags/#{type}"
-    assetHandler.build elements, public, appDir, callback
+    assetHandler.build elements, options, callback
   
 # This will compile the template with the plugin of your choosing
 compile = (html, app, options) ->

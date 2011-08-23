@@ -41,14 +41,22 @@ exports.boot = (app, options) ->
   app.configure "production", ->
     app.set "views", productionRoot
     
-    # app.register ".js", 
-    #   compile : (str, options) ->
-    #     (locals)
-    #   
-    # app.register ".html", 
-    #   compile : (str, options) ->
-    #     (locals) ->
-    #       _.template str, locals
+    app.use (req, res, next) ->
+      _render = res.render
+      res.render = (view, options = {}) ->
+        ext = path.extname view
+        view = path.basename view, ext
+        view = view + '.js'
+        view = productionRoot + "/" + view
+        console.log view
+        _render view, options
+      
+      next()
+    
+    app.register ".js", 
+      compile : (str, options) ->
+        (locals) ->
+          _.template str, locals
 
   
 

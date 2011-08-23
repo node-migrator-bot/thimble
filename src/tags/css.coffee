@@ -5,11 +5,11 @@ plugin = require("#{src}/plugin")("plugins/asset/")
 _ = require "underscore"
 emitter = new (require("events").EventEmitter)()
 
-build = exports.build = (assets, public, main, callback) ->
+build = exports.build = (assets, options, callback) ->
   
   emitter.once "rendered", (output) ->
     bundle = output.join ""
-    write bundle, public
+    write bundle, options.public
     
   emitter.once "written", (err) ->
     modify assets[0].ownerDocument
@@ -17,9 +17,9 @@ build = exports.build = (assets, public, main, callback) ->
   emitter.once "modified", () ->
     callback null
 
-  render assets, main
+  render assets, options
 
-render = exports.render = (assets, main) ->
+render = exports.render = (assets, options) ->
   finished = countdown assets.length
 
   done = (output) ->
@@ -28,8 +28,10 @@ render = exports.render = (assets, main) ->
   output = []
   for asset, i in assets    
     do (asset, i) ->
-      if asset.href        
-        fs.readFile main + "/" + asset.href, "utf8", (err, code) ->
+      source = asset.href
+      if source
+        source = options.root + "/" + source
+        fs.readFile source, "utf8", (err, code) ->
           Plugin = plugin(asset.href)
           if Plugin
             Plugin.render code, asset.href, options = {}, (err, js) ->
