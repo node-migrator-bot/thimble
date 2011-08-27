@@ -4,8 +4,8 @@ utils = require "../utils"
 build = require("../builder")
 $ = require "jquery"
 
-exports.build = (assets, public, main, output) ->
-
+exports.build = (assets, options, callback) ->
+  console.log "Embeds not supported right now"
   finished = utils.countdown assets.length
 
   for asset in assets

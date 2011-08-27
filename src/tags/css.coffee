@@ -6,20 +6,23 @@ _ = require "underscore"
 emitter = new (require("events").EventEmitter)()
 
 build = exports.build = (assets, options, callback) ->
-  
+  public = options.public
+  root = options.root
+
   emitter.once "rendered", (output) ->
     bundle = output.join ""
-    write bundle, options.public
+    write bundle, public
     
   emitter.once "written", (err) ->
+    throw err if err
     modify assets[0].ownerDocument
     
   emitter.once "modified", () ->
     callback null
 
-  render assets, options
+  render assets, root, options
 
-render = exports.render = (assets, options) ->
+render = exports.render = (assets, root, options) ->
   finished = countdown assets.length
 
   done = (output) ->
@@ -30,7 +33,7 @@ render = exports.render = (assets, options) ->
     do (asset, i) ->
       source = asset.href
       if source
-        source = options.root + "/" + source
+        source = root + "/" + source
         fs.readFile source, "utf8", (err, code) ->
           Plugin = plugin(asset.href)
           if Plugin
@@ -53,6 +56,8 @@ modify = exports.modify = (document) ->
   link.rel = "stylesheet"
 
   head = document.getElementsByTagName("head")[0]
+  if head is undefined
+    throw "You have no head! Seriously, no <head>. Valid syntax is required for this portion of the show. Maybe you forgot the layout flag?"
   head.appendChild link
   
   emitter.emit "modified"

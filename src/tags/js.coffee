@@ -6,10 +6,12 @@ _ = require "underscore"
 emitter = new (require("events").EventEmitter)()
 
 build = exports.build = (assets, options, callback) ->
+  public = options.public
+  root = options.root
   
   emitter.once "rendered", (output) ->
     bundle = output.join ""
-    write bundle, options.public
+    write bundle, public
     
   emitter.once "written", (err) ->
     modify assets[0].ownerDocument
@@ -17,9 +19,9 @@ build = exports.build = (assets, options, callback) ->
   emitter.once "modified", () ->
     callback null
 
-  render assets, options
+  render assets, root, options
 
-render = exports.render = (assets, options) ->
+render = exports.render = (assets, root) ->
   finished = countdown assets.length
   
   done = (output) ->
@@ -30,7 +32,7 @@ render = exports.render = (assets, options) ->
     do (asset, i) ->
       source = asset.src
       if source
-        source = options.root + "/" + source
+        source = root + "/" + source
           
         fs.readFile source, "utf8", (err, code) ->
           throw err if err

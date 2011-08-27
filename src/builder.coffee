@@ -14,7 +14,7 @@ path         = require "path"
 emitter      = new (require("events").EventEmitter)()
 
 parser = require "./parser"
-{countdown, hideTemplateTags, unhideTemplateTags} = require "./utils"
+utils = require "./utils"
 _            = require "underscore"
 jsdom        = require "jsdom"
 patch      = require "./patcher"
@@ -25,21 +25,28 @@ plugins = require("./plugin")("./plugins/document")
 # Patch jsdom to work with certain html5 tags
 jsdom = patch(jsdom).jsdom
 
-build = exports.build = (app, options = {}, callback) ->
+exports.build = (app, options = {}, callback) ->
+  public = options.public
+  root = options.root
+  build = options.build
 
   emitter.once "parsed", (html) ->
-    # jsdom cannot handle ERB <% ... %> style tags, so we escape
-    html = hideTemplateTags html
+    # jsdom cannot handle ERB <% ... %> style tags, so we escape them
+    html = utils.hideTemplateTags html
     bundle html, options
     
   # Bundle all the STATIC assets, dynamic assets cannot be bundled before runtime. CASE CLOSED.
   emitter.once "bundled", (html) ->
     # unhide escaped ERB <% ... %> style tags
-    html = unhideTemplateTags html
+    html = utils.unhideTemplateTags html
     compile html, app, options
   
   emitter.once "compiled", (code) ->
-    write code, options.public + "/app.js"
+    # Synchronously makes all the directories it's missing
+    utils.mkdir build
+    
+    # Write the code to app.js
+    write code, build + "/app.js"
       
   emitter.once "written", ->
     callback null
@@ -51,7 +58,10 @@ build = exports.build = (app, options = {}, callback) ->
 # Pull in all the assets and parse them, manipulates HTML document if necessary (ie. build.js, build.css)
 bundle = (html, options) ->
   document = jsdom html
-  finished = countdown _.size(assetTypes)
+  finished = utils.countdown _.size(assetTypes)
+
+  # Make the dir just in case it's not already there
+  utils.mkdir options.public
 
   # When finished, this is called
   done = () ->
@@ -96,5 +106,8 @@ write = (code, file) ->
   fs.writeFile file, code, "utf8", (err) ->
     throw err if err
     emitter.emit "written"
+
+
+
 
 module.exports = exports

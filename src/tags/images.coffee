@@ -1,9 +1,9 @@
 utils = require "../utils"
 path = require "path"
 
-build = exports.build = (assets, public, main, callback) ->
+build = exports.build = (assets, options, callback) ->
+  console.log "Images need updating"
   directory = public + "/images/"
-  
   # Pull out the sources and make them absolute
   sources = (main + "/" + elem.src for elem in assets) 
   finished = utils.countdown sources.length

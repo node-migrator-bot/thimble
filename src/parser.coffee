@@ -5,17 +5,17 @@ emitter = new (require("events").EventEmitter)()
 
 _ = require "underscore"
 $ = require "jquery"
-{countdown, hideTemplateTags, unhideTemplateTags} = require "./utils"
+utils = require "./utils"
 assetTypes = require("./tags/tags").types
 
-parse = exports.parse = (file, options, callback) ->
-  directory = path.dirname file
+parse = exports.parse = (app, options, callback) ->
+  directory = path.dirname app
   relativePath = findRelative directory, options.root
-  
+  # console.log relativePath
+  # console.log directory
   # If there aren't any options then it's the callback
-  if _.isFunction options
-    callback = options
-    
+  console.log options
+  
   emitter.once "read", (code) ->
     if options.layout
       wrap(code, options.layout)
@@ -25,19 +25,20 @@ parse = exports.parse = (file, options, callback) ->
     flatten done, code, directory
 
   done = (err, contents) ->
-      contents = hideTemplateTags contents
+      contents = utils.hideTemplateTags contents
       contents = fixPaths jsdom(contents), relativePath
-      contents = unhideTemplateTags contents
+      contents = utils.unhideTemplateTags contents
+
       callback err, contents
 
-  read file
+  read app
 
 ###
   PRIVATE
 ###
 
-read = (file) ->
-  fs.readFile file, "utf8", (err, code) =>
+read = (app) ->
+  fs.readFile app, "utf8", (err, code) =>
     throw err if err
     emitter.emit "read", code
 
@@ -53,25 +54,24 @@ flatten = (callback, html, directory) ->
   regex = /<!--=\s*(include) ["']?([\w\/.-]+)["']?\s*-->/g
   # console.log html
   # If there are no includes
-
   matches = []
   while match = regex.exec(html)
     matches.push [match[0], match[1], match[2]]
 
   numMatches = matches.length
   callback(null, html) if numMatches is 0
-  finished = countdown numMatches
+  finished = utils.countdown numMatches
 
   for match in matches
     do (match) ->
       [original, command, source] = match
-      file = directory + "/" + source
+      app = directory + "/" + source
 
-      fs.readFile file, "utf8", (err, contents) ->
+      fs.readFile app, "utf8", (err, contents) ->
         throw err if err
-        contents = hideTemplateTags contents
+        contents = utils.hideTemplateTags contents
         contents = fixPaths jsdom(contents), path.dirname(source)
-        contents = unhideTemplateTags contents
+        contents = utils.unhideTemplateTags contents
 
         output = (err, fragment) ->
           throw err if err
@@ -80,7 +80,7 @@ flatten = (callback, html, directory) ->
           if finished()
             callback(null, html)
 
-        flatten output, contents, path.dirname(file)
+        flatten output, contents, path.dirname(app)
 
 ###
   UTILITIES
@@ -107,5 +107,6 @@ fixPaths = (document, path) ->
         $(element).attr(attribute, path + "/" + element[attribute])
 
   return document.innerHTML
+  
 
 module.exports = exports
