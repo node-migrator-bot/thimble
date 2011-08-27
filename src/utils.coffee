@@ -101,8 +101,23 @@ countdown = exports.countdown = (length) ->
 fillArray = exports.fillArray = (length, value) ->
   value for num in [0...length]
 
-mkdir = exports.mkdir = (path) ->
-  fs.mkdir path, 0777, (err)
+# I *don't* think there is any reason to make this async. If there is a performance increase,
+# I will rewrite
+
+mkdir = exports.mkdir = (p) ->
+  dirs = p.split("/")
+  dirs[0] = "/"  if dirs[0] == ""
+  path_part = ""
+  i = 0
+
+  while i < dirs.length
+    dir = dirs[i]
+    path_part += dir
+    if dir isnt "" and not path.existsSync path_part
+      fs.mkdirSync path_part, 0777
+
+    path_part += "/"
+    i++
 
 iterator = exports.iterator = (arr, ptr = 0) ->
   {
@@ -121,6 +136,17 @@ iterator = exports.iterator = (arr, ptr = 0) ->
     reset : ->
       @pointer = 0
   }
+
+relativeFromRoot = exports.relativeFromRoot = (root, app) ->
+  # console.log root, app
+  outPath = []
+  while (newPath = path.dirname(app)) isnt root
+    # console.log "newPath: " + newPath
+    # console.log "root: " + root
+    outPath.push path.basename newPath
+    app = newPath
+
+  return outPath.join "/"
 
 hideTemplateTags = exports.hideTemplateTags = (str, hide = ["<%", "%>"], hideWith = ["<!--%%%", "%%%-->"]) ->
   str = str.replace hide[0], hideWith[0]
