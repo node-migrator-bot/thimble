@@ -9,54 +9,63 @@
   
 ###
 path = require "path"
-{toKeys} = require "./utils"
+utils = require "./utils"
 
 render = require('./render').render
 middleware = require('./middleware').middleware
 
-exports.boot = (app, options) ->
-  {root, productionRoot, extensions} = options
-  root ||= "./ui"
-  extensions ||= ["tm"]
-  productionRoot ||= "./public"
-  extensions = toKeys extensions
+exports.boot = (server, options) ->
+  root = options.root
+  public = options.public ||= "./public"
+  build = options.build ||= "./build"
+  
+  # Allow for a default or extension-less views - Must require only one. Could use a more express-compliant name
+  # if options.extension
+  #     options.extension = options.extensions)
+
+  if !root
+    throw "Need to specify a root directory"
+
+  # Default settings for development and production
+  server.configure ->
+    # We're rolling our own layout, express's is not necessary
+    server.set "view options", layout : false
 
   # Set view to root for development
-  app.configure "development", ->
-    app.set "views", root
-    app.use (req, res, next) ->
-      res.render = (view, options = {}) ->
-        if extensions[path.extname(view).substring(1)] isnt undefined
-          options.root = root
-          options.layout = root + "/" + options.layout if options.layout
-          render root + "/" + view, options, (err, html) ->
-            throw err if err
-            res.send html
-        
-      next()
-      
-    app.use middleware(root)
-    
+  server.configure "development", ->
+    server.set "views", root
+    server.use render("development", options)
+    server.use middleware(root)
+
   # For production, set it to productionRoot
-  app.configure "production", ->
-    app.set "views", productionRoot
+  server.configure "production", ->
+    server.set "views", build
+    server.set "view engine", "js"
+    server.set "view options", layout : false
     
-    app.use (req, res, next) ->
-      _render = res.render
-      res.render = (view, options = {}) ->
-        ext = path.extname view
-        view = path.basename view, ext
-        view = view + '.js'
-        view = productionRoot + "/" + view
-        console.log view
-        _render view, options
-      
-      next()
-    
-    app.register ".js", 
+    server.register ".js", 
       compile : (str, options) ->
+        delete options.layout
+        options.hint = true
+        console.log options
+        
+        # console.log str
         (locals) ->
-          _.template str, locals
+          return str
+
+    # server.use (req, res, next) ->
+    #   console.log 'hi'
+    #   _render = res.render
+    #   res.render = (view, options = {}) ->
+    #     ext = path.extname view
+    #     view = "./" + path.dirname(view) + "/" + path.basename(view, ext) + '.js'
+    #     # view = productionRoot + "/" + view
+    #     console.log view
+    #     _render view, options
+    #   
+    #   next()
+    
+
 
   
 
