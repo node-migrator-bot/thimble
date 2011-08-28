@@ -19,9 +19,7 @@ exports.boot = (server, options) ->
   public = options.public ||= "./public"
   build = options.build ||= "./build"
   
-  # Allow for a default or extension-less views - Must require only one. Could use a more express-compliant name
-  # if options.extension
-  #     options.extension = options.extensions)
+
 
   if !root
     throw "Need to specify a root directory"
@@ -34,6 +32,11 @@ exports.boot = (server, options) ->
   # Set view to root for development
   server.configure "development", ->
     server.set "views", root
+    
+    # Allow for a default or extension-less views - Must require only one. Could use a more express-compliant name
+    # if options.extension
+    #   server.set "view engine", options.extension
+    
     server.use render("development", options)
     server.use middleware(root)
 
