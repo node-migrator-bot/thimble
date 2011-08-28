@@ -7,7 +7,7 @@ build = exports.build = (code, file, options = {}, output) ->
     output = options
 
   compiled = eco.precompile code
-  compiled = "module.exports = " + compiled
+  # compiled = "module.exports = " + compiled
   
   output null, compiled
 

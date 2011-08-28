@@ -41,17 +41,24 @@ exports.boot = (server, options) ->
   server.configure "production", ->
     server.set "views", build
     server.set "view engine", "js"
-    server.set "view options", layout : false
+    
+    server.use (req, res, next) ->
+      _render = res.render
+      res.render = (view, options = {}, fn) ->
+        res.render = _render
+        options.layout = false
+        return res.render(view, options, fn)
+      next()
     
     server.register ".js", 
       compile : (str, options) ->
-        delete options.layout
-        options.hint = true
-        console.log options
-        
         # console.log str
         (locals) ->
-          return str
+          console.log str
+          fn = do new Function "return " +  str
+          return  fn(locals)
+          # fn = new Function(str)
+          # return fn(locals)
 
     # server.use (req, res, next) ->
     #   console.log 'hi'
