@@ -15,7 +15,6 @@ parse = exports.parse = (app, options, callback) ->
   # console.log relativePath
   # console.log directory
   # If there aren't any options then it's the callback
-  # console.log options
   
   emitter.once "read", (code) ->
     if options.layout
