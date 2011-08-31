@@ -10,11 +10,12 @@ assetTypes = require("./tags/tags").types
 
 parse = exports.parse = (app, options, callback) ->
   directory = path.dirname app
+  options.root ||= directory
   relativePath = findRelative directory, options.root
   # console.log relativePath
   # console.log directory
   # If there aren't any options then it's the callback
-  console.log options
+  # console.log options
   
   emitter.once "read", (code) ->
     if options.layout
