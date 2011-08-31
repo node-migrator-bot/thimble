@@ -19,16 +19,14 @@ _readFiles = (files, callback) ->
       if file.indexOf("*") >= 0
         dir = path.dirname file
         filename = path.basename file
-        filter = filename.replace "*", ".*"
-
+        delete output[file]
         filterDir dir, filter, (err, files) ->
           throw err if err
           files = (dir + "/" + f for f in files)
-          _readFiles files, (err, code) ->
+          _readFiles files, (err, obj) ->
             throw err if err
-            output[file] = 
-              file : file
-              code : code
+            for f, c of obj
+              output[f] = c
             callback null, output if finished()
       else
         fs.readFile file, "utf8", (err, code) ->
@@ -40,6 +38,9 @@ _readFiles = (files, callback) ->
           
             
 filterDir = exports.filterDir = (dir, filter, callback) ->
+  filter = filter.replace /\./g, "\\."
+  filter = filter.replace "*", ".*"
+
   regex = new RegExp filter
   files = []
   fs.readdir dir, (err, contents) ->
