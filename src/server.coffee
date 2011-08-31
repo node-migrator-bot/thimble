@@ -38,7 +38,7 @@ exports.boot = (server, options) ->
     #   server.set "view engine", options.extension
     
     server.use render("development", options)
-    server.use middleware(root)
+    server.use middleware(root, options)
 
   # For production, set it to productionRoot
   server.configure "production", ->
