@@ -21,9 +21,11 @@ renderForDevelopment = (options) ->
   
   # Return middleware
   (req, res, next) ->
-    if renderCached
-      res.render = renderCached
-      return next()
+  
+    # Caching currently not working correctly.. disabled for now.
+    # if renderCached
+    #   res.render = renderCached
+    #   return next()
     # Monkey patch res.render
     res.render = (view, locals) ->
       if locals.layout
@@ -38,7 +40,7 @@ renderForDevelopment = (options) ->
           throw "Couldn't find plugin(#{ext}) for #{app}"
 
         plugin.render code, view, locals, (err, template) ->
-          res.send template(locals)
+          return res.send template(locals)
           
     renderCached = res.render;
     next()
