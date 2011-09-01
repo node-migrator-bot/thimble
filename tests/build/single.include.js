@@ -16,7 +16,7 @@ var src = path.resolve(__dirname + "/../../src");
   Definitions
 */
 
-var suite = vows.describe("Including subviews");
+var suite = vows.describe("Single Include");
 var parser = require(src + "/parser.coffee");
 var utils = require(src + "/utils.coffee");
 
@@ -24,18 +24,14 @@ var utils = require(src + "/utils.coffee");
   Tests
 */
 
-var loadFiles = function() {
-  var args = Array.prototype.slice.call(arguments);
-  
-}
 
 suite.addBatch({
-  'When including a subview:' : {
+  'When including a single subview...' : {
     topic : function() {
-      parser.parse(fixtures + "/basic/initial.html", {}, this.callback);
+      parser.parse(fixtures + "/initials/single.include.html", {}, this.callback);
     },
 
-    "there is no error" : function(err, code) {
+    "there is no error parsing the file" : function(err, code) {
       assert.isNull(err);
     },
     
@@ -43,23 +39,11 @@ suite.addBatch({
       assert.isString(code);
     },
     
-    "the string is in the view" : function(err, code) {
-      assert.isNull(err);
-      var snippet = fs.readFileSync(fixtures + '/basic/snippet.html', "utf8");
-      var index = code.indexOf(snippet);
-      assert.isTrue(index >= 0);
-    },
-    
     "the initial matches the final" : function(err, initial) {
       assert.isNull(err);
-      var final = fs.readFileSync(fixtures + '/basic/final.html', "utf8");
+      var final = fs.readFileSync(fixtures + '/finals/single.include.html', "utf8");
       assert.strictEqual(initial, final);
-      
     }  
-  },
-  
-  'When including tons of subviews' : {
-    
   }
   
 }).export(module);

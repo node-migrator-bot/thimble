@@ -4,3 +4,4 @@ Thimble.tmproj
 /ui
 /lib
 /node_modules
+/tests/fixtures/public/
