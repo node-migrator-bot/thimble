@@ -8,7 +8,6 @@ var assert = require("assert");
 
 var fixtures = path.resolve(__dirname + "/../fixtures");
 var src = path.resolve(__dirname + "/../../src");
-
 /*
   Libraries
 */
@@ -53,8 +52,8 @@ suite.addBatch({
     topic : function() {
               
       builder.build(fixtures + "/initials/asset.bundling.html", {
-        build : fixtures + "/public",
-        public : fixtures + "/public"
+        build : fixtures + "/public/assetBundling",
+        public : fixtures + "/public/assetBundling",
       }, this.callback);
     },
     
@@ -119,7 +118,7 @@ suite.addBatch({
     
     "build.js" : {
       topic : function(file) {
-        fs.readFile(fixtures + "/public/build.js", "utf8", this.callback);
+        fs.readFile(fixtures + "/public/assetBundling/build.js", "utf8", this.callback);
       },
       
       'exists' : function(err, build) {
@@ -148,7 +147,7 @@ suite.addBatch({
         },
         
         'COFFEE' : function(document) {
-          var build = fs.readFileSync(fixtures + "/public/build.js", "utf8");
+          var build = fs.readFileSync(fixtures + "/public/assetBundling/build.js", "utf8");
           
           $("script[type|='text/coffee']", document).each(function(i, elem) {
             var coffee = $(elem).html();
@@ -162,7 +161,7 @@ suite.addBatch({
     
     "build.css" : {
       topic : function(file) {
-        fs.readFile(fixtures + "/public/build.css", "utf8", this.callback);
+        fs.readFile(fixtures + "/public/assetBundling/build.css", "utf8", this.callback);
       },
       
       'exists' : function(err, build) {
@@ -200,7 +199,7 @@ suite.addBatch({
         }, 
         
         'CSS' : function(document) {
-          var build = fs.readFileSync(fixtures + "/public/build.css", "utf8");
+          var build = fs.readFileSync(fixtures + "/public/assetBundling/build.css", "utf8");
           var css;
           $("style[type|='text/css']", document).each(function(i, elem) {
             css = $(elem).html();
@@ -209,7 +208,7 @@ suite.addBatch({
         },
         
         'STYLUS' : function(document) {
-          var build = fs.readFileSync(fixtures + "/public/build.css", "utf8");
+          var build = fs.readFileSync(fixtures + "/public/assetBundling/build.css", "utf8");
           var styl;
           
           $("style[type|='text/styl']", document).each(function(i, elem) {
@@ -223,7 +222,7 @@ suite.addBatch({
         },
         
         'LESS' : function(document) {
-          var build = fs.readFileSync(fixtures + "/public/build.css", "utf8");
+          var build = fs.readFileSync(fixtures + "/public/assetBundling/build.css", "utf8");
           var less_style;
           
           $("style[type|='text/less']", document).each(function(i, elem) {
