@@ -4,6 +4,7 @@ fs = require "fs"
 plugin = require("#{src}/plugin")("plugins/asset/")
 _ = require "underscore"
 emitter = new (require("events").EventEmitter)()
+$ = require "jquery"
 
 build = exports.build = (assets, options, callback) ->
   public = options.public
@@ -44,13 +45,26 @@ render = exports.render = (assets, root, options) ->
             output[i] = code
             done output if finished()
       else
-        throw "Not yet implemented yet! This will allow style tags, to be bundled correct"
+        # This is a STYLE tag
+        Plugin = plugin("blah."+asset.type.split("/").pop())
+        if Plugin
+          # Trim fixes stylus
+          style = $.trim(asset.firstChild.nodeValue)
+          Plugin.render style, "", options = {}, (err, js) ->
+            output[i] = js
+            done output if finished()
+        else
+          output[i] = asset.firstChild.nodeValue
+          done output if finished()
 
 write = exports.write = (bundle, public) ->
   fs.writeFile public + "/build.css", bundle, "utf8", (err) ->
     emitter.emit "written", err
 
 modify = exports.modify = (document) ->
+  # Remove all other LINK tags
+  $('link', document).remove()
+  
   link = document.createElement "link"
   link.href = "build.css"
   link.rel = "stylesheet"
