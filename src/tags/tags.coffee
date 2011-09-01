@@ -2,7 +2,7 @@
 
 types = exports.types =
   js : "script"
-  css : "link"
+  css : ["link", "style"]
   images : "img"
   embeds : "embed"
   iframes : "iframe"
