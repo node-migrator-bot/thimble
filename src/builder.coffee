@@ -48,8 +48,8 @@ exports.build = (app, options = {}, callback) ->
     # Write the code to app.js
     write code, build + "/app.js"
       
-  emitter.once "written", ->
-    callback null
+  emitter.once "written", (file) ->
+    return callback null, file
       
   parser.parse app, options, (err, code) ->
     throw err if err
@@ -78,6 +78,8 @@ bundle = (html, options) ->
   $(".thimble-test", document).remove()
   
   for type, tag of assetTypes
+    tag = [tag] if not _.isArray(tag)
+    tag = tag.join ","
     elements = $(tag, document).get()
     if elements.length is 0
       if finished()
@@ -105,7 +107,7 @@ compile = (html, app, options) ->
 write = (code, file) ->
   fs.writeFile file, code, "utf8", (err) ->
     throw err if err
-    emitter.emit "written"
+    emitter.emit "written", file
 
 
 
