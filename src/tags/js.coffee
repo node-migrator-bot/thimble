@@ -4,6 +4,7 @@ fs = require "fs"
 plugin = require("#{src}/plugin")("plugins/asset/")
 _ = require "underscore"
 emitter = new (require("events").EventEmitter)()
+$ = require("jquery");
 
 build = exports.build = (assets, options, callback) ->
   public = options.public
@@ -59,6 +60,9 @@ write = exports.write = (bundle, public) ->
     emitter.emit "written", err
   
 modify = exports.modify = (document) ->
+  # Remove the other script tags
+  $("script", document).remove();
+    
   script = document.createElement "script"
   script.src = "build.js"
   script.type = "text/javascript"
