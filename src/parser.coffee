@@ -100,7 +100,8 @@ fixPaths = (document, path) ->
 
   for type, tag of assetTypes
     attribute = if type is "css" then "href" else "src"
-
+    tag = [tag] if not _.isArray(tag)
+    tag = tag.join(",")
     $(tag, document).each (i, element) ->
       attr = $(element).attr(attribute)
       if attr and attr[0] isnt "/"
