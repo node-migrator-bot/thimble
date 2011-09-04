@@ -2,7 +2,7 @@ eco = require "eco"
 path = require "path"
 exports.type = "js"
 
-render = exports.render = (content, file, options = {}, output) ->
+render = exports.compile = (content, file, options = {}, output) ->
 
   namespace = options.namespace or "window"
     

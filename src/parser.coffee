@@ -10,8 +10,9 @@ assetTypes = require("./tags/tags").types
 
 parse = exports.parse = (app, options, callback) ->
   directory = path.dirname app
-  options.root ||= directory
-  relativePath = findRelative directory, options.root
+  # options.root ||= directory
+  # relativePath = findRelative directory, options.root
+  # console.log relativePath
   # console.log relativePath
   # console.log directory
   # If there aren't any options then it's the callback
@@ -25,11 +26,10 @@ parse = exports.parse = (app, options, callback) ->
     flatten done, code, directory
 
   done = (err, contents) ->
-      contents = utils.hideTemplateTags contents
-      contents = fixPaths jsdom(contents), relativePath
-      contents = utils.unhideTemplateTags contents
-
-      callback err, contents
+    contents = utils.hideTemplateTags contents
+    contents = fixPaths jsdom(contents), directory, options.root
+    contents = utils.unhideTemplateTags contents
+    callback err, contents
 
   read app
 
@@ -96,7 +96,7 @@ findRelative = (directory, root) ->
  
   return "."
 
-fixPaths = (document, path) ->
+fixPaths = (document, p, root = false) ->
 
   for type, tag of assetTypes
     attribute = if type is "css" then "href" else "src"
@@ -104,8 +104,13 @@ fixPaths = (document, path) ->
     tag = tag.join(",")
     $(tag, document).each (i, element) ->
       attr = $(element).attr(attribute)
-      if attr and attr[0] isnt "/"
-        $(element).attr(attribute, path + "/" + element[attribute])
+      if !attr
+        return
+      else if attr[0] is "/"
+        if root
+          $(element).attr(attribute, path.resolve(root + "/" + element[attribute]))
+      else
+        $(element).attr(attribute, p + "/" + element[attribute])
 
   return document.innerHTML
   

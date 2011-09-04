@@ -26,9 +26,9 @@ plugins = require("./plugin")("./plugins/document")
 jsdom = patch(jsdom).jsdom
 
 exports.build = (app, options = {}, callback) ->
-  public = options.public
-  root = options.root
-  build = options.build
+  build = options.build = path.resolve options.build || "./build"
+  root = options.root = path.resolve options.root || "./views"
+  public = options.public = path.resolve options.public || "./public"
 
   emitter.once "parsed", (html) ->
     # jsdom cannot handle ERB <% ... %> style tags, so we escape them
@@ -36,17 +36,15 @@ exports.build = (app, options = {}, callback) ->
     bundle html, options
     
   # Bundle all the STATIC assets, dynamic assets cannot be bundled before runtime. CASE CLOSED.
-  emitter.once "bundled", (html) ->
+  emitter.once "bundled", (code) ->
     # unhide escaped ERB <% ... %> style tags
-    html = utils.unhideTemplateTags html
-    compile html, app, options
-  
-  emitter.once "compiled", (code) ->
+    code = utils.unhideTemplateTags code
+    
     # Synchronously makes all the directories it's missing
     utils.mkdir build
     
     # Write the code to app.js
-    write code, build + "/app.js"
+    write code, build + "/" + path.basename(app)
       
   emitter.once "written", (file) ->
     return callback null, file
@@ -75,7 +73,8 @@ bundle = (html, options) ->
       done()
   
   # Remove ALL classes that are named "thimble-test"
-  $(".thimble-test", document).remove()
+  if options.env is "production"
+    $(".thimble-test", document).remove()
   
   for type, tag of assetTypes
     tag = [tag] if not _.isArray(tag)
@@ -100,9 +99,9 @@ compile = (html, app, options) ->
     err = "Couldn't find plugin(#{ext}) for #{file}"
     callback err
     
-  plugin.build html, app, options, (err, code) ->
-    throw err if err
-    emitter.emit "compiled", code
+  code = plugin.compile html, options
+  
+  emitter.emit "compiled", code
 
 write = (code, file) ->
   fs.writeFile file, code, "utf8", (err) ->

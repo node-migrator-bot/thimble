@@ -2,7 +2,7 @@
 
 less = require "less"
 
-exports.render = (content, file, options = {}, output) ->
+exports.compile = (content, file, options = {}, output) ->
   less.render content, (err, css) ->
     output err, css
   

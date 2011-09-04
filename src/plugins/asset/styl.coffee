@@ -3,7 +3,7 @@ _ = require "underscore"
 path = require "path"
 type = exports.type = "css"
 
-render = exports.render = (content, file, options = {}, output) ->
+render = exports.compile = (content, file, options = {}, output) ->
 
   styl = stylus(content)
   
