@@ -11,7 +11,7 @@ build = exports.build = (assets, options, callback) ->
   root = options.root
   
   emitter.once "rendered", (output) ->
-    bundle = output.join ""
+    bundle = output.join ";"
     write bundle, public
     
   emitter.once "written", (err) ->
@@ -32,14 +32,13 @@ render = exports.render = (assets, root) ->
   for asset, i in assets    
     do (asset, i) ->
       source = asset.src
-      if source
-        source = root + "/" + source
-          
+      
+      if source          
         fs.readFile source, "utf8", (err, code) ->
           throw err if err
           Plugin = plugin(asset.src)
           if Plugin
-            Plugin.render code, asset.src, options = {}, (err, js) ->
+            Plugin.compile code, asset.src, options = {}, (err, js) ->
               output[i] = js
               done output if finished()
           else
@@ -48,11 +47,12 @@ render = exports.render = (assets, root) ->
       else
         Plugin = plugin("blah."+asset.type.split("/").pop())
         if Plugin
-          Plugin.render asset.firstChild.nodeValue, "", options = {}, (err, js) ->
+          Plugin.compile asset.firstChild.nodeValue, "", options = {}, (err, js) ->
             output[i] = js
             done output if finished()
         else
-          output[i] = asset.innerHTML
+          # Use asset.firstChild.nodeValue so it doesn't escape quotes
+          output[i] = asset.firstChild.nodeValue
           done output if finished()
 
 write = exports.write = (bundle, public) ->

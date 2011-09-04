@@ -34,11 +34,11 @@ render = exports.render = (assets, root, options) ->
     do (asset, i) ->
       source = asset.href
       if source
-        source = root + "/" + source
         fs.readFile source, "utf8", (err, code) ->
+          throw err if err
           Plugin = plugin(asset.href)
           if Plugin
-            Plugin.render code, asset.href, options = {}, (err, js) ->
+            Plugin.compile code, asset.href, options = {}, (err, js) ->
               output[i] = js
               done output if finished()
           else
@@ -50,7 +50,7 @@ render = exports.render = (assets, root, options) ->
         if Plugin
           # Trim fixes stylus
           style = $.trim(asset.firstChild.nodeValue)
-          Plugin.render style, "", options = {}, (err, js) ->
+          Plugin.compile style, "", options = {}, (err, js) ->
             output[i] = js
             done output if finished()
         else

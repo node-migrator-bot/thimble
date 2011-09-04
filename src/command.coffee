@@ -28,6 +28,6 @@ switch action
     # knows how many directories it needs to make once in build
     options.build = path.resolve(options.build) + "/" + utils.relativeFromRoot(options.root, app)
         
-    builder.build app, options, (err) ->
+    builder.build app, options, (err, file) ->
       console.log "Successfully build the application:"
-      console.log "#{app} --> #{options.build}/app.js"
+      console.log "#{app} --> #{file}"
