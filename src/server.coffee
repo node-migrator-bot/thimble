@@ -10,15 +10,16 @@
 ###
 path = require "path"
 utils = require "./utils"
-
+express = require "express"
 # render = require('./render').render
-# middleware = require('./middleware').middleware
+middleware = require('./middleware').middleware
 builder = require("./builder")
 plugin = require("./plugin")("plugins/document")
 
 exports.boot = (server, options = {}) ->
   build = options.build = path.resolve options.build || "./build"
   public = options.public = path.resolve options.public || "./public"
+  root = options.root = path.resolve options.root || "./views"
   env = options.env = process.env.NODE_ENV || "development"
 
   # We're rolling our own layout, express's is not necessary
@@ -30,11 +31,12 @@ exports.boot = (server, options = {}) ->
     server.register extension, require(compiler)
   
   server.configure "development", ->
+    server.use middleware root, options
+    server.use express.static root
     server.use (req, res, next) ->
       _render = res.render
       res.render = (view, opts = {}, fn) ->
         res.render = _render
-        root = options.root = path.resolve options.root || path.dirname view
         view = path.join root, view
         
         if opts.layout
@@ -49,6 +51,7 @@ exports.boot = (server, options = {}) ->
         
     
   server.configure "production", ->
+    server.use express.static public
     server.use (req, res, next) ->
       _render = res.render
       res.render = (view, opts = {}, fn) ->

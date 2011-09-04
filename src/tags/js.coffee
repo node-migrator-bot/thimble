@@ -22,7 +22,7 @@ build = exports.build = (assets, options, callback) ->
 
   render assets, root, options
 
-render = exports.render = (assets, root) ->
+render = exports.render = (assets, root, options) ->
   finished = countdown assets.length
   
   done = (output) ->
@@ -33,7 +33,8 @@ render = exports.render = (assets, root) ->
     do (asset, i) ->
       source = asset.src
       
-      if source          
+      if source
+        source = root + "/" + source
         fs.readFile source, "utf8", (err, code) ->
           throw err if err
           Plugin = plugin(asset.src)

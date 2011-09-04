@@ -11,7 +11,7 @@ assetTypes = require("./tags/tags").types
 parse = exports.parse = (app, options, callback) ->
   directory = path.dirname app
   # options.root ||= directory
-  # relativePath = findRelative directory, options.root
+  relativePath = findRelative directory, options.root
   # console.log relativePath
   # console.log relativePath
   # console.log directory
@@ -27,7 +27,7 @@ parse = exports.parse = (app, options, callback) ->
 
   done = (err, contents) ->
     contents = utils.hideTemplateTags contents
-    contents = fixPaths jsdom(contents), directory, options.root
+    contents = fixPaths jsdom(contents), relativePath
     contents = utils.unhideTemplateTags contents
     callback err, contents
 
@@ -92,9 +92,9 @@ findRelative = (directory, root) ->
    
   for d, i in dir
     if r[i] isnt d
-      return "./" + dir.slice(i).join('/')
+      return dir.slice(i).join('/')
  
-  return "."
+  return ""
 
 fixPaths = (document, p, root = false) ->
 
@@ -104,13 +104,10 @@ fixPaths = (document, p, root = false) ->
     tag = tag.join(",")
     $(tag, document).each (i, element) ->
       attr = $(element).attr(attribute)
-      if !attr
-        return
-      else if attr[0] is "/"
-        if root
-          $(element).attr(attribute, path.resolve(root + "/" + element[attribute]))
-      else
+        
+      if attr and attr[0] isnt "/"
         $(element).attr(attribute, p + "/" + element[attribute])
+        
 
   return document.innerHTML
   
