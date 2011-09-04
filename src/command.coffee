@@ -23,6 +23,7 @@ switch action
     app = path.resolve app
     options.public = path.resolve options.public
     options.root = path.resolve options.root
+    options.env = "production"
     
     # Basically finds absolute path to build, then finds the relative path from root to app, so it
     # knows how many directories it needs to make once in build

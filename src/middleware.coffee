@@ -26,7 +26,7 @@ middleware = exports.middleware = (root, options) ->
         
         res.send out
       
-      Plugin.render contents, assetPath, options or {}, output
+      Plugin.compile contents, assetPath, options or {}, output
 
 # Implementation pulled from static.js in Connect
 getHeader = (assetPath) ->

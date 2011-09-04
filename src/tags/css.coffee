@@ -34,6 +34,7 @@ render = exports.render = (assets, root, options) ->
     do (asset, i) ->
       source = asset.href
       if source
+        source = root + "/" + source
         fs.readFile source, "utf8", (err, code) ->
           throw err if err
           Plugin = plugin(asset.href)
