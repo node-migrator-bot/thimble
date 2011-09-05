@@ -32,7 +32,6 @@ exports.boot = (server, options = {}) ->
   
   server.configure "development", ->
     server.use middleware root, options
-    server.use express.static root
     server.use (req, res, next) ->
       _render = res.render
       res.render = (view, opts = {}, fn) ->
@@ -47,7 +46,12 @@ exports.boot = (server, options = {}) ->
           opts.layout = false
           res.render file, opts, fn
           
-      next()
+      
+      if path.extname req.url is ".html"
+        next()
+      else
+        server.use express.static root
+        return next()
         
     
   server.configure "production", ->
