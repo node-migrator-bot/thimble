@@ -29,14 +29,11 @@ suite.addBatch({
     topic : function() {
       var self = this;
       builder.build(fixtures + "/initials/single.layout.html", {
+        root : fixtures,
         build : fixtures + "/public/layouts",
         public : fixtures + "/public/layouts",
         layout : fixtures + "/layouts/single.layout.html"
-      }, function(err, file) {
-        assert.isNull(err);
-        compiled = require(file);
-        self.callback.call(null, err, compiled({}));
-      });
+      }, this.callback);
     },
    
    'build should compile' : function(err, file) {
@@ -44,8 +41,9 @@ suite.addBatch({
    },
    
    'should match final' : function(err, build) {
-     var final = fs.readFileSync(fixtures + "/finals/single.layout.html", "utf8");
-     assert.strictEqual(build, final);
+     var final = fs.readFileSync(build, "utf8");
+     var compare = fs.readFileSync(fixtures + "/finals/single.layout.compare.html", "utf8");
+     assert.strictEqual(compare, final);
      
    }
   }

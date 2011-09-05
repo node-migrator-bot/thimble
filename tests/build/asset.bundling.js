@@ -52,7 +52,8 @@ suite.addBatch({
     topic : function() {
               
       builder.build(fixtures + "/initials/asset.bundling.html", {
-        build : fixtures + "/public/assetBundling",
+        root : fixtures,
+        build : fixtures + "/finals",
         public : fixtures + "/public/assetBundling",
       }, this.callback);
     },
@@ -63,16 +64,14 @@ suite.addBatch({
     
     'the applications source' : {
       topic : function(file) {
-        var compiled = require(file);
-        var rendered = compiled({});
-        // Pass back through JSDOM to get the document
-        var document = jsdom(rendered);
+        var final = fs.readFileSync(file, "utf8");
+        var document = jsdom(final);
         return document;
       },
-      
+                  
       // Javascript
       'JS: has only one <script> tag' : function(document) {
-        var script = $('script', document);
+        var script = $('script', document).not(".thimble-test");
 
         // Only one script tag
         assert.equal(script.length, 1);
@@ -139,10 +138,9 @@ suite.addBatch({
       
       'supports inline <script>\'s for' : {
         topic : function(build, file) {
-          var compiled = require(file);
-          var rendered = compiled({});
+          var final = fs.readFileSync(file, "utf8");
           // Pass back through JSDOM to get the document
-          var document = jsdom(rendered);
+          var document = jsdom(final);
           return document;
         },
         
@@ -191,10 +189,10 @@ suite.addBatch({
       
       'supports inline <style>\'s for' : {
         topic : function(build, file) {
-          var compiled = require(file);
-          var rendered = compiled({});
+          var final = fs.readFileSync(file, "utf8");
+
           // Pass back through JSDOM to get the document
-          var document = jsdom(rendered);
+          var document = jsdom(final);
           return document;
         }, 
         
