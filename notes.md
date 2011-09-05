@@ -27,3 +27,6 @@ Rendering will be easy, simply send back a compiled version. Build will require 
 ### Globbing ###
 
 **Problem:** Using globbing is not useful for development because files that have dependencies are arbitrarily selected from the filesystem. Going to leave in the globbing functionality in util.readFiles because it's badass and doesn't affect anything else.
+
+### Middleware writes to public then static middleware renders ###
+Major problem with this : You're now debugging JS/CSS and not the original language. Also will be slower writing. During development I don't see the benefits that static provides outweighing these issues. 
