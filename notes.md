@@ -4,6 +4,7 @@
 * Write server tests
   * Should be trivial as all the wacky server code is gone :-)
 * Start looking at providing "inserts", or compiled snippets. Markdown is a good place to start
+* Fix package.json
 * Install plugins programmatically as they come up using NPM
 * Add support for image and other tags.
 * Start writing documentation
