@@ -31,7 +31,6 @@ thimble.boot server,
 #   res.render 'index.html'
 
 server.get "/:page.html", (req, res) ->
-  console.log 'hi!'
   page = req.params.page
   res.render "initials/#{page}.html"
 
