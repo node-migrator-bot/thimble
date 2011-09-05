@@ -31,7 +31,8 @@ exports.build = (app, options = {}, callback) ->
   public = options.public = path.resolve options.public || "./public"
   env = options.env || "production"
 
-  emitter.once "parsed", (html) ->
+  emitter.once "parsed", (err, html) ->
+    callback err, null if err
     
     # In Development, we do not bundle
     if env is "production"
@@ -42,7 +43,9 @@ exports.build = (app, options = {}, callback) ->
       write html, build + "/" + path.basename(app)
   
   # Bundle all the STATIC assets, dynamic assets cannot be bundled before runtime. CASE CLOSED.
-  emitter.once "bundled", (code) ->
+  emitter.once "bundled", (err, code) ->
+    callback err, null if err
+    
     # unhide escaped ERB <% ... %> style tags
     code = utils.unhideTemplateTags code
     
@@ -52,12 +55,12 @@ exports.build = (app, options = {}, callback) ->
     # Write the code to app.js
     write code, build + "/" + path.basename(app)
       
-  emitter.once "written", (file) ->
+  emitter.once "written", (err, file) ->
+    callback err, null if err
     return callback null, file
       
   parser.parse app, options, (err, code) ->
-    throw err if err
-    emitter.emit "parsed", code
+    emitter.emit "parsed", err, code
 
 # Pull in all the assets and parse them, manipulates HTML document if necessary (ie. build.js, build.css)
 bundle = (html, options) ->
@@ -68,15 +71,14 @@ bundle = (html, options) ->
   utils.mkdir options.public
 
   # When finished, this is called
-  done = () ->
+  done = (err) ->
     doctype = if document.doctype then document.doctype else ""
     html = doctype + document.innerHTML
-    emitter.emit "bundled", html
+    emitter.emit "bundled", err, html
     
   callback = (err) =>
-    throw err if err
     if finished()
-      done()
+      done(err)
   
   # Remove ALL classes that are named "thimble-test"
   if options.env is "production"
@@ -95,24 +97,10 @@ bundle = (html, options) ->
     
     assetHandler = require "./tags/#{type}"
     assetHandler.build elements, options, callback
-  
-# This will compile the template with the plugin of your choosing
-compile = (html, app, options) ->
-  plugin = plugins app
-  
-  if !plugin
-    ext = path.extname app
-    err = "Couldn't find plugin(#{ext}) for #{file}"
-    callback err
-    
-  code = plugin.compile html, options
-  
-  emitter.emit "compiled", code
 
 write = (code, file) ->
   fs.writeFile file, code, "utf8", (err) ->
-    throw err if err
-    emitter.emit "written", file
+    emitter.emit "written", err, file
 
 
 
