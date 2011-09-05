@@ -57,6 +57,7 @@ exports.build = (app, options = {}, callback) ->
       
   emitter.once "written", (err, file) ->
     callback err, null if err
+    emitter = new (require("events").EventEmitter)()
     return callback null, file
       
   parser.parse app, options, (err, code) ->
