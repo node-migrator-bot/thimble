@@ -1,7 +1,6 @@
 # Thimble Notes #
 
 ## Next up ##
-* Rewrite command.coffee to use TJ's commander library.
 * Write server tests
   * Should be trivial as all the wacky server code is gone :-)
 * Start looking at providing "inserts", or compiled snippets. Markdown is a good place to start
@@ -17,6 +16,7 @@
   * Start pounding it with GETs to assets and files
 
 ## Features recently added ##
+* Rewrite command.coffee to use TJ's commander library.
 
 ### Eco Templating ###
 
