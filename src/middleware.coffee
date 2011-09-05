@@ -14,10 +14,14 @@ middleware = exports.middleware = (root, options) ->
       return next()
             
     fs.readFile assetPath, "utf8", (err, contents) ->
-      throw err if err
+      if err
+        console.log err.message
+        res.send 500
 
       output = (err, out) ->
-        throw err if err
+        if err
+          console.log err.message
+          res.send 500
         
         if not res.getHeader "content-type"
           # Name doesn't matter. mime just cares about .css, .js, .png, etc. not the name or if file exists
