@@ -6,13 +6,13 @@ utils = require "./utils"
 if process.argv.length is 2
   process.argv.push "-h"
 
-compile = (app, program) ->
+build = (app, program) ->
   app = path.resolve app
   options = {}
-  options.root = program.root or path.dirname(app)
+  options.root = program.rootDir or path.dirname(app)
   options.root = path.resolve options.root
-  options.public = path.resolve program.public
-  options.build = path.resolve program.build
+  options.public = path.resolve program.publicDir
+  options.build = path.resolve program.buildDir
   options.env = "production"
   
   if program.layout
@@ -27,14 +27,14 @@ compile = (app, program) ->
 program
   .version("0.0.1")
   .option("-l, --layout <path>", "Wrap application in a layout", false)
-  .option("-p, --public <path>", "Path to the public directory", "./public")
-  .option("-r, --root <path>", "Path to the root of your client-side code")
-  .option("-b, --build <path>", "Path to the build directory", "./build")
+  .option("-p, --publicDir <path>", "Path to the public directory", "./public")
+  .option("-r, --rootDir <path>", "Path to the root of your client-side code")
+  .option("-b, --buildDir <path>", "Path to the build directory", "./build")
 
 program
-  .command("compile <app>")
+  .command("build <app>")
   .description("Build the client-side application")
   .action (app) ->
-    compile(app, program)
+    build(app, program)
     
 program.parse process.argv
