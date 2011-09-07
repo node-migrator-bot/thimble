@@ -31,17 +31,19 @@ exports.boot = (server, options = {}) ->
     server.register extension, require(compiler)
   
   server.configure "development", ->
-    server.use express.logger()
     server.use middleware root, options
     server.use (req, res, next) ->
       _render = res.render
       res.render = (view, opts = {}, fn) ->
         res.render = _render
+        
         view = path.join root, view
         
         if opts.layout
           options.layout = path.resolve options.root + "/" + opts.layout
-        
+          # Overwrite express's layout
+          opts.layout = false
+          
         builder.build view, options, (err, file) ->
           console.log err.message if err
           res.render file, opts, fn
