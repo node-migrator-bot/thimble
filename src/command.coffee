@@ -3,6 +3,9 @@ program = require "commander"
 builder   = require "./builder"
 utils = require "./utils"
 
+if process.argv.length is 2
+  process.argv.push "-h"
+
 compile = (app, program) ->
   app = path.resolve app
   options = {}
@@ -27,7 +30,7 @@ program
   .option("-p, --public <path>", "Path to the public directory", "./public")
   .option("-r, --root <path>", "Path to the root of your client-side code")
   .option("-b, --build <path>", "Path to the build directory", "./build")
-  
+
 program
   .command("compile <app>")
   .description("Build the client-side application")
