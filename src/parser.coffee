@@ -14,11 +14,11 @@ parse = exports.parse = (app, options, callback) ->
 
   emitter.once "read", (code) ->
     if options.layout
-      wrap(code, options.layout)
+      wrap code, options
     else emitter.emit "wrapped", code
   
   emitter.once "wrapped", (code) ->
-    flatten done, code, directory
+    flatten done, code, directory, options
 
   done = (err, contents) ->
     contents = utils.hideTemplateTags contents
@@ -37,20 +37,46 @@ read = (app) ->
     throw err if err
     emitter.emit "read", code
 
-wrap = (innerHTML, outerFile) ->
+wrap = (innerHTML, options) ->
+  outerFile = options.layout
+  
   fs.readFile outerFile, "utf8", (err, code) ->
     throw err if err
 
-    code = code.replace /<!--=\s*yield\s*-->/, innerHTML
+    open = options.tags?.open or "<!--="
+    close = options.tags?.close or "-->"
+
+    regex = ///
+      #{open}
+      \s*
+      yield
+      \s*
+      #{close}
+    ///
+    
+    code = code.replace regex, innerHTML
     emitter.emit "wrapped", code
 
-flatten = (callback, html, directory) ->
+flatten = (callback, html, directory, options) ->
   parser = this
-  regex = /<!--=\s*(include) ["']?([\w\/.-]+)["']?\s*-->/g
-  # console.log html
-  # If there are no includes
+  
+  root = options.root  
+  open = options.tags?.open or "<!--="
+  close = options.tags?.close or "-->"
+
+  regex = ///
+    #{open}
+    \s*
+    (include)
+    \s
+    ["']?([\w\/.-]+)["']?
+    \s*
+    #{close}
+  ///g
+  
   matches = []
   while match = regex.exec(html)
+
     matches.push [match[0], match[1], match[2]]
 
   numMatches = matches.length
@@ -60,7 +86,10 @@ flatten = (callback, html, directory) ->
   for match in matches
     do (match) ->
       [original, command, source] = match
-      app = directory + "/" + source
+      if source[0] is "/"
+        app = root + source
+      else
+        app = directory + "/" + source
 
       fs.readFile app, "utf8", (err, contents) ->
         throw err if err
@@ -75,7 +104,7 @@ flatten = (callback, html, directory) ->
           if finished()
             callback(null, html)
 
-        flatten output, contents, path.dirname(app)
+        flatten output, contents, path.dirname(app), options
 
 ###
   UTILITIES
