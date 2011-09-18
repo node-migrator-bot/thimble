@@ -15,6 +15,7 @@ render = exports.compile = (content, file, options = {}, output) ->
   
   styl
     .set("filename", file)
+    .include(options.root)
     .render (err, css) ->
       throw err if err
       output null, css
