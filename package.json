@@ -13,7 +13,7 @@
     "node": ">=0.2.5"
   },
   "dependencies": {
-    "optimist" : "0.2.x",
+    "commander" : "0.x",
     "mime" : "1.2.2",
     "coffee-script" : "1.x",
     "jsdom" : "0.2.x",
