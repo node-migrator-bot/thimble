@@ -16,7 +16,7 @@
     "commander" : "0.x",
     "mime" : "1.2.2",
     "coffee-script" : "1.x",
-    "jsdom" : "0.2.x",
+    "jsdom" : "0.2.2",
     "jquery" : "1.6.x",
     "underscore" : "1.x",
     "eco" : "1.x"
