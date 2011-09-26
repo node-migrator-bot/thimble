@@ -18,12 +18,14 @@ parse = exports.parse = (app, options, callback) ->
     else emitter.emit "wrapped", code
   
   emitter.once "wrapped", (code) ->
+    # Root layer needs paths fixed if root differs from bottom js layer
+    code = utils.hideTemplateTags code
+    code = fixPaths jsdom(code), relativePath, options.root
+    code = utils.unhideTemplateTags code
+    
     flatten done, code, directory, options
 
   done = (err, contents) ->
-    contents = utils.hideTemplateTags contents
-    contents = fixPaths jsdom(contents), relativePath
-    contents = utils.unhideTemplateTags contents
     callback err, contents
 
   read app
@@ -58,7 +60,6 @@ wrap = (innerHTML, options) ->
     emitter.emit "wrapped", code
 
 flatten = (callback, html, directory, options) ->
-  parser = this
   
   root = options.root  
   open = options.tags?.open or "<!--="
@@ -90,11 +91,13 @@ flatten = (callback, html, directory, options) ->
         app = root + source
       else
         app = directory + "/" + source
-
+        
+      relativePath = findRelative(app, options.root)
+      
       fs.readFile app, "utf8", (err, contents) ->
         throw err if err
         contents = utils.hideTemplateTags contents
-        contents = fixPaths jsdom(contents), path.dirname(source)
+        contents = fixPaths jsdom(contents), path.dirname(relativePath), options.root
         contents = utils.unhideTemplateTags contents
 
         output = (err, fragment) ->
@@ -113,15 +116,17 @@ flatten = (callback, html, directory, options) ->
 findRelative = (directory, root) ->
   dir = directory.split "/"
   r = root.split "/"
-   
+
   for d, i in dir
     if r[i] isnt d
       return dir.slice(i).join('/')
  
   return ""
 
-fixPaths = (document, p, root = false) ->
+fixPaths = (document, _path, root) ->
 
+  # console.log root + "/" + _path
+  
   for type, tag of assetTypes
     attribute = if type is "css" then "href" else "src"
     tag = [tag] if not _.isArray(tag)
@@ -130,7 +135,7 @@ fixPaths = (document, p, root = false) ->
       attr = $(element).attr(attribute)
         
       if attr and attr[0] isnt "/"
-        $(element).attr(attribute, p + "/" + element[attribute])
+        $(element).attr(attribute, _path + "/" + element[attribute])
         
 
   return document.innerHTML
