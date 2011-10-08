@@ -17,7 +17,11 @@ parse = exports.parse = (app, options, callback) ->
     else emitter.emit "wrapped", code
   
   emitter.once "wrapped", (code) ->
-    flatten done, code, directory, options
+    # Root layer needs paths fixed if root differs from bottom js layer
+    code = utils.hideTemplateTags code
+    fixPaths code, relativePath, (err, html) ->
+      html = utils.unhideTemplateTags html
+      flatten done, html, directory, options
 
   done = (err, contents) ->
     throw err if err
@@ -58,7 +62,6 @@ wrap = (innerHTML, options) ->
     emitter.emit "wrapped", code
 
 flatten = (callback, html, directory, options) ->
-  parser = this
   
   root = options.root  
   open = options.tags?.open or "<!--="
@@ -90,7 +93,9 @@ flatten = (callback, html, directory, options) ->
         app = root + source
       else
         app = directory + "/" + source
-
+        
+      relativePath = findRelative(app, options.root)
+      
       fs.readFile app, "utf8", (err, contents) ->
         throw err if err
         
@@ -114,7 +119,7 @@ flatten = (callback, html, directory, options) ->
 findRelative = (directory, root) ->
   dir = directory.split "/"
   r = root.split "/"
-   
+
   for d, i in dir
     if r[i] isnt d
       return dir.slice(i).join('/')
@@ -148,8 +153,7 @@ fixPaths = (content, p, callback) ->
       #   attr = $(element).attr(attribute)
       # 
       #   if attr and attr[0] isnt "/"
-      #     $(element).attr(attribute, p + "/" + element[attribute])
-        
+      #     $(element).attr(attribute, p + "/" + element[attribute])        
 
   # return document.innerHTML
   
