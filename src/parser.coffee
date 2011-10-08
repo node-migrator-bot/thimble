@@ -1,10 +1,9 @@
 fs = require "fs"
 path = require "path"
-jsdom = require("jsdom").jsdom
+cheerio = require "cheerio"
 emitter = new (require("events").EventEmitter)()
 
 _ = require "underscore"
-$ = require "jquery"
 utils = require "./utils"
 assetTypes = require("./tags/tags").types
 
@@ -21,10 +20,11 @@ parse = exports.parse = (app, options, callback) ->
     flatten done, code, directory, options
 
   done = (err, contents) ->
+    throw err if err
     contents = utils.hideTemplateTags contents
-    contents = fixPaths jsdom(contents), relativePath
-    contents = utils.unhideTemplateTags contents
-    callback err, contents
+    contents = fixPaths contents, relativePath, (err, html) ->
+      html = utils.unhideTemplateTags html
+      callback err, html
 
   read app
 
@@ -93,18 +93,19 @@ flatten = (callback, html, directory, options) ->
 
       fs.readFile app, "utf8", (err, contents) ->
         throw err if err
-        contents = utils.hideTemplateTags contents
-        contents = fixPaths jsdom(contents), path.dirname(source)
-        contents = utils.unhideTemplateTags contents
-
+        
         output = (err, fragment) ->
           throw err if err
           html = html.replace(original, fragment)
 
           if finished()
             callback(null, html)
+        
+        contents = utils.hideTemplateTags contents
 
-        flatten output, contents, path.dirname(app), options
+        contents = fixPaths contents, path.dirname(source), (html) ->
+          html = utils.unhideTemplateTags html
+          flatten output, html, path.dirname(app), options
 
 ###
   UTILITIES
@@ -120,20 +121,37 @@ findRelative = (directory, root) ->
  
   return ""
 
-fixPaths = (document, p, root = false) ->
+# Overwrite assetTypes for now.
+# tags = _(_(assetTypes).values()).flatten().join(", ")
+tags = [
+  'script'
+  'link'
+  'img'
+]
 
-  for type, tag of assetTypes
-    attribute = if type is "css" then "href" else "src"
-    tag = [tag] if not _.isArray(tag)
-    tag = tag.join(",")
-    $(tag, document).each (i, element) ->
-      attr = $(element).attr(attribute)
+fixPaths = (content, p, callback) ->
+  cheerio content, (err, $) ->
+    # Hard-code for now..
+    for tag in tags
+      attribute = if tag is "link" then "href" else "src"
+      
+      $(tag).each ($elem) ->
+        attr = $elem.attr(attribute)
         
-      if attr and attr[0] isnt "/"
-        $(element).attr(attribute, p + "/" + element[attribute])
+        if attr and attr[0] isnt "/"
+          $elem.attr(attribute, p + '/' + attr)
+
+      
+    
+    callback err, $.html()
+      # $(tag, document).each (i, element) ->
+      #   attr = $(element).attr(attribute)
+      # 
+      #   if attr and attr[0] isnt "/"
+      #     $(element).attr(attribute, p + "/" + element[attribute])
         
 
-  return document.innerHTML
+  # return document.innerHTML
   
 
 module.exports = exports
