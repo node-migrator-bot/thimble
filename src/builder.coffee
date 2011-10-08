@@ -25,6 +25,8 @@ plugins = require("./plugin")("./plugins/document")
 # Patch jsdom to work with certain html5 tags
 jsdom = patch(jsdom).jsdom
 
+timer = utils.timer
+
 exports.build = (app, options = {}, callback) ->
   build = options.build = path.resolve options.build || "./build"
   root = options.root = path.resolve options.root || "./views"
@@ -59,8 +61,12 @@ exports.build = (app, options = {}, callback) ->
     callback err, null if err
     emitter = new (require("events").EventEmitter)()
     return callback null, file
-      
+  
+  # time = new timer "cheerio"
+  # time.start()
   parser.parse app, options, (err, code) ->
+    # time.stop()
+    # console.log time.results()
     emitter.emit "parsed", err, code
 
 # Pull in all the assets and parse them, manipulates HTML document if necessary (ie. build.js, build.css)
