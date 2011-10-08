@@ -6,3 +6,4 @@ Thimble.tmproj
 /node_modules
 /tests/fixtures/public/
 tests/fixtures/finals/
+/tests/fixtures/finals/asset.bundling.html
