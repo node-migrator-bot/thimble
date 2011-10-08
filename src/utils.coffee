@@ -157,6 +157,18 @@ hideTemplateTags = exports.hideTemplateTags = (str, hide = ["<%", "%>"], hideWit
 unhideTemplateTags = exports.unhideTemplateTags = (str, hide = ["<%", "%>"], hideWith = ["<!--%%%", "%%%-->"]) ->
   return hideTemplateTags str, hideWith, hide
   
+timer = exports.timer = (name) ->
+  @name = name
+
+timer::start = ->
+  @start = Date.now()
+
+timer::stop = ->
+  @stop = Date.now()
+
+timer::results = ->
+  "Results #{@name} : " + (@stop - @start) + "ms"  
+
 module.exports = exports
 
 # console.log fillArray 5, "hi"
