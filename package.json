@@ -7,7 +7,7 @@
   },
   
   "bin" : "./bin/thimble",
-  "main" : "./lib/server.js",
+  "main" : "./index.js",
   
   "engines": {
     "node": ">=0.2.5"
