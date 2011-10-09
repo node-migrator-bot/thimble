@@ -20,6 +20,7 @@
     "jquery" : "1.6.x",
     "underscore" : "1.x",
     "eco" : "1.x"
+    "cheerio" : "0.0.x"
   },
   "devDependencies": {}
 }
