@@ -16,16 +16,12 @@ emitter      = new (require("events").EventEmitter)()
 parser = require "./parser"
 utils = require "./utils"
 _            = require "underscore"
-jsdom        = require "jsdom"
 patch      = require "./patcher"
 $         = require "jquery"
 assetTypes = require("./tags/tags").types
 plugins = require("./plugin")("./plugins/document")
 
-# Patch jsdom to work with certain html5 tags
-jsdom = patch(jsdom).jsdom
-
-timer = utils.timer
+# timer = utils.timer
 
 exports.build = (app, options = {}, callback) ->
   build = options.build = path.resolve options.build || "./build"
@@ -38,18 +34,14 @@ exports.build = (app, options = {}, callback) ->
     
     # In Development, we do not bundle
     if env is "production"
-      # jsdom cannot handle ERB <% ... %> style tags, so we escape them
-      html = utils.hideTemplateTags html
-      bundle html, options
+      cheerio html, (err, $) ->
+        bundle $, options
     else 
-      write html, build + "/" + path.basename(app)
+      write html, build + "/" + path.basename(app)    
   
   # Bundle all the STATIC assets, dynamic assets cannot be bundled before runtime. CASE CLOSED.
   emitter.once "bundled", (err, code) ->
     callback err, null if err
-    
-    # unhide escaped ERB <% ... %> style tags
-    code = utils.unhideTemplateTags code
     
     # Synchronously makes all the directories it's missing
     utils.mkdir build
@@ -70,8 +62,15 @@ exports.build = (app, options = {}, callback) ->
     emitter.emit "parsed", err, code
 
 # Pull in all the assets and parse them, manipulates HTML document if necessary (ie. build.js, build.css)
-bundle = (html, options) ->
-  document = jsdom html
+bundle = ($, options) ->
+  
+  console.log """
+    WARNING: BUNDLE IS CURRENTLY BADLY BROKEN. STILL USES JSDOM AND NOT CHEERIO. WILL NEED TO BE FIXED.
+    
+    For now, since we're just in development, we can leave this broken...
+  """
+  process.exit(1)
+  
   finished = utils.countdown _.size(assetTypes)
 
   # Make the dir just in case it's not already there
@@ -89,7 +88,7 @@ bundle = (html, options) ->
   
   # Remove ALL classes that are named "thimble-test"
   if options.env is "production"
-    $(".thimble-test", document).remove()
+    $(".thimble-test").remove()
   
   for type, tag of assetTypes
     tag = [tag] if not _.isArray(tag)
