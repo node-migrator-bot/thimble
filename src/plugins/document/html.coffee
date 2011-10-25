@@ -1,3 +1,0 @@
-exports.compile = (str) ->
-  ->
-    str
