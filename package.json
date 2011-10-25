@@ -4,7 +4,9 @@
   , "description": "W3C moves too slow. It's time to take HTML into our own hands."
   , "keywords": []
   , "author": "Matt Mueller <mattmuelle@gmail.com>"
-  , "dependencies": {}
+  , "dependencies": {
+    "cheerio" : "0.0.x"
+  }
   , "main": "index"
   , "engines": { "node": "0.4.x" }
 }
