@@ -1,0 +1,10 @@
+{
+    "name": "thimble"
+  , "version": "0.0.1"
+  , "description": "W3C moves too slow. It's time to take HTML into our own hands."
+  , "keywords": []
+  , "author": "Matt Mueller <mattmuelle@gmail.com>"
+  , "dependencies": {}
+  , "main": "index"
+  , "engines": { "node": "0.4.x" }
+}
