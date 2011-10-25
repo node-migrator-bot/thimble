@@ -1,5 +1,0 @@
-#!/usr/bin/env node
-
-// Used to be run immediately, or preferably, we can run cake watch and then develop, calling "thimble"
-require("coffee-script")
-module.exports = require('../src/command');
