@@ -27,4 +27,33 @@ build = exports.build = (app, options, callback) ->
   public = options.public = path.resolve options.public || "./public"
   env = options.env || "production"
   
+  emitter.once "read", (err, code) ->
+    $ = cheerio.load code
+    
+    $("include").each ->
+      self = this
+      src = $(this).attr('src')
+      if src
+        test = path.dirname app
+        fs.readFile test + "/" + src, "utf8", (err, html) ->
+          # console.log html
+          # console.log $(self).before
+          $(self).before(html)
+          $(self).remove()
+          
+          console.log $.html()
+          
+  
+  read app
+
+read = exports.read = (file) ->
+  
+  fs.readFile file, "utf8", (err, code) ->
+    emitter.emit "read", err, code 
+
+build "../test/index.html", {}, (err, html) ->
+  throw err if err
+  
+  console.log html
+  
   
