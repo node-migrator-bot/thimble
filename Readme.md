@@ -3,6 +3,15 @@
 
   W3C moves too slow. It's time to take HTML into our own hands.
 
+  ## Why
+  
+  ## What
+  
+  Thimble allows you to modify and augment 3 distinct properties:
+    * tags
+    * assets types
+    * environment variables
+  
 ## License 
 
 (The MIT License)
