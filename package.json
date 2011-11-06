@@ -5,7 +5,8 @@
   , "keywords": []
   , "author": "Matt Mueller <mattmuelle@gmail.com>"
   , "dependencies": {
-    "cheerio" : "0.0.x"
+    "cheerio" : "0.0.x",
+    "underscore" : "1.x"
   }
   , "main": "index"
   , "engines": { "node": "0.4.x" }

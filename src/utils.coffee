@@ -2,6 +2,10 @@ fs = require "fs"
 _ = require "underscore"
 path = require "path"
 
+readFile = exports.readFile = (file, callback) ->
+  fs.readFile file, "utf8", (err, code) ->
+    return callback(err, code)
+
 readFiles = exports.readFiles = (files, callback) ->
   _readFiles files, (err, files) ->
     callback null, _.toArray files
