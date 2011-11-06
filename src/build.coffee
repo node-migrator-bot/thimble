@@ -26,34 +26,48 @@ build = exports.build = (app, options, callback) ->
   root = options.root = path.resolve options.root || "./views"
   public = options.public = path.resolve options.public || "./public"
   env = options.env || "production"
-  
-  emitter.once "read", (err, code) ->
-    $ = cheerio.load code
-    
-    $("include").each ->
-      self = this
-      src = $(this).attr('src')
-      if src
-        test = path.dirname app
-        fs.readFile test + "/" + src, "utf8", (err, html) ->
-          # console.log html
-          # console.log $(self).before
-          $(self).before(html)
-          $(self).remove()
-          
-          console.log $.html()
-          
-  
-  read app
 
-read = exports.read = (file) ->
+  html = fs.readFileSync app
+
+  flatten html, path.dirname(app), options, (err, code) ->
+    throw err if err
+    console.log code
+
+flatten = exports.flatten = (html, directory, options, callback) ->
+  $ = cheerio.load html
   
-  fs.readFile file, "utf8", (err, code) ->
-    emitter.emit "read", err, code 
+  $includes = $('include')
+  numIncludes = $includes.length
+  
+  if numIncludes is 0
+    return callback null, html
+    
+  finished = utils.countdown numIncludes
+  $includes.each ->
+    $this = $(this)
+    src = $this.attr('src')
+    
+    if !src and finished()
+      return callback null, $.html()
+
+    if src[0] is "/"
+      filePath = options.root + "/" + src
+    else
+      filePath = directory + "/" + src
+   
+    utils.readFile filePath, (err, code) ->
+      $this.before(code)
+      $this.remove()
+      
+      if finished()
+        return callback null, $.html()
+
+fixPaths = ($) ->
+  
 
 build "../test/index.html", {}, (err, html) ->
   throw err if err
   
-  console.log html
+  # console.log html
   
   
