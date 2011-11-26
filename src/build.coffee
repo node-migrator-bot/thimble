@@ -13,12 +13,10 @@
 
 fs         = require "fs"
 path       = require "path"
-emitter    = new (require("events").EventEmitter)()
 
-_          = require "underscore"
 cheerio    = require "cheerio"
 
-parser     = require "./renderer"
+flatten    = require "./flatten"
 utils      = require "./utils"
 
 build = exports.build = (app, options, callback) ->
@@ -27,47 +25,13 @@ build = exports.build = (app, options, callback) ->
   public = options.public = path.resolve options.public || "./public"
   env = options.env || "production"
 
-  html = fs.readFileSync app
+  utils.readFile app, (err, code) ->
+    flatten.flatten code, path.dirname(app), options, (err, code) ->
+      throw err if err
 
-  flatten html, path.dirname(app), options, (err, code) ->
-    throw err if err
-    console.log code
+module.exports = exports
 
-flatten = exports.flatten = (html, directory, options, callback) ->
-  $ = cheerio.load html
-  
-  $includes = $('include')
-  numIncludes = $includes.length
-  
-  if numIncludes is 0
-    return callback null, html
-    
-  finished = utils.countdown numIncludes
-  $includes.each ->
-    $this = $(this)
-    src = $this.attr('src')
-    
-    if !src and finished()
-      return callback null, $.html()
-
-    if src[0] is "/"
-      filePath = options.root + "/" + src
-    else
-      filePath = directory + "/" + src
-   
-    utils.readFile filePath, (err, code) ->
-      $this.before(code)
-      $this.remove()
-      
-      if finished()
-        return callback null, $.html()
-
-fixPaths = ($) ->
-  
-
-build "../test/index.html", {}, (err, html) ->
+build "../test/files/index.html", {}, (err, $) ->
   throw err if err
-  
-  # console.log html
-  
+  console.log $.html()
   
