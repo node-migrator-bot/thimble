@@ -1,43 +1,36 @@
 fs      = require "fs"
 path    = require "path"
 
-$ = require "../node_modules/cheerio"
+cheerio = require "../node_modules/cheerio"
 
-utils   = require "./utils"
+utils = require "./utils"
 
-flatten = exports.flatten = (html, directory, options, callback) ->
-  root = options.root
-  $includes = $('include', html)
-  numIncludes = $includes.length
+flatten = exports.flatten = (html, directory, options = {}, callback) ->
+  root = options.root || directory
+  $ = cheerio.load(html)
+  $include = $('include')
+  
+  if $include.length is 0
+    return callback null, $.html()
+  
+  finished = utils.countdown $include.length
 
-  if numIncludes is 0
-    return callback null, html
-    
-  finished = utils.countdown numIncludes
-
-  $includes.each ->
-    $this = $(this)
+  $include.each (i, elem) ->
+    $this = $(elem)
     src = $this.attr('src')
-
-    if !src and finished()
-      return callback null, html
 
     if src[0] is "/"
       filePath = root + "/" + src
     else
       filePath = directory + "/" + src
 
-    utils.readFile filePath, (err, code) ->
+    fs.readFile filePath, "utf8", (err, content) ->
       throw err if err
+      flatten content, path.dirname(filePath), options, (err, flattened) ->
+        $this.replaceWith flattened
 
-      output = (err, fragment) ->
-        $this.before(fragment)
-        $this.remove()
-        
         if finished()
-          return callback null, code
-          
-      flatten code, path.dirname(filePath), options, output
+          return callback null, $.html()
 
 findRelative = exports.findRelative = (directory, root) ->
   dir = directory.split "/"
@@ -51,10 +44,10 @@ findRelative = exports.findRelative = (directory, root) ->
 
 fixPaths = exports.fixPaths = ($) ->
   
-
 module.exports = exports
+
 options = {}
-html = '<html><include src = "../test/files/snippet.html"></html>'
+html = '<html><include src = "../test/files/index.html"></html>'
 
 flatten html, __dirname, options, (err, code) ->
   console.log code
