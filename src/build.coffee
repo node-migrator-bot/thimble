@@ -20,9 +20,7 @@ flatten    = require "./flatten"
 utils      = require "./utils"
 
 build = exports.build = (app, options, callback) ->
-  build = options.build = path.resolve options.build || "./build"
   root = options.root = path.resolve options.root || "./views"
-  public = options.public = path.resolve options.public || "./public"
   env = options.env || "production"
 
   utils.readFile app, (err, code) ->
