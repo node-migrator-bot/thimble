@@ -1,49 +1,46 @@
 
 ###
-  Thimble.coffee boots the middleware
+  thimble.coffee is the main driver
 ###
-_ = require "../node_modules/underscore"
-flatten = require "./flatten"
-middleware = require "./middleware"
-path = require "path"
-express = require "express"
 fs = require "fs"
 
+_ = require "underscore"
+cheerio = require "cheerio"
 
-exports.boot = (server, options) ->
-  root = options.root || './views'
-  env = process.env.NODE_ENV || "development"
-  options.paths = options.paths || {}
+flattener = require "./flatten"
 
-  # We're rolling our own layout, express's is not necessary
-  server.set "view options", layout : false
-  server.set "views", options.root
+configuration = {}
 
-  server.configure "development", ->
-      server.use middleware root, options
-      server.use (req, res, next) ->
-        _render = res.render
-        res.render = (view, opts = {}, fn) ->
-          res.render = _render
-          
-          # Add .html if no view extension given
-          if !path.extname(view)
-            view += ".html"
-          
-          view = path.join root, view
+emitter = exports.emitter = new (require('events').EventEmitter)()
 
-          if opts.layout
-            opts.layout = false
+# Pull in all the tags
+tags = fs.readdirSync(__dirname + '/tags')
+for tag in tags
+  if tag is '.DS_Store' then continue
+  require('./tags/' + tag)
 
-          fs.readFile view, 'utf8', (err, contents) ->
-            throw err if err
+configure = exports.configure = (options) ->
+  # Defaults
+  _.extend configuration,
+    root :  './views'
+    env :   'development'
+    paths : {}
 
-            flatten.flatten contents, path.dirname(view), options, (err, flattened) ->
-              throw err if err
-              res.send flattened
+  _.extend configuration, options
+  
+start = exports.start = (expressServer) ->
+  server = require "./server"
+  server.boot expressServer, configuration
 
-        if path.extname req.url is ".html"
-          return next()
-        else
-          server.use express.static root
-          return next()
+render = exports.render = (content, directory, callback) ->
+  $ = cheerio.load content
+  emitter.emit "before:flattened", $
+  content = $.html()
+  
+  flattener.flatten content, directory, configuration, (err, flattened) ->
+    $ = cheerio.load flattened
+    emitter.emit "after:flattened", $
+    callback null, $.html()
+  
+
+module.exports = exports
