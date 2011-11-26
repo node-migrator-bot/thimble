@@ -8,6 +8,8 @@ server.configure ->
   
 thimble.boot server, 
   root : "./client"
+  paths :
+    support : "./support"
 
 server.get "/", (req, res) ->
   res.render("index/index")

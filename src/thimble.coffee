@@ -13,9 +13,7 @@ fs = require "fs"
 exports.boot = (server, options) ->
   root = options.root || './views'
   env = process.env.NODE_ENV || "development"
-  
-  # Support files
-  options.support = options.support || root + '/support'
+  options.paths = options.paths || {}
 
   # We're rolling our own layout, express's is not necessary
   server.set "view options", layout : false

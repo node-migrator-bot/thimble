@@ -5,23 +5,30 @@ language = require("./language")('./languages')
 utils = require './utils'
 
 middleware = exports.middleware = (root, options) ->
-  # Add support files
-  # support = addSupport options
+  # Add custom paths
+  defaultPath = addPaths options
   
   # Return middleware
   (req, res, next) ->
     url = req.url
     
-    # name = path.basename url
-    # if !path.extname name and support(name)
-    #   assetPath = support(name)
+    # Allow custom paths
+    if url.split(':').length > 1
+      url = path.basename(url)
+      url = defaultPath url
+      
+    if url
+      req.url = url
+    else
+      return next()
     
-    assetPath = path.resolve(root + url)
 
-    plugin = language assetPath
+    plugin = language url
     if plugin is false
       return next()
             
+    assetPath = path.resolve(root + '/' + url)
+
     fs.readFile assetPath, "utf8", (err, contents) ->
       if err
         console.log err.message
@@ -41,28 +48,30 @@ middleware = exports.middleware = (root, options) ->
       
       plugin.compile contents, assetPath, options or {}, output
 
-# addSupport = (supportDir) ->
-#   supportFiles = {}
-#   support = options.support
-#   root = options.root
-#   
-#   files = fs.readdirSync supportDir
-# 
-#   for file in files
-#     ext = path.extname file
-#     name = path.basename file, ext
-#     console.log name
-#     
-#     supportFiles[name] = supportDir + "/" + file
-# 
-#   return (file) ->
-#     if(supportFiles[file]) then supportFiles[file] else false
-
 # Implementation pulled from static.js in Connect
 getHeader = (assetPath) ->
   type = mime.lookup assetPath
   charset = mime.charsets.lookup type
   charset = if charset then "; charset=#{charset}" else ""
   return (type + charset)
-  
+
+addPaths = (options) ->
+  paths = {}
+  for namespace, p of options.paths
+    assets = {}
+    files = fs.readdirSync options.root + "/" + p
+    
+    for file in files
+      ext = path.extname file
+      name = path.basename file, ext
+      assets[name] = p + "/" + file
+    
+    paths[namespace] = assets
+    
+  return (namespace) ->
+    namespace = namespace.split(':')
+    file = namespace.pop()
+    return paths[namespace.join(':')][file] || false
+
+
 module.exports = exports.middleware
