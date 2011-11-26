@@ -10,7 +10,7 @@ flatten = exports.flatten = (html, directory, options = {}, callback) ->
   $ = cheerio.load(html)
   
   # Fix asset paths
-  fixPaths $, directory
+  fixPaths $, directory, options.root
 
   # Gather all includes
   $include = $('include')
@@ -36,23 +36,13 @@ flatten = exports.flatten = (html, directory, options = {}, callback) ->
         if finished()
           return callback null, $.html()
 
-# findRelative = exports.findRelative = (directory, root) ->
-#   dir = directory.split "/"
-#   r = root.split "/"
-# 
-#   for d, i in dir
-#     if r[i] isnt d
-#       return dir.slice(i).join('/')
-# 
-#   return ""
-
 tags = [
   'script'
   'link'
   'img'
 ]
 
-fixPaths = exports.fixPaths = ($, directory) ->
+fixPaths = exports.fixPaths = ($, directory, root) ->
   # Hard-code for now..
   for tag in tags
     attribute = if tag is "link" then "href" else "src"
@@ -61,7 +51,9 @@ fixPaths = exports.fixPaths = ($, directory) ->
       $elem = $(this)
       attr = $elem.attr(attribute)
 
+
       if attr and attr[0] isnt "/"
-        $elem.attr(attribute, directory + '/' + attr)
+        relPath = utils.findRelative directory, root
+        $elem.attr(attribute, relPath + '/' + attr)
       
 module.exports = exports
