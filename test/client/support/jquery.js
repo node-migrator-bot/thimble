@@ -1,1 +1,1 @@
-alert('jquery!');
+console.log('jquery');
