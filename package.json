@@ -6,7 +6,9 @@
   , "author": "Matt Mueller <mattmuelle@gmail.com>"
   , "dependencies": {
     "cheerio" : "0.x",
-    "underscore" : "1.x"
+    "underscore" : "1.x",
+    "mime" : "1.2.x",
+    "express" : "2.x"
   }
   , "main": "index"
   , "engines": { "node": "0.4.x" }

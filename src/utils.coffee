@@ -153,13 +153,18 @@ relativeFromRoot = exports.relativeFromRoot = (root, app) ->
 
   return outPath.join "/"
 
-hideTemplateTags = exports.hideTemplateTags = (str, hide = ["<%", "%>"], hideWith = ["<!--%%%", "%%%-->"]) ->
-  str = str.replace hide[0], hideWith[0]
-  str = str.replace hide[1], hideWith[1]
-  return str
 
-unhideTemplateTags = exports.unhideTemplateTags = (str, hide = ["<%", "%>"], hideWith = ["<!--%%%", "%%%-->"]) ->
-  return hideTemplateTags str, hideWith, hide
+findRelative = exports.findRelative = (directory, root) ->
+  directory = path.resolve directory
+  root = path.resolve root
+  dir = directory.split "/"
+  r = root.split "/"
+
+  for d, i in dir
+    if r[i] isnt d
+      return dir.slice(i).join('/')
+
+  return ""
   
 timer = exports.timer = (name) ->
   @name = name
