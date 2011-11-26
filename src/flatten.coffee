@@ -63,6 +63,5 @@ fixPaths = exports.fixPaths = ($, directory) ->
 
       if attr and attr[0] isnt "/"
         $elem.attr(attribute, directory + '/' + attr)
-      console.log this
       
 module.exports = exports
