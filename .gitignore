@@ -1,9 +1,4 @@
 .DS_Store
-Thimble.tmproj
-/public
-/ui
-/lib
-/node_modules
-/tests/fixtures/public/
-tests/fixtures/finals/
-/tests/fixtures/finals/asset.bundling.html
+node_modules
+*.sock
+thimble.tmproj

@@ -1,7 +1,8 @@
 // Use source if we have coffeescript otherwise use lib
+var dir = 'lib';
 try {
     require('coffee-script');
-    module.exports = require(__dirname + "/src/server.coffee");
-} catch (e) {
-    module.exports = require(__dirname + "/lib/server.js");
-}
+    dir = 'src';
+} catch (e) { }
+
+module.exports = require(__dirname + '/' + dir + '/cheerio.coffee');
