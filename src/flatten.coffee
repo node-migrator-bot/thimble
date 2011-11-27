@@ -8,17 +8,22 @@ utils = require "./utils"
 flatten = exports.flatten = (html, directory, options = {}, callback) ->
   root = options.root || directory
   $ = cheerio.load(html)
-  $include = $('include')
   
+  # Fix asset paths
+  fixPaths $, directory, options.root
+
+  # Gather all includes
+  $include = $('include')
   if $include.length is 0
     return callback null, $.html()
+  
+  # Add focus attribute here
   
   finished = utils.countdown $include.length
 
   $include.each (i, elem) ->
     $this = $(elem)
     src = $this.attr('src')
-
     if src[0] is "/"
       filePath = root + "/" + src
     else
@@ -26,28 +31,31 @@ flatten = exports.flatten = (html, directory, options = {}, callback) ->
 
     fs.readFile filePath, "utf8", (err, content) ->
       throw err if err
+
       flatten content, path.dirname(filePath), options, (err, flattened) ->
         $this.replaceWith flattened
 
         if finished()
           return callback null, $.html()
 
-findRelative = exports.findRelative = (directory, root) ->
-  dir = directory.split "/"
-  r = root.split "/"
+tags = [
+  'script'
+  'link'
+  'img'
+]
 
-  for d, i in dir
-    if r[i] isnt d
-      return dir.slice(i).join('/')
+fixPaths = exports.fixPaths = ($, directory, root) ->
+  # Hard-code for now..
+  for tag in tags
+    attribute = if tag is "link" then "href" else "src"
+    
+    $(tag).each ->
+      $elem = $(this)
+      attr = $elem.attr(attribute)
 
-  return ""
 
-fixPaths = exports.fixPaths = ($) ->
-  
+      if attr and attr[0] isnt "/"
+        relPath = utils.findRelative directory, root
+        $elem.attr(attribute, relPath + '/' + attr)
+      
 module.exports = exports
-
-options = {}
-html = '<html><include src = "../test/files/index.html"></html>'
-
-flatten html, __dirname, options, (err, code) ->
-  console.log code

@@ -1,76 +1,30 @@
 
 ###
-  Main Server
+  thimble.coffee is the main driver
 ###
+fs = require "fs"
 
-###
-  index.coffee --- Matt Mueller
-  
-  The purpose of this provide an application interface for developing applications.
-  It has two main functions : middleware(appDir), and render(file)
-  
-  middleware - will load all the required assets
-  render - will parse the html comments
-  
-###
-path = require "path"
-utils = require "./utils"
-express = require "express"
-# render = require('./render').render
-middleware = require('./middleware').middleware
-builder = require("./builder")
-plugin = require("./plugin")("plugins/document")
+_ = require "underscore"
+cheerio = require "cheerio"
 
-exports.boot = (server, options = {}) ->
-  build = options.build = path.resolve options.build || "./build"
-  public = options.public = path.resolve options.public || "./public"
-  root = options.root = path.resolve options.root || "./views"
-  env = options.env = process.env.NODE_ENV || "development"
+flattener = require "./flatten"
 
-  # We're rolling our own layout, express's is not necessary
-  server.set "view options", layout : false
-  server.set "views", build
+configuration = {}
+
+emitter = exports.emitter = new (require('events').EventEmitter)()
+
+configure = exports.configure = (options) ->
+  # Defaults
+  _.extend configuration,
+    root :  './views'
+    env :   'development'
+    paths : {}
+
+  _.extend configuration, options
   
-  # Register the available document plugins
-  for extension, compiler of plugin.extensions
-    server.register extension, require(compiler)
-  
-  server.configure "development", ->
-    server.use middleware root, options
-    server.use (req, res, next) ->
-      _render = res.render
-      res.render = (view, opts = {}, fn) ->
-        res.render = _render
-        
-        view = path.join root, view
-        
-        if opts.layout
-          options.layout = path.resolve options.root + "/" + opts.layout
-          # Overwrite express's layout
-          opts.layout = false
-          
-        builder.build view, options, (err, file) ->
-          console.log err.message if err
-          res.render file, opts, fn
-          
-      
-      if path.extname req.url is ".html"
-        next()
-      else
-        server.use express.static root
-        return next()
-        
-    
-  server.configure "production", ->
-    server.use express.static public
-    server.use (req, res, next) ->
-      _render = res.render
-      res.render = (view, opts = {}, fn) ->
-        res.render = _render
-        opts.layout = false
-        res.render view, opts, fn
-        
-      next()
+start = exports.start = (expressServer) ->
+  server = require "./server"
+  server.boot expressServer, configuration
   
 
 module.exports = exports
