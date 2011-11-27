@@ -9,7 +9,7 @@ path = require "path"
 express = require "express"
 fs = require "fs"
 
-render = require('./thimble').render
+renderer = require './render'
 
 exports.boot = (server, options) ->
   root = options.root || './views'
@@ -35,13 +35,10 @@ exports.boot = (server, options) ->
 
           if opts.layout
             opts.layout = false
-
-          fs.readFile view, 'utf8', (err, contents) ->
-            throw err if err
-            render contents, path.dirname(view), (err, response) ->
-              throw err if err
-              res.send response
             
+          renderer.render view, options, (err, content) ->
+            throw err if err
+            res.send content
 
         if path.extname req.url is ".html"
           return next()
