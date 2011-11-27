@@ -1,7 +1,7 @@
 path = require "path"
 fs = require "fs"
 mime = require "mime"
-language = require("./language")('./languages')
+language = require("./language")
 utils = require './utils'
 
 middleware = exports.middleware = (root, options) ->

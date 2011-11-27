@@ -31,7 +31,7 @@ language = (availablePlugins) ->
   p.extensions = availablePlugins
   return p
   
-module.exports = (languageDir) ->
-  languageDir = path.join __dirname, languageDir
+module.exports = do () ->
+  languageDir = path.join __dirname, './languages'
   languages = loadPlugins languageDir
   return language(languages)
