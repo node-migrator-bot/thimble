@@ -5,4 +5,4 @@ try {
     dir = 'src';
 } catch (e) { }
 
-module.exports = require(__dirname + '/' + dir + '/cheerio.coffee');
+module.exports = require(__dirname + '/' + dir + '/thimble.coffee');
