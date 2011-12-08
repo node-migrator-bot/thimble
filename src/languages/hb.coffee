@@ -3,9 +3,12 @@ handlebars = require "handlebars"
 type = exports.type = "js"
 
 exports.compile = (content, file, options = {}, output) ->
-  console.log "handlebars not yet implemented"
-  output null, ""
-  # javascript = handlebars.precompile content
-  #   output null, javascript
+  namespace = options.namespace or "window"
+  template = options.template
+
+  compiled = handlebars.precompile content
+
+  js = "#{namespace}.JST = #{namespace}.JST || {}; #{namespace}.JST['#{template}'] = " + compiled
+  output null, js
     
 module.exports = exports
