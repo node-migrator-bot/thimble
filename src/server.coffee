@@ -13,6 +13,7 @@ renderer = require './render'
 
 exports.start = (app) ->
   t = this
+  
 
 exports.boot = (server, options) ->
   root = options.root || './views'
