@@ -3,13 +3,16 @@
   Thimble.coffee boots the middleware
 ###
 _ = require "../node_modules/underscore"
-flatten = require "./flatten"
+# flatten = require "./flatten"
 middleware = require "./middleware"
 path = require "path"
 express = require "express"
 fs = require "fs"
 
 renderer = require './render'
+
+exports.start = (app) ->
+  t = this
 
 exports.boot = (server, options) ->
   root = options.root || './views'

@@ -2,29 +2,73 @@
 ###
   thimble.coffee is the main driver
 ###
-fs = require "fs"
-
 _ = require "underscore"
-cheerio = require "cheerio"
 
-flattener = require "./flatten"
+# fs = require "fs"
+# 
+# cheerio = require "cheerio"
+# 
+# # flattener = require "./flatten"
+# 
+# configuration = {}
+# # 
+# emitter = exports.emitter = new (require('events').EventEmitter)()
+# 
+# configure = exports.configure = (options) ->
+#   # Defaults
+#   _.extend configuration,
+#     root :  './views'
+#     env :   'development'
+#     paths : {}
+# 
+#   _.extend configuration, options
+  
+# configure = exports.configure = (env, fn) ->
+#   envs = 'all'
+#   args = [].slice.call arguments
+#   fn = args.pop()
+#   # if args.length the
+#   
+# start = exports.start = (expressServer) ->
+#   server = require "./server"
+#   server.boot expressServer, configuration
 
-configuration = {}
+###
+  Public: creates a thimble instance. Sets up the object and 
+    passes in the configuration
+  
+  configuration - configuration values for the server
+  
+  Examples
+   
+    var t = thimble.create({
+      root : "./client",
+      env : "production",
+      paths : {
+        support : "./client/support"
+        vendor : "./client/vendor"
+      }
+    });
+  
+  Returns: an thimble instance Object 
+###
 
-emitter = exports.emitter = new (require('events').EventEmitter)()
-
-configure = exports.configure = (options) ->
-  # Defaults
+create = exports.create = (configuration = {}) ->
+  t = 
+    settings : {}
+    stack : []
+  
+  # Set the defaults
   _.extend configuration,
     root :  './views'
-    env :   'development'
+    env :   'all'
     paths : {}
+  
+  for key, value of configuration
+    t.settings[key] = value
 
-  _.extend configuration, options
+  t.__proto__ = require './proto'
   
-start = exports.start = (expressServer) ->
-  server = require "./server"
-  server.boot expressServer, configuration
-  
+  return t
 
 module.exports = exports
