@@ -1,9 +1,20 @@
 fs      = require "fs"
 path    = require "path"
 
-cheerio = require "../node_modules/cheerio"
+cheerio = require __dirname + "/../../node_modules/cheerio"
 
-utils = require "./utils"
+utils = require "../utils"
+
+# Allows this to be the "main" function that gets called
+exports = module.exports = (file) ->
+  directory = path.dirname file
+   
+  # Return the plugin
+  return (content, options, next) ->
+    # Flatten the content
+    flatten content, directory, options, (err, html) ->
+      # Pass the err and modified content down the chain
+      next err, html
 
 flatten = exports.flatten = (html, directory, options = {}, callback) ->
   root = options.root || directory
@@ -30,7 +41,7 @@ flatten = exports.flatten = (html, directory, options = {}, callback) ->
       filePath = directory + "/" + src
 
     fs.readFile filePath, "utf8", (err, content) ->
-      throw err if err
+      return callback err, null if err
 
       flatten content, path.dirname(filePath), options, (err, flattened) ->
         $this.replaceWith flattened
@@ -57,5 +68,3 @@ fixPaths = exports.fixPaths = ($, directory, root) ->
       if attr and attr[0] isnt "/"
         relPath = utils.findRelative directory, root
         $elem.attr(attribute, relPath + '/' + attr)
-      
-module.exports = exports
