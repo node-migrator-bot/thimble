@@ -3,7 +3,7 @@ path = require 'path'
 
 cheerio = require '../node_modules/cheerio'
 
-flattener = require './flatten'
+# flattener = require './flatten'
 language = require './language'
 utils = require './utils'
 
