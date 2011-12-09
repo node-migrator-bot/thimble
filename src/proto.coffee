@@ -1,3 +1,7 @@
+fs = require "fs"
+
+thimble = require "./thimble"
+
 ###
   Public: starts thimble and configures our server
   
@@ -59,8 +63,7 @@ configure = exports.configure = (env, fn) ->
   Returns an instance of the thimble Object
 ###
 use = exports.use = (fn) ->
-  this.stack.push
-    handle: fn
+  this.stack.push fn
 
   return this
 
@@ -84,16 +87,60 @@ use = exports.use = (fn) ->
   
 ###
 render = exports.render = (file, locals, fn) ->
-  this.settings.source = file
-
+  self = this
+  self.settings.source = file
+  
+  # Implicit plugins
+  implicit = []
+  
+  if locals.layout
+    implicit.push thimble.layout(locals.layout)
+  
+  # Add the flattener
+  implicit.push thimble.flatten
+  
+  # Push the implicit commands on the stack before the user plugins
+  # self.stack = implicit.concat self.stack
+  
+  fs.readFile file, "utf8", (err, content) ->
+    if err then return fn(err)
+    handle.call self, content, self.settings, (err, output) ->
+      return fn(err, output)
+      # If pathname .html send...
+  
 ###
   Private: Handle the plugin layers
   
 ###
 handle = (content, options, out) ->
   stack = this.stack
+  index = 0
   
+  next = (err, content) ->
+  
+    # Next callback
+    layer = stack[index++]
+    
+    # all done
+    if (!layer)
+      if out then return out(err, content)
 
-
+    # Plugin punting
+    try
+      arity = layer.length
+      if err
+        # Give the middleware a chance to catch it
+        if arity is 4
+          layer(err, content, options, next)
+        else
+          next(err)
+      else if arity < 4
+        layer(content, options, next)
+      else
+        next()
+    catch e
+      next(e)
+      
+  next(null, content)
 
 module.exports = exports
