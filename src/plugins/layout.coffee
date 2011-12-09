@@ -11,6 +11,8 @@ exports = module.exports = (layout) ->
       next(err) if err
       
       $ = cheerio.load html
+      # HACK: Load twice, so yield will always look like <yield />
+      $ = cheerio.load $.html()
       
       # Find the basename of the source (flattener will handle rest)
       $include = $('<include>').attr('src', path.basename(source))
