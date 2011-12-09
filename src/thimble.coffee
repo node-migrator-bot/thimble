@@ -2,6 +2,9 @@
 ###
   thimble.coffee is the main driver
 ###
+fs = require "fs"
+path = require "path"
+
 _ = require "underscore"
 
 # fs = require "fs"
@@ -70,5 +73,17 @@ create = exports.create = (configuration = {}) ->
   t.__proto__ = require './proto'
   
   return t
+
+
+fs.readdirSync(__dirname + "/plugins").forEach (filename) ->
+  if not /\.(js|coffee)$/.test(filename) then return
+  ext = path.extname filename
+  name = path.basename(filename, ext)
+  
+  load = ->
+    require "./plugins/" + name
+  
+  exports.__defineGetter__ name, load
+
 
 module.exports = exports

@@ -1,4 +1,5 @@
 fs = require "fs"
+path = require "path"
 
 thimble = require "./thimble"
 
@@ -94,19 +95,27 @@ render = exports.render = (file, locals, fn) ->
   implicit = []
   
   if locals.layout
-    implicit.push thimble.layout(locals.layout)
+    implicit.push thimble.layout.call(self, locals.layout)
   
   # Add the flattener
-  implicit.push thimble.flatten
+  implicit.push thimble.flatten.call(self, file)
   
   # Push the implicit commands on the stack before the user plugins
-  # self.stack = implicit.concat self.stack
+  self.stack = implicit.concat self.stack
+  
+  # If extname something other than html, try to compile it
+  extname = path.extname file
+  if extname isnt '.html'
+    self.stack.push thimble.compile extname
   
   fs.readFile file, "utf8", (err, content) ->
     if err then return fn(err)
     handle.call self, content, self.settings, (err, output) ->
-      return fn(err, output)
-      # If pathname .html send...
+      if 'function' is typeof output
+        console.log 'should compile template'
+        return fn(err, output)
+      else
+        return fn(err, output)
   
 ###
   Private: Handle the plugin layers
@@ -120,7 +129,7 @@ handle = (content, options, out) ->
   
     # Next callback
     layer = stack[index++]
-    
+
     # all done
     if (!layer)
       if out then return out(err, content)
