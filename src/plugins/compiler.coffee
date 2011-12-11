@@ -12,16 +12,19 @@ thimble = require "../thimble"
   Used to compile languages for both assets and views
 ###
 
-exports = module.exports = (file, locals = {}) ->
+exports = module.exports = (file) ->
   extname = path.extname(file).substring(1)
   extname = if (thimble.extensions[extname]) then thimble.extensions[extname] else extname
   
   return (content, options, next) ->
+    locals = options.locals || {}
+    locals._thimble = options
+
     compile = exports[extname]
     
     # Compile the file
     if compile
-      exports[extname] file, locals, (err, str) ->
+      compile file, locals, (err, str) ->
         return next err, str
     else
       return next null, content
@@ -45,6 +48,7 @@ requires = {};
 ###
 
 read = (file, options, fn) ->
+  options = options._thimble
   str = cache[file]
   return fn(null, str)  if options.cache and str
   fs.readFile file, "utf8", (err, str) ->
@@ -53,21 +57,39 @@ read = (file, options, fn) ->
     fn null, str
 
 ###
+  Private extensions to types map
+###
+
+types = 
+  'coffeescript' : 'js'
+  'stylus' : 'css'
+
+exports.getType = (file) ->
+  extname = path.extname(file).substring 1
+  extension = thimble.extensions[extname]
+  extname = if extension then extension else extname
+
+  type = types[extname]
+  return if type then type else false
+  
+###
   Asset Compilers
 ###
 
 # Coffeescript
-exports.coffeescript = (file, locals, fn) ->
+exports.coffeescript = (file, options, fn) ->
+  options = options._thimble
   engine = requires.coffeescript || (requires.coffeescript = require('coffeescript'))
   
-  read file, locals, (err, str) ->
+  read file, options, (err, str) ->
     fn null, engine.compile(str)
 
 # Stylus
-exports.stylus = (file, locals, fn) ->
+exports.stylus = (file, options, fn) ->
+  options = options._thimble
   engine = requires.stylus || (requires.stylus = require('stylus'))
   
-  read file, locals, (err, str) ->
+  read file, options, (err, str) ->
 
     styl = engine(str)
 
@@ -193,7 +215,7 @@ exports.haml = (file, locals, fn) ->
     return fn(err)  if err
     try
       locals.filename = file
-      locals.locals = locals
+      locals.options = locals
       fn null, engine.render(str, locals).trimLeft()
     catch err
       fn err

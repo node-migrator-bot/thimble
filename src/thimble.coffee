@@ -38,10 +38,13 @@ create = exports.create = (configuration = {}) ->
     settings : {}
     stack : []
   
+  # Get the env from how $ node is run
+  env = process.env.NODE_ENV || 'development'
+  
   # Set the defaults
   _.defaults configuration,
     root :  './views'
-    env :   'all'
+    env :   env
     paths : {}
     template : 'JST'
     namespace : 'window'
@@ -49,12 +52,13 @@ create = exports.create = (configuration = {}) ->
   for key, value of configuration
     t.settings[key] = value
 
+  # Add prototype functions to the instance
   t.__proto__ = require './proto'
   
   return t
 
 ###
-  Internal extension to View Map
+  Extension to View Map
 ###
 
 extensions = exports.extensions = 

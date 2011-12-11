@@ -7,19 +7,15 @@ server.configure ->
   server.use express.favicon()
 
 t = thimble.create
-  root: './client'
-  paths :
-    support : './support'
+  root: './files'
 
 # t.configure ->
   # t.use thimble.layout
   # t.use thimble.focus()
   # t.use thimble.flatten()
   
-t.render './files/test.jade', {layout : './files/layout.html', planet: "mars", name : 'matt'}, (err, content) ->  
-  throw err if err
-  console.log content
-# t.start server
+t.start server
+
 
 #   
 # 
@@ -30,8 +26,15 @@ t.render './files/test.jade', {layout : './files/layout.html', planet: "mars", n
 #     
 # thimble.start(server)
 
-# server.get "/", (req, res) ->
-#   res.render("index/index")
-#   
-#   
-# server.listen 8000
+server.get "/", (req, res) ->
+  res.render "test.jade", {
+    planet : 'venus'
+  }
+  
+  
+server.listen 8000
+console.log "Server listening on port 8000"
+
+# t.render './files/test.jade', {planet : 'mars', name : 'matt', layout : 'layout2.html'}, (err, content) ->
+#   console.log err if err
+#   console.log content

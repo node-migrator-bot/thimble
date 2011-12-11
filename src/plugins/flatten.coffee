@@ -7,17 +7,19 @@ thimble = require "../thimble"
 utils = require "../utils"
 
 # Allows this to be the "main" function that gets called
-exports = module.exports = (file, locals) ->
+exports = module.exports = (file) ->
   directory = path.dirname file
   
   # Return the plugin
   return (content, options, next) ->
-    options.locals = locals || {}
+    # Try to compile the content
+    thimble.compiler(file) content, options, (err, content) ->
+      return next err if err
 
-    # Flatten the content
-    flatten content, directory, options, (err, html) ->
-      # Pass the err and modified content down the chain
-      next err, html
+      # Flatten the content
+      flatten content, directory, options, (err, html) ->
+        # Pass the err and modified content down the chain
+        next err, html
 
 flatten = exports.flatten = (html, directory, options = {}, callback) ->
   root = options.root || directory
@@ -47,8 +49,9 @@ flatten = exports.flatten = (html, directory, options = {}, callback) ->
       return callback err if err
       
       # Try to compile the content
-      thimble.compiler(filePath, options.locals) content, options, (err, content) ->
-        
+      thimble.compiler(filePath) content, options, (err, content) ->
+        return callback err if err
+
         # Recursively flatten
         flatten content, path.dirname(filePath), options, (err, flattened) ->
           $this.replaceWith flattened
