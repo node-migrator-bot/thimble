@@ -16,12 +16,14 @@ exports = module.exports = (file, locals = {}) ->
   extname = if (thimble.extensions[extname]) then thimble.extensions[extname] else extname
   
   return (content, options, next) ->
-  
-    if !exports[extname]
-      return next(null, content)
-
-    exports[extname] file, locals, (err, str) ->
-      return next(err, str)
+    compile = exports[extname]
+    
+    # Compile the file
+    if compile
+      exports[extname] file, locals, (err, str) ->
+        return next err, str
+    else
+      return next null, content
 
 ###
   Content Cache
@@ -80,108 +82,124 @@ exports.stylus = (file, options, fn) ->
       .render (err, css) ->
         throw err if err
         output null, css
-    
+
 ###
-  Consolidate Compilers
+  Compilers
+###
+
+# Handlebars
+exports.handlebars = (file, locals, fn) ->
+  engine = requires.handlebars || (requires.handlebars = require('handlebars'))
+  read file, options, (err, str) ->
+    return fn(err) if err
+    try
+      locals.filename = file
+      tmpl = engine.compile str, locals
+      fn null, tmpl(locals)
+    catch err
+      fn err
+  
+###
+  consolidate.js compilers
   Author : TJ Holowaychuk - @visionmedia
   URL : https://github.com/visionmedia/consolidate.js
 ###
 
 # Jade
-exports.jade = (file, options, fn) ->
+exports.jade = (file, locals, fn) ->
   engine = requires.jade or (requires.jade = require("jade"))
-  engine.renderFile file, options, fn
+  engine.renderFile file, locals, fn
 
 # Swig
-exports.swig = (file, options, fn) ->
+exports.swig = (file, locals, fn) ->
   engine = requires.swig or (requires.swig = require("swig"))
-  read file, options, (err, str) ->
-    return fn(err)  if err
+  read file, locals, (err, str) ->
+    return fn(err) if err
     try
-      options.filename = file
-      tmpl = engine.compile(str, options)
-      fn null, tmpl(options)
+      locals.filename = file
+      tmpl = engine.compile(str, locals)
+      fn null, tmpl(locals)
     catch err
       fn err
 
 # Liquor
-exports.liquor = (file, options, fn) ->
+exports.liquor = (file, locals, fn) ->
   engine = requires.liquor or (requires.liquor = require("liquor"))
-  read file, options, (err, str) ->
+  read file, locals, (err, str) ->
     return fn(err)  if err
     try
-      options.filename = file
-      tmpl = engine.compile(str, options)
-      fn null, tmpl(options)
+      locals.filename = file
+      tmpl = engine.compile(str, locals)
+      fn null, tmpl(locals)
     catch err
       fn err
 
 # EJS
-exports.ejs = (file, options, fn) ->
+exports.ejs = (file, locals, fn) ->
   engine = requires.ejs or (requires.ejs = require("ejs"))
-  read file, options, (err, str) ->
+  read file, locals, (err, str) ->
     return fn(err)  if err
     try
-      options.filename = file
-      tmpl = engine.compile(str, options)
-      fn null, tmpl(options)
+      locals.filename = file
+      tmpl = engine.compile(str, locals)
+      fn null, tmpl(locals)
     catch err
       fn err
 
 # Eco
-exports.eco = (file, options, fn) ->
+exports.eco = (file, locals, fn) ->
   engine = requires.eco or (requires.eco = require("eco"))
-  read file, options, (err, str) ->
+  read file, locals, (err, str) ->
     return fn(err)  if err
     try
-      options.filename = file
-      fn null, engine.render(str, options)
+      locals.filename = file
+      fn null, engine.render(str, locals)
     catch err
       fn err
 
 # Jazz
-exports.jazz = (file, options, fn) ->
+exports.jazz = (file, locals, fn) ->
   engine = requires.jazz or (requires.jazz = require("jazz"))
-  read file, options, (err, str) ->
+  read file, locals, (err, str) ->
     return fn(err)  if err
     try
-      options.filename = file
-      tmpl = engine.compile(str, options)
-      tmpl.eval options, (str) ->
+      locals.filename = file
+      tmpl = engine.compile(str, locals)
+      tmpl.eval locals, (str) ->
         fn null, str
     catch err
       fn err
 
 # JQTPL
-exports.jqtpl = (file, options, fn) ->
+exports.jqtpl = (file, locals, fn) ->
   engine = requires.jqtpl or (requires.jqtpl = require("jqtpl"))
-  read file, options, (err, str) ->
+  read file, locals, (err, str) ->
     return fn(err)  if err
     try
-      options.filename = file
+      locals.filename = file
       engine.template file, str
-      fn null, engine.tmpl(file, options)
+      fn null, engine.tmpl(file, locals)
     catch err
       fn err
 
-exports.haml = (file, options, fn) ->
+exports.haml = (file, locals, fn) ->
   engine = requires.hamljs or (requires.hamljs = require("hamljs"))
-  read file, options, (err, str) ->
+  read file, locals, (err, str) ->
     return fn(err)  if err
     try
-      options.filename = file
-      options.locals = options
-      fn null, engine.render(str, options).trimLeft()
+      locals.filename = file
+      locals.locals = locals
+      fn null, engine.render(str, locals).trimLeft()
     catch err
       fn err
 
 # Whiskers
-exports.whiskers = (file, options, fn) ->
+exports.whiskers = (file, locals, fn) ->
   engine = requires.whiskers or (requires.whiskers = require("whiskers"))
-  read file, options, (err, str) ->
+  read file, locals, (err, str) ->
     return fn(err)  if err
     try
-      fn null, engine.render(str, options)
+      fn null, engine.render(str, locals)
     catch err
       fn err
 
