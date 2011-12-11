@@ -36,7 +36,7 @@ middleware = exports.middleware = (options) ->
         header = getHeader 'blah.' + thimble.compiler.getType(assetPath) 
         res.setHeader('Content-Type', header)          
       
-      res.send out
+      res.send content
       #   
       # plugin = language url
       # if plugin is false
