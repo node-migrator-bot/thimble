@@ -5,28 +5,23 @@
 
 path = require "path"
 
+thimble = require "../thimble"
+
 ###
   Used to compile languages for both assets and views
 ###
 
 exports = module.exports = (file, locals = {}) ->
   extname = path.extname(file).substring(1)
-  extname = if (extensions[extname]) then extensions[extname] else extname
+  extname = if (thimble.extensions[extname]) then thimble.extensions[extname] else extname
   
   return (content, options, next) ->
+  
     if !exports[extname]
       return next(null, content)
 
     exports[extname] file, locals, (err, str) ->
       return next(err, str)
-
-###
-  Internal extension to View Map
-###
-
-extensions = exports.extensions = 
-  'styl' : 'stylus'
-  'coffee' : 'coffeescript'
 
 ###
   Content Cache
@@ -189,6 +184,5 @@ exports.whiskers = (file, options, fn) ->
       fn null, engine.render(str, options)
     catch err
       fn err
-
 
       

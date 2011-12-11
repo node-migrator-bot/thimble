@@ -14,6 +14,16 @@ _ = require "underscore"
 exports.version = '0.0.1'
 
 ###
+  Internal extension to View Map
+###
+
+extensions = exports.extensions = 
+  'styl' : 'stylus'
+  'coffee' : 'coffeescript'
+  'hb' : 'handlebars'
+  'mu' : 'handlebars'
+  
+###
   Public: creates a thimble instance. Sets up the object and 
     passes in the configuration
   
@@ -43,7 +53,9 @@ create = exports.create = (configuration = {}) ->
     root :  './views'
     env :   'all'
     paths : {}
-  
+    template : 'JST'
+    namespace : 'window'
+    
   for key, value of configuration
     t.settings[key] = value
 
