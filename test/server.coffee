@@ -11,7 +11,7 @@ t = thimble.create
   paths :
     support : './support'
 
-t.configure ->
+# t.configure ->
   # t.use thimble.layout
   # t.use thimble.focus()
   # t.use thimble.flatten()
