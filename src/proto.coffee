@@ -10,7 +10,7 @@ thimble = require "./thimble"
 ###
 start = exports.start = (app) ->
   server = require "./server"
-  server.start.call this, app
+  server.boot.call this, app
 
 ###
   Public: configure the application for zero or more callbacks.
@@ -97,9 +97,12 @@ use = exports.use = (fn) ->
     
   
 ###
-render = exports.render = (file, locals, fn) ->
+render = exports.render = (file, locals = {}, fn) ->
   self = this
-  self.settings.source = file
+
+  options = self.settings
+  options.source = file
+  options.locals = locals
   
   # Implicit plugins
   implicit = []
@@ -109,8 +112,8 @@ render = exports.render = (file, locals, fn) ->
     implicit.push thimble.layout(locals.layout)
     
   # Add the flattener
-  implicit.push thimble.flatten(file, locals)
-  
+  implicit.push thimble.flatten(file)
+
   # Add the embedder
   implicit.push thimble.embed
   
@@ -119,7 +122,7 @@ render = exports.render = (file, locals, fn) ->
   
   fs.readFile file, "utf8", (err, content) ->
     if err then return fn(err)
-    handle.call self, content, self.settings, (err, output) ->
+    handle.call self, content, options, (err, output) ->
       return fn(err, output)
   
 ###

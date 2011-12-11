@@ -1,10 +1,13 @@
 path = require "path"
 fs = require "fs"
 mime = require "mime"
-language = require("./language")
+
+thimble = require './thimble'
 utils = require './utils'
 
-middleware = exports.middleware = (root, options) ->
+middleware = exports.middleware = (options) ->
+  root = options.root
+  
   # Add custom paths
   defaultPath = addPaths options
   
@@ -22,32 +25,43 @@ middleware = exports.middleware = (root, options) ->
     else
       return next()
     
-
-    plugin = language url
-    if plugin is false
-      return next()
-            
     assetPath = path.resolve(root + '/' + url)
-
-    fs.readFile assetPath, "utf8", (err, contents) ->
-      if err
-        console.log err.message
-        res.send 500
-
-      output = (err, out) ->
-        if err
-          console.log err.message
-          res.send 500
+    
+    thimble.compiler(assetPath) null, options, (err, content) ->
+      if !content
+        return next()
         
-        if not res.getHeader "content-type"
-          # Name doesn't matter. mime just cares about .css, .js, .png, etc. not the name or if file exists
-          header = getHeader "blah.#{plugin.type}"
-          res.setHeader('Content-Type', header)          
-        
-        res.send out
+      if not res.getHeader "content-type"
+        # Name doesn't matter. mime just cares about .css, .js, .png, etc. not the name or if file exists
+        header = getHeader 'blah.' + thimble.compiler.getType(assetPath) 
+        res.setHeader('Content-Type', header)          
       
-      plugin.compile contents, assetPath, options or {}, output
-
+      res.send out
+      #   
+      # plugin = language url
+      # if plugin is false
+      #   return next()
+      #         
+      # 
+      # fs.readFile assetPath, "utf8", (err, contents) ->
+      #   if err
+      #     console.log err.message
+      #     res.send 500
+      # 
+      #   output = (err, out) ->
+      #     if err
+      #       console.log err.message
+      #       res.send 500
+      #     
+      #     if not res.getHeader "content-type"
+      #       # Name doesn't matter. mime just cares about .css, .js, .png, etc. not the name or if file exists
+      #       header = getHeader "blah.#{plugin.type}"
+      #       res.setHeader('Content-Type', header)          
+      #     
+      #     res.send out
+      #   
+      #   plugin.compile contents, assetPath, options or {}, output
+  
 # Implementation pulled from static.js in Connect
 getHeader = (assetPath) ->
   type = mime.lookup assetPath
