@@ -1,5 +1,4 @@
 coffeescript = require "coffee-script"
-_ = require "underscore"
 
 type = exports.type = "js"
 

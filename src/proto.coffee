@@ -50,8 +50,19 @@ configure = exports.configure = (env, fn) ->
   return this
 
 ###
+  Public: Get and set setting variables
+###
+
+set = exports.set = (setting, value) ->
+  if !value
+    return this.setting[setting]
+  else
+    this.setting[setting] = value
+    return this
+    
+###
   Public: plug in the plugins that will be called as the content moves
-    through the layers
+    through the layers. Can be chained.
   
   fn - a plugin Function
   
@@ -65,7 +76,6 @@ configure = exports.configure = (env, fn) ->
 ###
 use = exports.use = (fn) ->
   this.stack.push fn
-
   return this
 
 ###
@@ -93,29 +103,21 @@ render = exports.render = (file, locals, fn) ->
   
   # Implicit plugins
   implicit = []
-  
+    
+  # If theres a layout, add the layout plugin
   if locals.layout
-    implicit.push thimble.layout.call(self, locals.layout)
-  
+    implicit.push thimble.layout(locals.layout)
+    
   # Add the flattener
-  implicit.push thimble.flatten.call(self, file)
+  implicit.push thimble.flatten(file, locals)
   
   # Push the implicit commands on the stack before the user plugins
   self.stack = implicit.concat self.stack
   
-  # If extname something other than html, try to compile it
-  extname = path.extname file
-  if extname isnt '.html'
-    self.stack.push thimble.compile extname
-  
   fs.readFile file, "utf8", (err, content) ->
     if err then return fn(err)
     handle.call self, content, self.settings, (err, output) ->
-      if 'function' is typeof output
-        console.log 'should compile template'
-        return fn(err, output)
-      else
-        return fn(err, output)
+      return fn(err, output)
   
 ###
   Private: Handle the plugin layers
@@ -126,7 +128,6 @@ handle = (content, options, out) ->
   index = 0
   
   next = (err, content) ->
-  
     # Next callback
     layer = stack[index++]
 
