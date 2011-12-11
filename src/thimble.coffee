@@ -7,34 +7,11 @@ path = require "path"
 
 _ = require "underscore"
 
-# fs = require "fs"
-# 
-# cheerio = require "cheerio"
-# 
-# # flattener = require "./flatten"
-# 
-# configuration = {}
-# # 
-# emitter = exports.emitter = new (require('events').EventEmitter)()
-# 
-# configure = exports.configure = (options) ->
-#   # Defaults
-#   _.extend configuration,
-#     root :  './views'
-#     env :   'development'
-#     paths : {}
-# 
-#   _.extend configuration, options
-  
-# configure = exports.configure = (env, fn) ->
-#   envs = 'all'
-#   args = [].slice.call arguments
-#   fn = args.pop()
-#   # if args.length the
-#   
-# start = exports.start = (expressServer) ->
-#   server = require "./server"
-#   server.boot expressServer, configuration
+###
+  Version
+###
+
+exports.version = '0.0.1'
 
 ###
   Public: creates a thimble instance. Sets up the object and 
@@ -62,7 +39,7 @@ create = exports.create = (configuration = {}) ->
     stack : []
   
   # Set the defaults
-  _.extend configuration,
+  _.defaults configuration,
     root :  './views'
     env :   'all'
     paths : {}

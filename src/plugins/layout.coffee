@@ -19,7 +19,6 @@ exports = module.exports = (layout) ->
       
       # Replace yield with the include
       $('yield').replaceWith($include)
-
       next(null, $.html())
     
   
