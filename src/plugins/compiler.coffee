@@ -48,7 +48,7 @@ requires = {};
 ###
 
 read = (file, options, fn) ->
-  options = options._thimble
+  options = options._thimble || {}
   str = cache[file]
   return fn(null, str)  if options.cache and str
   fs.readFile file, "utf8", (err, str) ->
@@ -79,7 +79,7 @@ exports.getType = (file) ->
 # Coffeescript
 exports.coffeescript = (file, options, fn) ->
   options = options._thimble
-  engine = requires.coffeescript || (requires.coffeescript = require('coffeescript'))
+  engine = requires.coffeescript || (requires.coffeescript = require('coffee-script'))
   
   read file, options, (err, str) ->
     fn null, engine.compile(str)
@@ -104,7 +104,7 @@ exports.stylus = (file, options, fn) ->
       .include(options.root)
       .render (err, css) ->
         throw err if err
-        output null, css
+        fn null, css
 
 ###
   Compilers
