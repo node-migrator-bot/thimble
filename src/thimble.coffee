@@ -58,11 +58,11 @@ create = exports.create = (configuration = {}) ->
 ###
 
 extensions = exports.extensions = 
-  'styl' : 'stylus'
+  'styl'   : 'stylus'
   'coffee' : 'coffeescript'
-  'hb' : 'handlebars'
-  'mu' : 'handlebars'
-  'md' : 'markdown'
+  'hb'     : 'handlebars'
+  'mu'     : 'handlebars'
+  'md'     : 'markdown'
 
 ###
   Read in all the plugins
@@ -75,6 +75,7 @@ fs.readdirSync(__dirname + "/plugins").forEach (filename) ->
   load = ->
     require "./plugins/" + name
   
+  # Lazy load the plugins
   exports.__defineGetter__ name, load
 
 
