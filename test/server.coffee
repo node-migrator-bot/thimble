@@ -7,7 +7,9 @@ server.configure ->
   server.use express.favicon()
 
 t = thimble.create
-  root: './files'
+  root: './client'
+  paths :
+    support : './support'
 
 # t.configure ->
   # t.use thimble.layout
@@ -27,9 +29,7 @@ t.start server
 # thimble.start(server)
 
 server.get "/", (req, res) ->
-  res.render "test.jade", {
-    planet : 'venus'
-  }
+  res.render "index/index"
   
   
 server.listen 8000
