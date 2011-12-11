@@ -111,6 +111,9 @@ render = exports.render = (file, locals, fn) ->
   # Add the flattener
   implicit.push thimble.flatten(file, locals)
   
+  # Add the embedder
+  implicit.push thimble.embed
+  
   # Push the implicit commands on the stack before the user plugins
   self.stack = implicit.concat self.stack
   

@@ -1,7 +1,7 @@
 fs      = require "fs"
 path    = require "path"
 
-cheerio = require __dirname + "/../../node_modules/cheerio"
+cheerio = require "cheerio"
 
 thimble = require "../thimble"
 utils = require "../utils"
@@ -22,7 +22,7 @@ exports = module.exports = (file, locals) ->
 flatten = exports.flatten = (html, directory, options = {}, callback) ->
   root = options.root || directory
   $ = cheerio.load(html)
-  
+
   # Fix asset paths
   fixPaths $, directory, options.root
 
@@ -42,16 +42,19 @@ flatten = exports.flatten = (html, directory, options = {}, callback) ->
       filePath = root + "/" + src
     else
       filePath = directory + "/" + src
-
-    # Try to compile the content
-    thimble.compiler(filePath, options.locals) null, options, (err, content) ->
     
-      # Recursively flatten
-      flatten content, path.dirname(filePath), options, (err, flattened) ->
-        $this.replaceWith flattened
+    fs.readFile filePath, 'utf8', (err, content) ->
+      return callback err if err
+      
+      # Try to compile the content
+      thimble.compiler(filePath, options.locals) content, options, (err, content) ->
+        
+        # Recursively flatten
+        flatten content, path.dirname(filePath), options, (err, flattened) ->
+          $this.replaceWith flattened
 
-        if finished()
-          return callback null, $.html()
+          if finished()
+            return callback null, $.html()
 
 tags = [
   'script'

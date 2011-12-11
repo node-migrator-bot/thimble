@@ -16,7 +16,7 @@ t = thimble.create
   # t.use thimble.focus()
   # t.use thimble.flatten()
   
-t.render './files/test.jade', {layout : './layout2.html', planet: "mars"}, (err, content) ->  
+t.render './files/snippet2.html', {layout : './files/layout.html', planet: "mars"}, (err, content) ->  
   throw err if err
   console.log content
 # t.start server
