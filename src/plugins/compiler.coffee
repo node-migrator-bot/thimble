@@ -4,6 +4,7 @@
 ###
 
 path = require "path"
+fs = require "fs"
 
 thimble = require "../thimble"
 
@@ -56,17 +57,17 @@ read = (file, options, fn) ->
 ###
 
 # Coffeescript
-exports.coffeescript = (file, options, fn) ->
+exports.coffeescript = (file, locals, fn) ->
   engine = requires.coffeescript || (requires.coffeescript = require('coffeescript'))
   
-  read file, options, (err, str) ->
+  read file, locals, (err, str) ->
     fn null, engine.compile(str)
 
 # Stylus
-exports.stylus = (file, options, fn) ->
+exports.stylus = (file, locals, fn) ->
   engine = requires.stylus || (requires.stylus = require('stylus'))
   
-  read file, options, (err, str) ->
+  read file, locals, (err, str) ->
 
     styl = engine(str)
 
@@ -90,7 +91,8 @@ exports.stylus = (file, options, fn) ->
 # Handlebars
 exports.handlebars = (file, locals, fn) ->
   engine = requires.handlebars || (requires.handlebars = require('handlebars'))
-  read file, options, (err, str) ->
+  
+  read file, locals, (err, str) ->
     return fn(err) if err
     try
       locals.filename = file
@@ -99,6 +101,9 @@ exports.handlebars = (file, locals, fn) ->
     catch err
       fn err
   
+exports.markdown = (file, locals, fn) ->
+  console.log 'coming **soon** ;-P'
+    
 ###
   consolidate.js compilers
   Author : TJ Holowaychuk - @visionmedia

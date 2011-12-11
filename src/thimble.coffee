@@ -14,16 +14,6 @@ _ = require "underscore"
 exports.version = '0.0.1'
 
 ###
-  Internal extension to View Map
-###
-
-extensions = exports.extensions = 
-  'styl' : 'stylus'
-  'coffee' : 'coffeescript'
-  'hb' : 'handlebars'
-  'mu' : 'handlebars'
-  
-###
   Public: creates a thimble instance. Sets up the object and 
     passes in the configuration
   
@@ -63,7 +53,20 @@ create = exports.create = (configuration = {}) ->
   
   return t
 
+###
+  Internal extension to View Map
+###
 
+extensions = exports.extensions = 
+  'styl' : 'stylus'
+  'coffee' : 'coffeescript'
+  'hb' : 'handlebars'
+  'mu' : 'handlebars'
+  'md' : 'markdown'
+
+###
+  Read in all the plugins
+###
 fs.readdirSync(__dirname + "/plugins").forEach (filename) ->
   if not /\.(js|coffee)$/.test(filename) then return
   ext = path.extname filename
