@@ -48,6 +48,7 @@ requires = {};
 ###
 
 read = (file, options, fn) ->
+  # Figure out why I need this "|| {}"
   options = options._thimble || {}
   str = cache[file]
   return fn(null, str)  if options.cache and str

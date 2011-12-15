@@ -10,6 +10,8 @@ cheerio = require "cheerio"
 thimble = require "../thimble"
 utils = require "../utils"
 
+support = __dirname + '/../../support'
+
 exports = module.exports = (content, options, next) ->
   $ = cheerio.load content
   $scripts = $('script[type=text/template]')
@@ -22,7 +24,6 @@ exports = module.exports = (content, options, next) ->
   $scripts.each ->
     $script = $(this)
     source = $script.attr('src')
-
     extname = path.extname source
     
     # Rename our template if we have an ID that's given
@@ -36,19 +37,32 @@ exports = module.exports = (content, options, next) ->
     extname = if (thimble.extensions[extname]) then thimble.extensions[extname] else extname
     
     # Get the precompiler 
-    precompile = exports[extname]
+    precompile = exports[extname]    
+    
+    assetPath = options.root + "/" + source
     
     if precompile
-      precompile source, options, (err, str) ->
+      
+      precompile assetPath, options, (err, str) ->
+        
+      
         $script.removeAttr('src')
                .attr('type', 'text/javascript')
         
         js = prefix + str
 
         $script.text(js)
-
-        if finished()
-          next null, $.html()
+        
+        ###
+          CLEAN UP
+        ###
+        # Check to see if there is a support file
+        read support + '/' + extname + '.js', options, (err, str) ->
+          if !err
+            $('head').append $('<script>').text(str)
+          
+          if finished()
+            next null, $.html()
         
     else if finished()
       next null, $.html()
@@ -96,6 +110,8 @@ exports.handlebars = (file, options, fn) ->
   engine = requires.handlebars || (requires.handlebars = require('handlebars'))
   basename = path.basename file, path.extname file
   out = []
+
+  
 
   read file, options, (err, str) ->
 

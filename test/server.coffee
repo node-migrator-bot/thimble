@@ -29,7 +29,9 @@ t.start server
 # thimble.start(server)
 
 server.get "/", (req, res) ->
-  res.render "index/index"
+  res.render "index/index",
+    planet : 'mars'
+    name : 'matt'
   
   
 server.listen 8000
