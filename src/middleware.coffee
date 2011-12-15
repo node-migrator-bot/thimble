@@ -26,8 +26,12 @@ middleware = exports.middleware = (options) ->
       return next()
     
     assetPath = path.resolve(root + '/' + url)
-    
+
     thimble.compiler(assetPath) null, options, (err, content) ->
+      if err
+        console.log 'err', err
+        return next()
+        
       if !content
         return next()
         
