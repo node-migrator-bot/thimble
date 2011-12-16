@@ -8,12 +8,6 @@ path = require "path"
 _ = require "underscore"
 
 ###
-  Version
-###
-
-version = '0.0.1'
-
-###
   Public: creates a thimble instance. Sets up the object and 
     passes in the configuration
   
@@ -83,7 +77,9 @@ exports.create = module.exports
   Export version
 ###
 
-exports.version = version
+exports.version = JSON.parse(
+  fs.readFileSync(__dirname + '/../package.json', 'utf8')
+).version
 
 ###
   Extension to View Map
