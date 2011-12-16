@@ -10,6 +10,9 @@
     "mime" : "1.2.x",
     "express" : "2.x"
   }
+	,	"devDependencies": {
+		"mocha" : "0.x"
+	}
   , "main": "index"
   , "engines": { "node": "0.4.x" }
 }
