@@ -20,39 +20,73 @@ exports.boot = (server) ->
   server.set "views", root
 
   server.configure "development", ->
-       
-    # Inject our middleware where static was
-    injected = false
-    server.stack.forEach (layer, i) ->
-      if layer.handle and layer.handle.name is 'static'
-        server.stack[i] = 
-          route : ''
-          handle : middleware(options)
-        injected = true
-
-    # If static didn't exist, just append to end
-    if !injected
-      server.use middleware options
+    stack = server.stack
+    # Monkey-patch renderer at top of stack
+    stack.unshift
+      route  : ''
+      handle : render.call(thim, options)
     
-    # Add on custom middleware to monkey-patch render
-    server.use (req, res, next) ->
-      _render = res.render
-      res.render = (view, locals = {}, fn) ->
-        res.render = _render
-        
-        # Add .html if no view extension given
-        if !path.extname(view)
-          view += ".html"
-        
-        view = path.join root, view
-
-        thim.render view, locals, (err, content) ->
-          throw err if err
-          res.send content
+    staticLayer = false
+    for layer, i in server.stack
+      if layer.handle and layer.handle.name is 'static'
+        staticLayer = i
+        break
+    
+    # Stack up middleware
+    layers = []
+    
+    # Add the middleware
+    layers.push
+      route : ''
+      handle : middleware(options)
+    
+    # Add the static overwrite
+    layers.push
+      route : ''
+      handle : static(options)
       
-      # If our request is an html file, don't use static module
-      if path.extname req.url is ".html"
-        return next()
-      else
-        # Otherwise we should use it
-        express.static(root)(req, res, next)
+    if staticLayer isnt false
+      stack.splice.apply(stack, [staticLayer, 1].concat(layers))
+    else
+      stack = stack.concat layers
+
+###
+  This will monkey-patch render to use thimble's
+  renderer
+###
+render = exports.render = (options) ->
+  thim = this
+  
+  return (req, res, next) ->
+    _render = res.render
+    res.render = (view, locals = {}, fn) ->
+      # Go back to old renderer after it passes through here once
+      res.render = _render
+    
+      # Default to .html if no view extension given
+      if !path.extname(view)
+        view += ".html"
+    
+      view = path.join options.root, view
+
+      thim.render view, locals, (err, content) ->
+        return next(err) if err
+        res.send content
+        
+    # Be on your way.
+    return next()
+    
+###
+  This will overwrite how static does things
+  
+  Basically, prevent static from responding to .html files.
+  
+  Remember, res.render is monkey-patched in beginning, but
+  doesn't get called till later on.
+###
+static = exports.static = (options) ->
+  return (req, res, next) ->
+    if path.extname(req.url) is '.html'
+      return next()
+    else
+      return express.static(options.root)(req, res, next)
