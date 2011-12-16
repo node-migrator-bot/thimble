@@ -20,9 +20,19 @@ exports.boot = (server) ->
   server.set "views", root
 
   server.configure "development", ->
-  
-    # Use our middleware to catch custom asset types
-    server.use middleware options
+       
+    # Inject our middleware where static was
+    injected = false
+    server.stack.forEach (layer, i) ->
+      if layer.handle and layer.handle.name is 'static'
+        server.stack[i] = 
+          route : ''
+          handle : middleware(options)
+        injected = true
+
+    # If static didn't exist, just append to end
+    if !injected
+      server.use middleware options
     
     # Add on custom middleware to monkey-patch render
     server.use (req, res, next) ->
@@ -40,10 +50,9 @@ exports.boot = (server) ->
           throw err if err
           res.send content
       
+      # If our request is an html file, don't use static module
       if path.extname req.url is ".html"
-        # If our request is an html file, don't use static module
         return next()
       else
         # Otherwise we should use it
-        express.static(root) req, res, (err) ->
-          return next(err)
+        express.static(root)(req, res, next)
