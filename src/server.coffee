@@ -45,5 +45,5 @@ exports.boot = (server) ->
         return next()
       else
         # Otherwise we should use it
-        server.use express.static root
-        return next()
+        express.static(root) req, res, (err) ->
+          return next(err)
