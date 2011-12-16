@@ -35,4 +35,6 @@ describe 'proto', ->
         content.should.include.string "cool story, man."
         
         done()
-      
+    
+  describe '.configure', ->
+    

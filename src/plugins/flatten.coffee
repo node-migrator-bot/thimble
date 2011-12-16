@@ -35,7 +35,7 @@ flatten = exports.flatten = (html, directory, options = {}, callback) ->
   
   # Add focus attribute here
   
-  finished = utils.countdown $include.length
+  finished = utils.after $include.length
 
   $include.each (i, elem) ->
     $this = $(elem)
@@ -65,6 +65,18 @@ tags = [
   'img'
 ]
 
+findRelative = exports.findRelative = (directory, root) ->
+  directory = path.resolve directory
+  root = path.resolve root
+  dir = directory.split "/"
+  r = root.split "/"
+
+  for d, i in dir
+    if r[i] isnt d
+      return dir.slice(i).join('/')
+
+  return ""
+
 fixPaths = exports.fixPaths = ($, directory, root) ->
   # Hard-code for now..
   for tag in tags
@@ -75,7 +87,7 @@ fixPaths = exports.fixPaths = ($, directory, root) ->
       attr = $elem.attr(attribute)
 
       if attr and attr[0] isnt "/"
-        relPath = utils.findRelative directory, root
+        relPath = findRelative directory, root
         
         $elem.attr(attribute, relPath + '/' + attr)
         
