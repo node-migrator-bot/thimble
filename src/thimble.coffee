@@ -11,7 +11,7 @@ _ = require "underscore"
   Version
 ###
 
-exports.version = '0.0.1'
+version = '0.0.1'
 
 ###
   Public: creates a thimble instance. Sets up the object and 
@@ -33,7 +33,7 @@ exports.version = '0.0.1'
   Returns: an thimble instance Object 
 ###
 
-create = exports.create = (configuration = {}) ->
+exports = module.exports = (configuration = {}) ->
   t = 
     settings : {}
     stack : []
@@ -48,6 +48,7 @@ create = exports.create = (configuration = {}) ->
     paths : {}
     template : 'JST'
     namespace : 'window'
+    use : ['']
     
   for key, value of configuration
     t.settings[key] = value
@@ -56,6 +57,12 @@ create = exports.create = (configuration = {}) ->
   t.__proto__ = require './proto'
   
   return t
+
+###
+  Export version
+###
+
+exports.version = version
 
 ###
   Extension to View Map

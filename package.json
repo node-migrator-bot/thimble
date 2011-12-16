@@ -11,7 +11,8 @@
     "express" : "2.x"
   }
 	,	"devDependencies": {
-		"mocha" : "0.x"
+		"mocha" : "0.x",
+		"should" : "*"
 	}
   , "main": "index"
   , "engines": { "node": "0.4.x" }
