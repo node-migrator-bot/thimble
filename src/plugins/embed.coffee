@@ -41,8 +41,6 @@ exports = module.exports = (content, options, next) ->
     
     if precompile
       precompile assetPath, options, (err, str) ->
-        return next(err) if err
-        
         # Remove the attributes that will cause script not to execute
         $script.removeAttr('src')
                .attr('type', 'text/javascript')
@@ -52,7 +50,7 @@ exports = module.exports = (content, options, next) ->
         
         # Attach it to the script tag
         $script.text(js)
-        
+                
         return next null, $.html()
         
     else if finished()
@@ -102,7 +100,8 @@ exports.handlebars = (file, options, fn) ->
   basename = path.basename file, path.extname file
   out = []
   
-  options.support.add('handlebars.js')
+  if options.support.add
+    options.support.add('handlebars.js')
     
   # Precompile the file
   read file, options, (err, str) ->

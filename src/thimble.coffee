@@ -48,7 +48,6 @@ exports = module.exports = (configuration = {}) ->
     paths : {}
     template : 'JST'
     namespace : 'window'
-    use : ['']
     
   for key, value of configuration
     t.settings[key] = value
