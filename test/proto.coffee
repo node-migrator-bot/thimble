@@ -5,6 +5,7 @@ fixtures = __dirname + '/fixtures'
 index = fixtures + '/index.html'
 layout = fixtures + '/layout.html'
 title = fixtures + '/title.html'
+template = fixtures + '/template.hb'
 
 describe 'proto', ->
   describe '.render', ->
@@ -34,6 +35,15 @@ describe 'proto', ->
         throw err if err
         
         content.should.include.string "cool story, man."
+        
+        done()
+  
+    it 'should render something with local variables', (done) ->
+      
+      thim.render template, {planet : 'venus'}, (err, content) ->
+        throw err if err
+        
+        content.should.equal '<h2>hello venus!</h2>'
         
         done()
   
