@@ -10,11 +10,11 @@ middleware = exports.middleware = (options) ->
   
   # Add custom paths
   defaultPath = addPaths options
-  
+
   # Return middleware
-  (req, res, next) ->
+  return (req, res, next) ->
     url = req.url
-    
+
     # Allow custom paths
     if url.split(':').length > 1
       url = path.basename(url)
@@ -26,7 +26,7 @@ middleware = exports.middleware = (options) ->
       return next()
     
     assetPath = path.resolve(root + '/' + url)
-
+    
     thimble.compiler(assetPath) null, options, (err, content) ->
       if err
         console.log 'err', err
@@ -41,30 +41,6 @@ middleware = exports.middleware = (options) ->
         res.setHeader('Content-Type', header)          
       
       res.send content
-      #   
-      # plugin = language url
-      # if plugin is false
-      #   return next()
-      #         
-      # 
-      # fs.readFile assetPath, "utf8", (err, contents) ->
-      #   if err
-      #     console.log err.message
-      #     res.send 500
-      # 
-      #   output = (err, out) ->
-      #     if err
-      #       console.log err.message
-      #       res.send 500
-      #     
-      #     if not res.getHeader "content-type"
-      #       # Name doesn't matter. mime just cares about .css, .js, .png, etc. not the name or if file exists
-      #       header = getHeader "blah.#{plugin.type}"
-      #       res.setHeader('Content-Type', header)          
-      #     
-      #     res.send out
-      #   
-      #   plugin.compile contents, assetPath, options or {}, output
   
 # Implementation pulled from static.js in Connect
 getHeader = (assetPath) ->

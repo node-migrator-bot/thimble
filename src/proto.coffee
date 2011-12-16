@@ -104,6 +104,16 @@ render = exports.render = (file, locals = {}, fn) ->
   options.source = file
   options.locals = locals
   
+  # Instantiate internal plugin-specific options
+  options.layout = 
+    layout : locals.layout
+  options.flatten = {}
+  options.embed = {}
+  options.support = 
+    files : []
+    add : (file) ->
+      this.files.push file
+  
   # Implicit plugins
   implicit = []
     
@@ -117,12 +127,18 @@ render = exports.render = (file, locals = {}, fn) ->
   # Add the embedder
   implicit.push thimble.embed
   
+  # Add the support files
+  implicit.push thimble.support()
+  
   # Push the implicit commands on the stack before the user plugins
   self.stack = implicit.concat self.stack
   
   fs.readFile file, "utf8", (err, content) ->
     if err then return fn(err)
     handle.call self, content, options, (err, output) ->
+      # Important to clear the stack
+      self.stack = []
+      
       return fn(err, output)
   
 ###

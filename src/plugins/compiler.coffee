@@ -3,10 +3,10 @@
   Load modules
 ###
 
-path = require "path"
-fs = require "fs"
+path = require 'path'
+fs = require 'fs'
 
-thimble = require "../thimble"
+thimble = require '../thimble'
 
 ###
   Used to compile languages for both assets and views
@@ -51,6 +51,7 @@ read = (file, options, fn) ->
   # Figure out why I need this "|| {}"
   options = options._thimble || {}
   str = cache[file]
+
   return fn(null, str)  if options.cache and str
   fs.readFile file, "utf8", (err, str) ->
     return fn(err)  if err
@@ -83,7 +84,7 @@ exports.coffeescript = (file, options, fn) ->
   engine = requires.coffeescript || (requires.coffeescript = require('coffee-script'))
   
   read file, options, (err, str) ->
-    fn null, engine.compile(str)
+    fn err, engine.compile(str)
 
 # Stylus
 exports.stylus = (file, options, fn) ->
@@ -104,8 +105,7 @@ exports.stylus = (file, options, fn) ->
       .set("filename", file)
       .include(options.root)
       .render (err, css) ->
-        throw err if err
-        fn null, css
+        fn err, css
 
 ###
   Compilers
