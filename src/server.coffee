@@ -35,6 +35,7 @@ exports.boot = (server) ->
           view += ".html"
         
         view = path.join root, view
+
         instance.render view, locals, (err, content) ->
           throw err if err
           res.send content

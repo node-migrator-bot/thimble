@@ -17,8 +17,7 @@ compile = exports.compile = (content, file, options = {}, output) ->
     .set("filename", file)
     .include(options.root)
     .render (err, css) ->
-      throw err if err
-      output null, css
+      output err, css
   
 
 module.exports = exports

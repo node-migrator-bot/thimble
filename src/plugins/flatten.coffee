@@ -13,6 +13,7 @@ exports = module.exports = (file) ->
   # Return the plugin
   return (content, options, next) ->
     # Try to compile the content
+    
     thimble.compiler(file) content, options, (err, content) ->
       return next err if err
 
@@ -24,7 +25,6 @@ exports = module.exports = (file) ->
 flatten = exports.flatten = (html, directory, options = {}, callback) ->
   root = options.root || directory
   $ = cheerio.load(html)
-
   # Fix asset paths
   fixPaths $, directory, options.root
 
@@ -74,7 +74,10 @@ fixPaths = exports.fixPaths = ($, directory, root) ->
       $elem = $(this)
       attr = $elem.attr(attribute)
 
-
       if attr and attr[0] isnt "/"
         relPath = utils.findRelative directory, root
+        
         $elem.attr(attribute, relPath + '/' + attr)
+        
+        
+        

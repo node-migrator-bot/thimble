@@ -6,7 +6,9 @@ cheerio = require __dirname + "/../../node_modules/cheerio"
 exports = module.exports = (layout) ->
   
   return (content, options, next) ->
+    # Source file, main entry point (app.html, index.html)
     source = options.source
+    
     fs.readFile layout, 'utf8', (err, html) ->
       next(err) if err
       
