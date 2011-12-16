@@ -20,7 +20,7 @@ exports = module.exports = (opts = {}) ->
       files = options.support.files ||= []
   
     if files.length
-      finished = utils.countdown files.length
+      finished = utils.after files.length
     else
       return next(null, content)
 

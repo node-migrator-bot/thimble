@@ -17,7 +17,7 @@ exports = module.exports = (content, options, next) ->
   if !$scripts.length
     return next(null, content)
   else
-    finished = utils.countdown $scripts.length
+    finished = utils.after $scripts.length
 
   $scripts.each ->
     $script = $(this)
