@@ -102,12 +102,11 @@ exports.stylus = (file, options, fn) ->
     catch error
       # Do nothing
   
-    styl.render (err, css) ->
-      fn err, css
-    #   .set("filename", file)
-    #   .include(options.root)
-    #   .render (err, css) ->
-    #     fn err, css
+    styl
+      .set("filename", file)
+      .include(options.root)
+      .render (err, css) ->
+        fn err, css
 
 ###
   Compilers
