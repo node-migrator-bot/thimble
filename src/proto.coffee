@@ -52,7 +52,6 @@ configure = exports.configure = (env, fn) ->
 ###
   Public: Get and set setting variables
 ###
-
 set = exports.set = (setting, value) ->
   if !value
     return this.setting[setting]
@@ -107,8 +106,7 @@ render = exports.render = (file, locals = {}, fn) ->
   # Instantiate internal plugin-specific options
   options.layout = 
     layout : locals.layout
-  options.flatten = {}
-  options.embed = {}
+    
   options.support = 
     files : []
     add : (file) ->
