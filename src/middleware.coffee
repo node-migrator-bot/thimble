@@ -27,7 +27,7 @@ middleware = exports.middleware = (options) ->
     
     assetPath = path.resolve(root + '/' + url)
     
-    thimble.compiler(assetPath) null, options, (err, content) ->
+    thimble.compile(assetPath) null, options, (err, content) ->
       if err
         console.log 'err', err
         return next()
@@ -37,7 +37,7 @@ middleware = exports.middleware = (options) ->
         
       if not res.getHeader "content-type"
         # Name doesn't matter. mime just cares about .css, .js, .png, etc. not the name or if file exists
-        header = getHeader 'blah.' + thimble.compiler.getType(assetPath) 
+        header = getHeader 'blah.' + thimble.compile.getType(assetPath) 
         res.setHeader('Content-Type', header)          
       
       res.send content

@@ -57,6 +57,9 @@ exports = module.exports = (configuration = {}) ->
   
   return t
 
+# Expose .create()
+exports.create = module.exports
+
 ###
   Export version
 ###

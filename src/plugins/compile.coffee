@@ -20,14 +20,14 @@ exports = module.exports = (file) ->
     locals = options.locals || {}
     locals._thimble = options
 
-    compile = exports[extname]
-    
+    compiler = exports[extname]
+
     # Compile the file
-    if compile
-      compile file, locals, (err, str) ->
-        return next err, str
+    if compiler
+      compiler file, locals, (err, str) ->
+        return next(err, str)
     else
-      return next null, content
+      return next(null, content)
 
 ###
   Content Cache
@@ -52,7 +52,7 @@ read = (file, options, fn) ->
   options = options._thimble || {}
   str = cache[file]
 
-  return fn(null, str)  if options.cache and str
+  return fn(null, str) if options.cache and str
   fs.readFile file, "utf8", (err, str) ->
     return fn(err)  if err
     cache[file] = str  if options.cache
@@ -92,20 +92,22 @@ exports.stylus = (file, options, fn) ->
   engine = requires.stylus || (requires.stylus = require('stylus'))
   
   read file, options, (err, str) ->
-
+    return fn(err) if err
+    
     styl = engine(str)
-
+  
     try
       nib = require "nib"
       styl.use(nib())
     catch error
       # Do nothing
-
-    styl
-      .set("filename", file)
-      .include(options.root)
-      .render (err, css) ->
-        fn err, css
+  
+    styl.render (err, css) ->
+      fn err, css
+    #   .set("filename", file)
+    #   .include(options.root)
+    #   .render (err, css) ->
+    #     fn err, css
 
 ###
   Compilers
@@ -114,7 +116,7 @@ exports.stylus = (file, options, fn) ->
 # Handlebars
 exports.handlebars = (file, locals, fn) ->
   engine = requires.handlebars || (requires.handlebars = require('handlebars'))
-  
+
   read file, locals, (err, str) ->
     return fn(err) if err
     try
