@@ -5,6 +5,7 @@ server = express.createServer()
 
 server.configure ->
   server.use express.favicon()
+  server.use express.static('./public')
 
 t = thimble.create
   root: './client'
