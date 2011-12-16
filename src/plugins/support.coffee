@@ -25,7 +25,7 @@ exports = module.exports = (opts = {}) ->
       return next(null, content)
 
     $ = cheerio.load(content)
-      
+    
     files.forEach (file) ->
       extname = path.extname(file).substring 1
       
@@ -33,7 +33,7 @@ exports = module.exports = (opts = {}) ->
         tag = 'script'
       else if extname is 'css'
         tag = 'link'
-    
+      
       supportFile = opts.path + '/' + file
       fs.readFile supportFile, 'utf8', (err, str) ->
         return next(err) if err

@@ -11,7 +11,7 @@ express = require "express"
 middleware = require "./middleware"
 
 exports.boot = (server) ->
-  instance = this
+  thim = this
   options = instance.settings
   root = options.root 
   
@@ -36,7 +36,7 @@ exports.boot = (server) ->
         
         view = path.join root, view
 
-        instance.render view, locals, (err, content) ->
+        thim.render view, locals, (err, content) ->
           throw err if err
           res.send content
       

@@ -100,8 +100,8 @@ exports.handlebars = (file, options, fn) ->
   basename = path.basename file, path.extname file
   out = []
   
-  if options.support.add
-    options.support.add('handlebars.js')
+  if options.support.files
+    options.support.files.push 'handlebars.js'
     
   # Precompile the file
   read file, options, (err, str) ->
