@@ -5,4 +5,7 @@ test:
 	  --reporter list \
 		--growl
 
+mate:
+	mate src/ test/
+
 .PHONY: test

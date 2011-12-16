@@ -14,7 +14,7 @@ exports = module.exports = (file) ->
   return (content, options, next) ->
     # Try to compile the content
     
-    thimble.compiler(file) content, options, (err, content) ->
+    thimble.compile(file) content, options, (err, content) ->
       return next err if err
 
       # Flatten the content
@@ -49,7 +49,7 @@ flatten = exports.flatten = (html, directory, options = {}, callback) ->
       return callback err if err
       
       # Try to compile the content
-      thimble.compiler(filePath) content, options, (err, content) ->
+      thimble.compile(filePath) content, options, (err, content) ->
         return callback err if err
 
         # Recursively flatten
