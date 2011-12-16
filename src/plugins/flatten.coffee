@@ -7,20 +7,20 @@ thimble = require "../thimble"
 utils = require "../utils"
 
 # Allows this to be the "main" function that gets called
-exports = module.exports = (file) ->
-  directory = path.dirname file
-  
-  # Return the plugin
-  return (content, options, next) ->
-    # Try to compile the content
+exports = module.exports = (content, options, next) ->
+  if !options.source
+    return next null, content
     
-    thimble.compile(file) content, options, (err, content) ->
-      return next err if err
+  # Try to compile content
+  thimble.compile(options.source) content, options, (err, content) ->
+    return next err if err
 
-      # Flatten the content
-      flatten content, directory, options, (err, html) ->
-        # Pass the err and modified content down the chain
-        next err, html
+    directory = path.dirname options.source  
+
+    # Flatten the content
+    flatten content, directory, options, (err, html) ->
+      # Pass the err and modified content down the chain
+      next err, html
 
 flatten = exports.flatten = (html, directory, options = {}, callback) ->
   root = options.root || directory

@@ -12,7 +12,7 @@ middleware = require "./middleware"
 
 exports.boot = (server) ->
   thim = this
-  options = instance.settings
+  options = thim.settings
   root = options.root 
   
   # We're rolling our own layout, express's is not necessary

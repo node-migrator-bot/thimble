@@ -1,6 +1,8 @@
 fs = require "fs"
 path = require "path"
 
+_ = require 'underscore'
+
 thimble = require "./thimble"
 
 ###
@@ -94,39 +96,34 @@ use = exports.use = (fn) ->
       // Content is here.
     });
     
+  
 ###
 render = exports.render = (file, locals = {}, fn) ->
   self = this
 
-  options = self.settings
-  options.source = file
-  options.locals = locals
-  
-  # Implicit plugins
-  implicit = []
-    
+  # Allow fn to be passed as the 2nd param
+  if('function' is typeof locals)
+    fn = locals
+    locals = {}
+
+  # Add settings and other params to options object
+  options = _.extend self.settings,
+    source : file
+    locals : locals
+
   # If theres a layout, add the layout plugin
   if locals.layout
-    implicit.push thimble.layout(locals.layout)
+    # Instantiate plugin-specific options
+    options.layout = 
+      source : locals.layout
+    # Add to the top of the stack
+    self.stack.unshift thimble.layout(locals.layout)
+  
     
-  # Add the flattener
-  implicit.push thimble.flatten(file)
-
-  # Add the embedder
-  implicit.push thimble.embed
-  
-  # Add the support files
-  implicit.push thimble.support()
-  
-  # Push the implicit commands on the stack before the user plugins
-  self.stack = implicit.concat self.stack
-  
   fs.readFile file, "utf8", (err, content) ->
-    if err then return fn(err)
+    return fn(err) if err
+    
     handle.call self, content, options, (err, output) ->
-      # Important to clear the stack
-      self.stack = []
-      
       return fn(err, output)
   
 ###

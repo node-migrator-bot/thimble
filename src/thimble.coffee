@@ -34,7 +34,7 @@ version = '0.0.1'
 ###
 
 exports = module.exports = (configuration = {}) ->
-  t = 
+  thim = 
     settings : {}
     stack : []
   
@@ -50,12 +50,31 @@ exports = module.exports = (configuration = {}) ->
     namespace : 'window'
     
   for key, value of configuration
-    t.settings[key] = value
+    thim.settings[key] = value
+
+  # Implicit plugins
+  implicit = []
+
+  # Add the flattener
+  implicit.push exports.flatten
+  
+  # Add the embedder
+  implicit.push exports.embed
+
+  # Support options
+  thim.settings.support = 
+    files : []
+
+  # Add the support plugin
+  implicit.push exports.support()
+
+  # Push the implicit commands on the stack before the user plugins
+  thim.stack = implicit.concat thim.stack  
 
   # Add prototype functions to the instance
-  t.__proto__ = require './proto'
+  thim.__proto__ = require './proto'
   
-  return t
+  return thim
 
 # Expose .create()
 exports.create = module.exports
