@@ -56,9 +56,9 @@ configure = exports.configure = (env, fn) ->
 ###
 set = exports.set = (setting, value) ->
   if !value
-    return this.setting[setting]
+    return this.settings[setting]
   else
-    this.setting[setting] = value
+    this.settings[setting] = value
     return this
     
 ###

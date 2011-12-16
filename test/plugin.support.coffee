@@ -29,6 +29,9 @@ describe 'plugin', ->
         
         done()
     
+    ###
+      Not enough support files right now
+    ###
     # it 'should ignore files that arent css or js files', (done) ->
     #   options.support.files.push 'style.styl'
     #   
