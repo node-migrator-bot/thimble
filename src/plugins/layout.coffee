@@ -1,14 +1,11 @@
 fs      = require "fs"
 path    = require "path"
 
-cheerio = require __dirname + "/../../node_modules/cheerio"
+cheerio = require 'cheerio'
 
 exports = module.exports = (layout) ->
   
   return (content, options, next) ->
-    # Source file, main entry point (app.html, index.html)
-    source = options.source
-    
     fs.readFile layout, 'utf8', (err, html) ->
       next(err) if err
       
@@ -16,11 +13,8 @@ exports = module.exports = (layout) ->
       # HACK: Load twice, so yield will always look like <yield />
       $ = cheerio.load $.html()
       
-      # Find the basename of the source (flattener will handle rest)
-      $include = $('<include>').attr('src', path.basename(source))
-      
       # Replace yield with the include
-      $('yield').replaceWith($include)
+      $('yield').replaceWith(content)
       next(null, $.html())
     
   

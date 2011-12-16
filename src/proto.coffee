@@ -94,7 +94,6 @@ use = exports.use = (fn) ->
       // Content is here.
     });
     
-  
 ###
 render = exports.render = (file, locals = {}, fn) ->
   self = this
@@ -102,15 +101,6 @@ render = exports.render = (file, locals = {}, fn) ->
   options = self.settings
   options.source = file
   options.locals = locals
-  
-  # Instantiate internal plugin-specific options
-  options.layout = 
-    layout : locals.layout
-    
-  options.support = 
-    files : []
-    add : (file) ->
-      this.files.push file
   
   # Implicit plugins
   implicit = []
