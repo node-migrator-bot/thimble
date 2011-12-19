@@ -43,7 +43,7 @@ exports = module.exports = (opts = {}) ->
         else
           # Attach the support file
           $tag = $('<' + tag + '>').text str
-          $(opts.appendTo).append($tag.html())
+          $(opts.appendTo).append($tag)
         
         if finished()
           return next(null, $.html())
