@@ -16,7 +16,7 @@ describe 'proto', ->
       thim.render index, {}, (err, content) ->
         throw err if err
         
-        content.should.include.string "cool story, man."
+        content.should.include "cool story, man."
         
         done()
         
@@ -25,7 +25,7 @@ describe 'proto', ->
       thim.render title, { layout : layout }, (err, content) ->
         throw err if err
         
-        content.should.include.string '<html>This is a pretty important title</html>'
+        content.should.include '<html>This is a pretty important title</html>'
         
         done()
         
@@ -34,7 +34,7 @@ describe 'proto', ->
       thim.render index, (err, content) ->
         throw err if err
         
-        content.should.include.string "cool story, man."
+        content.should.include "cool story, man."
         
         done()
   
@@ -72,7 +72,7 @@ describe 'proto', ->
       
       thim.render index, (err, content) ->
         
-        content.should.include.string "cool story, man."
+        content.should.include "cool story, man."
         
         done()
         
@@ -83,7 +83,7 @@ describe 'proto', ->
         thim.use minify
       
       thim.render index, (err, content) ->
-        content.should.include.string "coolstory,man."
+        content.should.include "coolstory,man."
         
         done()
         

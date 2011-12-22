@@ -1,7 +1,7 @@
 // Use source if we have coffeescript otherwise use lib
 var dir = 'lib';
 try {
-    require('coffee-script');
+    require('./node_modules/coffee-script');
     dir = 'src';
 } catch (e) { }
 

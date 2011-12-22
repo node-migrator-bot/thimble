@@ -1,5 +1,6 @@
 
 thimble = require '../'
+should = require 'should'
 
 describe 'plugin', ->
   describe '.compile', ->
@@ -29,8 +30,7 @@ describe 'plugin', ->
     
       thimble.compile(file) null, options, (err, str) ->
         throw err if err
-        
-        str.should.include.string 'console.log("cool")'
+        str.should.include 'console.log("cool")'
         
         done()
       
@@ -42,7 +42,7 @@ describe 'plugin', ->
       thimble.compile(file) null, options, (err, str) ->
         throw err if err
         
-        str.should.include.string "hello mars!"
+        str.should.include "hello mars!"
         
         done()
         
@@ -53,7 +53,7 @@ describe 'plugin', ->
       thimble.compile(file) null, options, (err, str) ->
         throw err if err
         
-        str.should.include.string '<p>this is a post</p>'
+        str.should.include '<p>this is a post</p>'
         
         done()
         

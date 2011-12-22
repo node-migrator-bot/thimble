@@ -14,6 +14,6 @@ describe 'plugin', ->
       thimble.layout(layout) 'hi there', options, (err, content) ->
         throw err if err
 
-        content.should.include.string "<html>hi there</html>"
+        content.should.include "<html>hi there</html>"
 
         done()

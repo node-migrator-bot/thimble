@@ -17,7 +17,7 @@ describe 'plugin', ->
       thimble.embed str, options, (err, content) ->
         throw err if err
 
-        content.should.include.string "templates['template']"
+        content.should.include "templates['template']"
       
         done()
       
@@ -27,7 +27,7 @@ describe 'plugin', ->
       thimble.embed str, options, (err, content) ->
         throw err if err
 
-        content.should.include.string "src = '/template.hb'"
+        content.should.include "src = '/template.hb'"
       
         done()
         
@@ -37,6 +37,6 @@ describe 'plugin', ->
       thimble.embed str, options, (err, content) ->
         throw err if err
 
-        content.should.include.string 'src = "/template.newb"'
+        content.should.include 'src = "/template.newb"'
       
         done()

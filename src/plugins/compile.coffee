@@ -5,7 +5,7 @@
 
 path = require 'path'
 fs = require 'fs'
-
+should = require "should"
 thimble = require '../thimble'
 
 ###

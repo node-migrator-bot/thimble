@@ -18,7 +18,7 @@ describe 'plugin', ->
       thimble.flatten relative, options, (err, content) ->
         throw err if err
         
-        content.should.include.string 'This is a pretty important title'
+        content.should.include 'This is a pretty important title'
         
         done()
       
@@ -28,7 +28,7 @@ describe 'plugin', ->
       thimble.flatten absolute, options, (err, content) ->
         throw err if err
         
-        content.should.include.string 'This is a pretty important title'
+        content.should.include 'This is a pretty important title'
         
         done()
         
@@ -38,7 +38,7 @@ describe 'plugin', ->
       thimble.flatten str, options, (err, content) ->
         throw err if err
         
-        content.should.include.string '<p>this is a post</p>'
+        content.should.include '<p>this is a post</p>'
         
         done()
       

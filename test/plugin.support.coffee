@@ -25,7 +25,7 @@ describe 'plugin', ->
         $ = cheerio.load content
         
         $('head').find('script').length.should.equal 1
-        content.should.include.string ".registerHelper"
+        content.should.include ".registerHelper"
         
         done()
     
