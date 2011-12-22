@@ -1,5 +1,10 @@
 
-# Pretty elegant counter
+read = exports.read = (file, options, fn) ->
+  
+
+###
+  Counter used for async calls
+###
 after = exports.after = (length) ->
   left = length
   return ->
@@ -9,16 +14,22 @@ after = exports.after = (length) ->
     else
       return false
 
+###
+  Ridiculously simple timer
+###
 timer = exports.timer = (name) ->
-  @name = name
+  
+  name : name
+  startTime : 0
+  stopTime : 0
+  
+  start : ->
+    @startTime = Date.now()
+  
+  stop : ->
+    @stopTime = Date.now()
 
-timer::start = ->
-  @start = Date.now()
-
-timer::stop = ->
-  @stop = Date.now()
-
-timer::results = ->
-  "Results #{@name} : " + (@stop - @start) + "ms"  
-
+  results : ->
+    "Results #{@name} : " + (@stopTime - @startTime) + "ms"  
+    
 module.exports = exports
