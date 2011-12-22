@@ -1,3 +1,4 @@
+
 ###
   This is for additional support files that need to be loaded.
 ###
@@ -8,17 +9,10 @@ cheerio = require 'cheerio'
 
 utils = require '../utils'
 
-exports = module.exports = (opts = {}) ->
-  opts.appendTo ||= 'head' 
-  opts.path     ||= __dirname + '/../../support'
-  
-  return (content, options, next) ->
-    files = []
-  
-    # Support specific options
-    if options.support 
-      files = options.support.files ||= []
-  
+exports = module.exports = (content, options, next) ->
+    # console.log 'this', this
+    files = options['support files']
+    
     if files.length
       finished = utils.after files.length
     else
@@ -27,17 +21,26 @@ exports = module.exports = (opts = {}) ->
     $ = cheerio.load(content)
     
     files.forEach (file) ->
-      extname = path.extname(file).substring 1
+      # Explode object
+      opts = file.options
+      file = file.file
       
+      # Set defaults
+      opts.appendTo ||= 'head'
+      opts.path ||= options['support path']
+      
+      extname = path.extname(file).substring 1
+
       if extname is 'js'
         tag = 'script'
       else if extname is 'css'
         tag = 'link'
       
       supportFile = opts.path + '/' + file
+
       fs.readFile supportFile, 'utf8', (err, str) ->
         return next(err) if err
-        
+
         if !tag
           console.log "Cannot attach support file, " + file + ", not .js or .css"
         else

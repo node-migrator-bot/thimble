@@ -102,8 +102,13 @@ describe 'proto', ->
       test.should.be.true
       
     
-
+  describe '.support', ->
     
-    
+    it 'should set the support files of the application', ->
+      thim = thimble()
+      thim.support "handlebars.js"
+      
+      files = thim.settings('support files')
+      files[0].file.should.equal 'handlebars.js'
     
     

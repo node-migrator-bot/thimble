@@ -1,30 +1,45 @@
+
 ###
   Tests for the support plugin
 ###
 fs = require 'fs'
 
-thimble = require '../'
+should = require 'should'
 cheerio = require 'cheerio'
+
+thimble = require '../'
 
 describe 'plugin', ->
   describe '.support', ->
     fixtures = __dirname + '/fixtures'
     options = 
       root : fixtures
-      support : 
-        files : []
+      'support files' : []
     
     index = fs.readFileSync fixtures + '/index.html', 'utf8'
     
-    it 'should append support script to the <head>', (done) ->
+    it 'should not modify the content if no support files are present', (done) ->
+      options['support path'] = __dirname + '/../support/'
+
+      thimble.support index, options, (err, content) ->
+        throw err if err
+
+        content.should.equal(index)
+        content.should.not.include ".registerHelper"
+        
+        done()
+    
+    it 'should append support script to the <head> by default', (done) ->
       # Add the support file
-      options.support.files.push 'handlebars.js'
+      options['support path'] = __dirname + '/../support/'
+      options['support files'].push
+        file : 'handlebars.js'
+        options : {}
       
-      thimble.support() index, options, (err, content) ->
+      thimble.support index, options, (err, content) ->
         throw err if err
         $ = cheerio.load content
-        
-        $('head').find('script').length.should.equal 1
+
         content.should.include ".registerHelper"
         
         done()

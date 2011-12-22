@@ -80,6 +80,16 @@ use = exports.use = (fn) ->
   return this
 
 ###
+  Public: Add support files to your application at runtime
+###
+support = exports.support = (file, options = {}) ->
+  this.set('support files').push
+    file : file
+    options : options
+    
+  return this
+
+###
   Public: renders the application
   
   file - a String that is the main entry point into our application
@@ -131,7 +141,8 @@ render = exports.render = (file, locals = {}, fn) ->
   
 ###
 handle = (content, options, out) ->
-  stack = this.stack
+  self = this
+  stack = self.stack
   index = 0
   
   next = (err, content) ->
@@ -148,16 +159,16 @@ handle = (content, options, out) ->
       if err
         # Give the middleware a chance to catch it
         if arity is 4
-          layer(err, content, options, next)
+          layer.call(self, err, content, options, next)
         else
-          next(err)
+          next.call(self, err)
       else if arity < 4
-        layer(content, options, next)
+        layer.call(self, content, options, next)
       else
-        next()
+        next.call(self)
     catch e
-      next(e)
+      next.call(self, e)
       
-  next(null, content)
+  next.call(self, null, content)
 
 module.exports = exports
