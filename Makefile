@@ -1,8 +1,7 @@
 
 test:
 	@./node_modules/.bin/mocha \
-		--require should \
-	  --reporter list \
+		--reporter list \
 		--growl
 
 mate:
