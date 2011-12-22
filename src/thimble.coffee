@@ -93,6 +93,13 @@ extensions = exports.extensions =
   'md'     : 'markdown'
 
 ###
+  Hook static application modules onto thimble object
+###
+
+exports.utils = require './utils'
+exports.middleware = require './middleware'
+
+###
   Read in all the plugins
 ###
 fs.readdirSync(__dirname + "/plugins").forEach (filename) ->
