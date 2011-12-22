@@ -7,7 +7,7 @@ server.configure ->
   server.use express.favicon()
   server.use express.static('./public')
 
-t = thimble.create
+thim = thimble.create
   root: './client'
   paths :
     support : './support'
@@ -17,7 +17,7 @@ t = thimble.create
   # t.use thimble.focus()
   # t.use thimble.flatten()
   
-t.start server
+thim.start server
 
 
 #   
