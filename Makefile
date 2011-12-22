@@ -5,6 +5,6 @@ test:
 		--growl
 
 mate:
-	mate src/ test/
+	@mate src/ test/
 
 .PHONY: test
