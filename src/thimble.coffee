@@ -29,7 +29,9 @@ _ = require "underscore"
 
 exports = module.exports = (configuration = {}) ->
   thim = 
-    settings : {}
+    settings : (setting) ->
+      if this.settings[setting] 
+        return this.settings[setting]
     stack : []
   
   # Get the env from how $ node is run
@@ -42,6 +44,8 @@ exports = module.exports = (configuration = {}) ->
     paths : {}
     template : 'JST'
     namespace : 'window'
+    'support path' : __dirname + '/../support/'
+    'support files' : []
     
   for key, value of configuration
     thim.settings[key] = value
@@ -55,12 +59,8 @@ exports = module.exports = (configuration = {}) ->
   # Add the embedder
   implicit.push exports.embed
 
-  # Support options
-  thim.settings.support = 
-    files : []
-
   # Add the support plugin
-  implicit.push exports.support()
+  implicit.push exports.support
 
   # Push the implicit commands on the stack before the user plugins
   thim.stack = implicit.concat thim.stack  
