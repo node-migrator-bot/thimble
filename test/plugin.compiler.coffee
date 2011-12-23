@@ -4,10 +4,20 @@ should = require 'should'
 
 describe 'plugin', ->
   describe '.compile', ->
+    thim = undefined
     
     fixtures = __dirname + '/fixtures'
     options = 
       root : fixtures
+      plugins : []
+    
+    beforeEach (done) ->
+      thim = thimble(options)
+      
+      # Add the compile middleware
+      thim.use thimble.compile()
+      
+      done()
       
     ###
       Wait till leaky var is fixed
@@ -27,12 +37,16 @@ describe 'plugin', ->
     
     it 'should compile coffeescript', (done) ->
       file = fixtures + '/cool.coffee'
-    
-      thimble.compile(file) null, options, (err, str) ->
-        throw err if err
-        str.should.include 'console.log("cool")'
-        
+      
+      thim.render 'cool.coffee', {}, (err, str) ->
+        console.log err
+        console.log str
         done()
+      
+      # thimble.compile(file) null, options, (err, str) ->
+      #   throw err if err
+      #   str.should.include 'console.log("cool")'
+        
       
     it 'should compile handlebars', (done) ->
       file = fixtures + '/template.hb'
