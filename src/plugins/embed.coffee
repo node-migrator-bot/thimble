@@ -14,7 +14,7 @@ utils = require '../utils'
 exports = module.exports = (content, options, next) ->
   $ = cheerio.load content
   $scripts = $('script[type=text/template]')
-  
+
   if !$scripts.length
     return next(null, content)
   else
@@ -100,6 +100,8 @@ exports.handlebars = (file, options, fn) ->
   engine = requires.handlebars || (requires.handlebars = require('handlebars'))
   basename = path.basename file, path.extname file
   out = []
+  
+  options.instance.support 'handlebars.js'
   
   # Precompile the file
   read file, options, (err, str) ->

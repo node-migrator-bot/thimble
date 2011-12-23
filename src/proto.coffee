@@ -118,18 +118,36 @@ support = exports.support = (file, options = {}) ->
 render = exports.render = (file, locals = {}, fn) ->
   self = this
 
+  # If nothing is set, don't do anything
+  if !locals and !fn then return;
+  
+  # Obtain the source, and add it to the settings
+  source = path.join(self.settings.root, file)
+  self.settings.source = source
+
+  fs.readFile source, "utf8", (err, content) ->
+    return fn(err) if err
+
+    eval.call self, content, locals, fn
+
+###
+  Evaluate a string
+###
+eval = exports.eval = (content, locals = {}, fn) ->
+  self = this
+
+  # If nothing is set, don't do anything
+  if !locals and !fn then return;
+
   # Allow fn to be passed as the 2nd param
   if('function' is typeof locals)
     fn = locals
     locals = {}
-  
+
   # Add settings and other params to options object
   options = _.extend self.settings,
-    locals : locals
-  
-  # Obtain the source
-  source = options.source = path.join(self.settings.root, file)
-  
+    'locals' : locals
+
   # Save a reference to the instance
   options.instance = self
 
@@ -141,11 +159,9 @@ render = exports.render = (file, locals = {}, fn) ->
     # Add to the top of the stack
     self.stack.unshift thimble.layout(locals.layout)
   
-  fs.readFile source, "utf8", (err, content) ->
-    return fn(err) if err
-
-    handle.call self, content, options, (err, output) ->
-      return fn(err, output)
+  # Kick off the plugins
+  handle.call self, content, options, (err, output) ->
+    return fn(err, output)
   
 ###
   Private: Handle the plugin layers

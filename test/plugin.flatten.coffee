@@ -1,3 +1,4 @@
+
 ###
   Tests for the flatten plugin
 ###
@@ -7,15 +8,21 @@ fixtures = __dirname + '/fixtures'
 
 describe 'plugin', ->
   describe '.flatten', ->
+    thim = undefined
     
     options =
       root : fixtures
       source : fixtures + '/index.html'
-        
+    
+    beforeEach (done) ->
+      thim = thimble options
+      thim.use thimble.flatten
+      done()
+       
     it 'should include relative files', (done) ->
       relative = "<h2><include src = 'title.html' /></h2>"
       
-      thimble.flatten relative, options, (err, content) ->
+      thim.eval relative, options, (err, content) ->
         throw err if err
         
         content.should.include 'This is a pretty important title'
@@ -25,7 +32,7 @@ describe 'plugin', ->
     it 'should include absolute files', (done) ->
       absolute = "<h2><include src = '/title.html' /></h2>"
       
-      thimble.flatten absolute, options, (err, content) ->
+      thim.eval absolute, options, (err, content) ->
         throw err if err
         
         content.should.include 'This is a pretty important title'
@@ -35,7 +42,7 @@ describe 'plugin', ->
     it 'should work with plugins', (done) ->
       str = "<h2><include src = 'post.jade' /></h2>"
       
-      thimble.flatten str, options, (err, content) ->
+      thim.eval str, options, (err, content) ->
         throw err if err
         
         content.should.include '<p>this is a post</p>'

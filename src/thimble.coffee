@@ -28,6 +28,8 @@ _ = require "underscore"
 ###
 
 exports = module.exports = (configuration = {}) ->
+  configuration = _.clone(configuration)
+
   thim = 
     stack : []
     settings : (setting) ->
@@ -36,11 +38,11 @@ exports = module.exports = (configuration = {}) ->
   
   # Get the env from how $ node is run
   env = process.env.NODE_ENV || 'development'
-  
+
   # Set the defaults
   _.defaults configuration,
-    root :  './views'
-    env :   env
+    root : ''
+    env : env
     paths : {}
     template : 'JST'
     namespace : 'window'
@@ -53,7 +55,7 @@ exports = module.exports = (configuration = {}) ->
 
   # Implicit plugins
   implicit = []
-
+  # console.log thim
   # Add the implicit plugins
   for plugin in thim.settings.plugins
     implicit.push exports[plugin]
