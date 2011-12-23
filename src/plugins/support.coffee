@@ -45,8 +45,13 @@ exports = module.exports = (content, options, next) ->
           console.log "Cannot attach support file, " + file + ", not .js or .css"
         else
           # Attach the support file
-          $tag = $('<' + tag + '>').text str
-          $(opts.appendTo).append($tag)
+          $asset = $('<' + tag + '>').text str
+          $tag = $(opts.appendTo)
+          if $tag.length
+            $tag.append($asset)
+            html = $.html()
+          else
+            html = $asset.html() + '\n' + $.html()
         
         if finished()
-          return next(null, $.html())
+          return next(null, html)

@@ -13,7 +13,7 @@ describe 'plugin', ->
     
     beforeEach (done) ->
       thim = thimble(options)
-      
+
       # Add the compile middleware
       thim.use thimble.compile()
       
@@ -37,7 +37,7 @@ describe 'plugin', ->
     
     it 'should compile coffeescript', (done) ->
       file = fixtures + '/cool.coffee'
-      
+
       thim.render 'cool.coffee', {}, (err, str) ->
         console.log err
         console.log str

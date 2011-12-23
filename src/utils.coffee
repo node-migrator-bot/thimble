@@ -1,6 +1,6 @@
 
 read = exports.read = (file, options, fn) ->
-  
+  # Fill in with caching
 
 ###
   Counter used for async calls
