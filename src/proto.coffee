@@ -121,6 +121,9 @@ render = exports.render = (file, locals = {}, fn) ->
     source : file
     locals : locals
 
+  # Save a reference to the instance
+  options.instance = self
+
   # If theres a layout, add the layout plugin
   if locals.layout
     # Instantiate plugin-specific options
@@ -128,7 +131,6 @@ render = exports.render = (file, locals = {}, fn) ->
       source : locals.layout
     # Add to the top of the stack
     self.stack.unshift thimble.layout(locals.layout)
-  
     
   fs.readFile file, "utf8", (err, content) ->
     return fn(err) if err
@@ -138,7 +140,7 @@ render = exports.render = (file, locals = {}, fn) ->
   
 ###
   Private: Handle the plugin layers
-  
+
 ###
 handle = (content, options, out) ->
   self = this
@@ -159,16 +161,17 @@ handle = (content, options, out) ->
       if err
         # Give the middleware a chance to catch it
         if arity is 4
-          layer.call(self, err, content, options, next)
+          layer(err, content, options, next)
         else
-          next.call(self, err)
+          next(err)
       else if arity < 4
-        layer.call(self, content, options, next)
+        layer(content, options, next)
       else
-        next.call(self)
+        next()
     catch e
-      next.call(self, e)
+      next(e)
       
-  next.call(self, null, content)
+  # Kick it off
+  next(null, content)
 
 module.exports = exports
