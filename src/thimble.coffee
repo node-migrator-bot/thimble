@@ -29,10 +29,10 @@ _ = require "underscore"
 
 exports = module.exports = (configuration = {}) ->
   thim = 
+    stack : []
     settings : (setting) ->
       if this.settings[setting] 
         return this.settings[setting]
-    stack : []
   
   # Get the env from how $ node is run
   env = process.env.NODE_ENV || 'development'
@@ -46,6 +46,7 @@ exports = module.exports = (configuration = {}) ->
     namespace : 'window'
     'support path' : __dirname + '/../support/'
     'support files' : []
+    plugins : ['embed', 'flatten', 'support']
     
   for key, value of configuration
     thim.settings[key] = value
@@ -53,21 +54,16 @@ exports = module.exports = (configuration = {}) ->
   # Implicit plugins
   implicit = []
 
-  # Add the flattener
-  implicit.push exports.flatten
-  
-  # Add the embedder
-  implicit.push exports.embed
-
-  # Add the support plugin
-  implicit.push exports.support
+  # Add the implicit plugins
+  for plugin in thim.settings.plugins
+    implicit.push exports[plugin]
 
   # Push the implicit commands on the stack before the user plugins
   thim.stack = implicit.concat thim.stack  
 
   # Add prototype functions to the instance
   thim.__proto__ = require './proto'
-  
+
   return thim
 
 # Expose .create()

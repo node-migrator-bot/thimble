@@ -80,6 +80,13 @@ use = exports.use = (fn) ->
   return this
 
 ###
+  Public: Pushes plugins immediately next in line
+###
+
+next = exports.next = (fn) ->
+  # Not sure how to do this one right now
+
+###
   Public: Add support files to your application at runtime
 ###
 support = exports.support = (file, options = {}) ->
@@ -115,12 +122,14 @@ render = exports.render = (file, locals = {}, fn) ->
   if('function' is typeof locals)
     fn = locals
     locals = {}
-
+  
   # Add settings and other params to options object
   options = _.extend self.settings,
-    source : file
     locals : locals
-
+  
+  # Obtain the source
+  source = options.source = path.join(self.settings.root, file)
+  
   # Save a reference to the instance
   options.instance = self
 
@@ -131,10 +140,10 @@ render = exports.render = (file, locals = {}, fn) ->
       source : locals.layout
     # Add to the top of the stack
     self.stack.unshift thimble.layout(locals.layout)
-    
-  fs.readFile file, "utf8", (err, content) ->
+  
+  fs.readFile source, "utf8", (err, content) ->
     return fn(err) if err
-    
+
     handle.call self, content, options, (err, output) ->
       return fn(err, output)
   

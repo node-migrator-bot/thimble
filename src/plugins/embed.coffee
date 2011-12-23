@@ -39,7 +39,7 @@ exports = module.exports = (content, options, next) ->
     precompile = exports[extname]    
     
     assetPath = options.root + "/" + source
-    
+
     if precompile
       precompile assetPath, options, (err, str) ->
         # Remove the attributes that will cause script not to execute
