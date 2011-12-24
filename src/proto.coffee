@@ -154,10 +154,10 @@ eval = exports.eval = (content, locals = {}, fn) ->
   # If theres a layout, add the layout plugin
   if locals.layout
     # Instantiate plugin-specific options
-    options.layout = 
-      source : locals.layout
+    options.layout = locals.layout
+      
     # Add to the top of the stack
-    self.stack.unshift thimble.layout(locals.layout)
+    self.stack.unshift thimble.layout
   
   # Kick off the plugins
   handle.call self, content, options, (err, output) ->
