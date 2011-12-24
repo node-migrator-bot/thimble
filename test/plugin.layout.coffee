@@ -1,17 +1,27 @@
+
 ###
   Tests for the layout plugin
 ###
 thimble = require '../'
-fixture = __dirname + '/fixtures'
+fixtures = __dirname + '/fixtures'
 
 describe 'plugin', ->
   describe '.layout', ->
+    thim = undefined
+    
+    options =
+      root : fixtures
+    
+    beforeEach (done) ->
+      thim = thimble(options)
+      thim.use thimble.layout
+      done()
     
     it 'should place content within <yield /> tag', (done) ->
-      layout = fixture + '/layout.html'
-      options = {}
+      str = 'hi there'
+      options.layout = 'layout.html'
       
-      thimble.layout(layout) 'hi there', options, (err, content) ->
+      thim.eval str, options, (err, content) ->
         throw err if err
 
         content.should.include "<html>hi there</html>"
