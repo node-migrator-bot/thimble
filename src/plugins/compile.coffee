@@ -5,7 +5,7 @@
 
 path = require 'path'
 fs = require 'fs'
-should = require "should"
+
 thimble = require '../thimble'
 
 ###
@@ -13,50 +13,29 @@ thimble = require '../thimble'
 ###
 
 exports = module.exports = (file) ->
-  extname = path.extname(file).substring(1)
+  # Allow files or compilers to be specified
+  if file.indexOf '.' >= 0
+    extname = path.extname(file).substring(1)
+  else
+    extname = file
+    
   extname = if (thimble.extensions[extname]) then thimble.extensions[extname] else extname
   
   return (content, options, next) ->
-    locals = options.locals || {}
-    locals._thimble = options
-
     compiler = exports[extname]
 
     # Compile the file
     if compiler
-      compiler file, locals, (err, str) ->
+      compiler content, options, (err, str) ->
         return next(err, str)
     else
       return next(null, content)
-
-###
-  Content Cache
-###
-
-cache = {};
 
 ###
   Requires Cache
 ###
 
 requires = {};
-
-###
-  Read `file` with `options` with
-  callback `(err, str)`. When `options.cache`
-  is true the template string will be cached.  
-###
-
-read = (file, options, fn) ->
-  # Figure out why I need this "|| {}"
-  options = options._thimble || {}
-  str = cache[file]
-
-  return fn(null, str) if options.cache and str
-  fs.readFile file, "utf8", (err, str) ->
-    return fn(err)  if err
-    cache[file] = str  if options.cache
-    fn null, str
 
 ###
   Private extensions to types map
@@ -79,62 +58,45 @@ exports.getType = (file) ->
 ###
 
 # Coffeescript
-exports.coffeescript = (file, options, fn) ->
+exports.coffeescript = (content, options, fn) ->
   options = options._thimble
   engine = requires.coffeescript || (requires.coffeescript = require('coffee-script'))
   
-  read file, options, (err, str) ->
-    fn err, engine.compile(str)
+  try
+    str = engine.compile(content)
+    fn null, str
+  catch err
+    fn err
 
 # Stylus
-exports.stylus = (file, options, fn) ->
+exports.stylus = (content, options, fn) ->
   options = options._thimble
   engine = requires.stylus || (requires.stylus = require('stylus'))
   
-  read file, options, (err, str) ->
-    return fn(err) if err
-    
-    styl = engine(str)
+  styl = engine str
   
-    try
-      nib = require "nib"
-      styl.use(nib())
-    catch error
-      # Do nothing
+  # Try adding nib
+  try
+    nib = requires.nib || (requires.nib = require('nib'))
+    styl.use(nib())
+  catch error
+    # Do nothing - nib wasn't added
   
-    styl
-      .set("filename", file)
-      .include(options.root)
-      .render (err, css) ->
-        fn err, css
+  styl
+    .set('filename', options.source)
+    .include(options.root)
+    .render (err, css) ->
+      fn err, css
 
 ###
   Compilers
 ###
-
-# Handlebars
-exports.handlebars = (file, locals, fn) ->
-  engine = requires.handlebars || (requires.handlebars = require('handlebars'))
-
-  read file, locals, (err, str) ->
-    return fn(err) if err
-    try
-      locals.filename = file
-      tmpl = engine.compile str, locals
-      fn null, tmpl(locals)
-    catch err
-      fn err
   
-exports.markdown = (file, locals, fn) ->
+# Markdown
+exports.markdown = (content, options, fn) ->
   console.log 'coming **soon** ;-P'
-    
-###
-  consolidate.js compilers
-  Author : TJ Holowaychuk - @visionmedia
-  URL : https://github.com/visionmedia/consolidate.js
-###
 
 # Jade
-exports.jade = (file, locals, fn) ->
-  engine = requires.jade or (requires.jade = require("jade"))
-  engine.renderFile file, locals, fn
+# exports.jade = (content, options, fn) ->
+#   engine = requires.jade or (requires.jade = require("jade"))
+#   engine.renderFile file, options.locals, fn

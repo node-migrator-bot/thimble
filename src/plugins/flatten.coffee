@@ -10,17 +10,13 @@ utils = require "../utils"
 exports = module.exports = (content, options, next) ->
   if !options.source
     return next null, content
-    
-  # Try to compile content
-  thimble.compile(options.source) content, options, (err, content) ->
-    return next err if err
 
-    directory = path.dirname options.source  
+  directory = path.dirname options.source  
 
-    # Flatten the content
-    flatten content, directory, options, (err, html) ->
-      # Pass the err and modified content down the chain
-      next err, html
+  # Flatten the content
+  flatten content, directory, options, (err, html) ->
+    # Pass the err and modified content down the chain
+    next err, html
 
 flatten = exports.flatten = (html, directory, options = {}, callback) ->
   root = options.root || directory
