@@ -15,7 +15,7 @@ describe 'plugin', ->
       thim = thimble(options)
 
       # Add the compile middleware
-      thim.use thimble.compile()
+      # thim.use thimble.compile
       
       done()
       
