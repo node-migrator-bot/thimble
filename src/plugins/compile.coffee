@@ -18,7 +18,7 @@ exports = module.exports = (file) ->
     extname = path.extname(file).substring(1)
   else
     extname = file
-    
+
   extname = if (thimble.extensions[extname]) then thimble.extensions[extname] else extname
 
   return (content, options, next) ->
@@ -59,9 +59,8 @@ exports.getType = (file) ->
 
 # Coffeescript
 exports.coffeescript = (content, options, fn) ->
-  options = options._thimble
   engine = requires.coffeescript || (requires.coffeescript = require('coffee-script'))
-  
+
   try
     str = engine.compile(content)
     fn null, str
@@ -70,7 +69,6 @@ exports.coffeescript = (content, options, fn) ->
 
 # Stylus
 exports.stylus = (content, options, fn) ->
-  options = options._thimble
   engine = requires.stylus || (requires.stylus = require('stylus'))
   
   styl = engine str
@@ -108,7 +106,7 @@ exports.jade = (content, options, fn) ->
   
   try
     # Compile jade without any locals
-    str = engine.compile(content, options)({})
+    str = engine.compile(content, options)(options.locals || {})
     fn null, str
   catch err
     fn err

@@ -13,10 +13,6 @@ describe 'plugin', ->
     
     beforeEach (done) ->
       thim = thimble(options)
-      thim.use thimble.flatten
-      # Add the compile middleware
-      # thim.use thimble.compile
-      
       done()
       
     ###
@@ -36,10 +32,9 @@ describe 'plugin', ->
     #     done()
     
     it 'should compile coffeescript', (done) ->
-
       thim.render 'cool.coffee', {}, (err, str) ->
-        console.log err
-        console.log str
+        throw err if err
+        str.should.include 'return console.log("cool");'
         done()
       
       # thimble.compile(file) null, options, (err, str) ->
@@ -71,6 +66,7 @@ describe 'plugin', ->
     #     done()
         
     it 'should compile markdown', (done) ->
+      thim.use thimble.flatten
       str = '<include src = "markdown.md" />'
       thim.eval str, {}, (err, str) ->
         throw err if err
