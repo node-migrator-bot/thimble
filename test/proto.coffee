@@ -43,15 +43,6 @@ describe 'proto', ->
         
         done()
   
-    it 'should render something with local variables', (done) ->
-      
-      thim.render template, {planet : 'venus'}, (err, content) ->
-        throw err if err
-        
-        content.should.equal '<h2>hello venus!</h2>'
-        
-        done()
-  
   describe '.use', ->
     thim = thimble()
     
