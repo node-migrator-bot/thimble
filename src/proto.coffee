@@ -157,9 +157,9 @@ eval = exports.eval = (content, options = {}, fn) ->
   
   # Compile the template at the end
   # This should be moved into thim.configure 'dev'
-  if options.locals
+  if options.source
     self.stack.push thimble.compile(options.source)
-  
+
   # Kick off the plugins
   handle.call self, content, options, (err, output) ->
     return fn(err, output)
