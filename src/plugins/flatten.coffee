@@ -8,11 +8,15 @@ utils = require "../utils"
 
 # Allows this to be the "main" function that gets called
 exports = module.exports = (content, options, next) ->
-  if !options.source
+  directory = null
+  if options.source
+    directory = path.dirname options.source
+  else if options.root
+    directory = options.root
+
+  if !directory
     return next null, content
-
-  directory = path.dirname options.source  
-
+  
   # Flatten the content
   flatten content, directory, options, (err, html) ->
     # Pass the err and modified content down the chain
@@ -26,6 +30,7 @@ flatten = exports.flatten = (html, directory, options = {}, callback) ->
 
   # Gather all includes
   $include = $('include')
+
   if $include.length is 0
     return callback null, $.html()
   
@@ -40,7 +45,7 @@ flatten = exports.flatten = (html, directory, options = {}, callback) ->
       filePath = root + "/" + src
     else
       filePath = directory + "/" + src
-    
+
     fs.readFile filePath, 'utf8', (err, content) ->
       return callback err if err
       
