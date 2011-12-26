@@ -20,7 +20,7 @@ exports = module.exports = (file) ->
     extname = file
     
   extname = if (thimble.extensions[extname]) then thimble.extensions[extname] else extname
-  
+
   return (content, options, next) ->
     compiler = exports[extname]
 
@@ -94,7 +94,15 @@ exports.stylus = (content, options, fn) ->
   
 # Markdown
 exports.markdown = (content, options, fn) ->
-  console.log 'coming **soon** ;-P'
+  engine = requires.markdown || (requires.markdown = require('github-flavored-markdown'))
+  
+  try
+    markdown = engine.parse content
+    fn null, markdown
+  catch err
+    fn err
+  
+  
 
 # Jade
 # exports.jade = (content, options, fn) ->
