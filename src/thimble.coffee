@@ -49,7 +49,7 @@ exports = module.exports = (configuration = {}) ->
     'support path' : __dirname + '/../support/'
     'support files' : []
     plugins : ['embed', 'flatten', 'support']
-    instance : this
+    instance : thim
     
   for key, value of configuration
     thim.settings[key] = value

@@ -30,7 +30,6 @@ exports = module.exports = (file, locals = {}) ->
         options.locals = locals
         
       compiler content, options, (err, str) ->
-        options.locals = tmpLocals
         return next(err, str)
     else
       return next(null, content)

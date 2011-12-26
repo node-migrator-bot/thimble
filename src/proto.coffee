@@ -117,13 +117,14 @@ support = exports.support = (file, options = {}) ->
 ###
 render = exports.render = (file, locals = {}, fn) ->
   self = this
+  options = self.settings
   
   # If nothing is set, don't do anything
   if !locals and !fn then return;
   
   # Obtain the source, and add it to the settings
-  source = path.join(self.settings('root'), file)
-  self.set 'source', source
+  source = path.join(options.root, file)
+  options.source = source
 
   fs.readFile source, "utf8", (err, content) ->
     return fn(err) if err
@@ -136,7 +137,6 @@ render = exports.render = (file, locals = {}, fn) ->
 eval = exports.eval = (content, locals = {}, fn) ->
   self = this
   options = self.settings
-  console.log options
   
   # If nothing is set, don't do anything
   if !locals and !fn then return;
@@ -148,14 +148,14 @@ eval = exports.eval = (content, locals = {}, fn) ->
 
   # If theres a layout, add the layout plugin
   if locals.layout
-    self.set 'layout', locals.layout
+    options.layout = locals.layout
     # Add to the top of the stack
     self.stack.unshift thimble.layout
   
   # Compile the template at the end
   # This should be moved into thim.configure 'dev'
-  if source
-    self.stack.push thimble.compile(source, locals)
+  if options.source
+    self.stack.push thimble.compile(options.source, locals)
 
   # Kick off the plugins
   handle.call self, content, options, (err, output) ->
