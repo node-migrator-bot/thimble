@@ -1,9 +1,8 @@
 path = require "path"
 fs = require "fs"
 mime = require "mime"
-
+parse = require('url').parse
 thimble = require './thimble'
-utils = require './utils'
 
 middleware = exports.middleware = (options) ->
   root = options.root
@@ -14,7 +13,8 @@ middleware = exports.middleware = (options) ->
   # Return middleware
   return (req, res, next) ->
     url = req.url
-
+    console.log parse req.url
+    
     # Allow custom paths
     if url.split(':').length > 1
       url = path.basename(url)
@@ -26,21 +26,28 @@ middleware = exports.middleware = (options) ->
       return next()
     
     assetPath = path.resolve(root + '/' + url)
-    
-    thimble.compile(assetPath) null, options, (err, content) ->
+
+    thimble.utils.read assetPath, (err, content) ->
       if err
-        console.log 'err', err
-        return next()
-        
+        console.log req.method
+        return next(err)
+      
       if !content
         return next()
         
-      if not res.getHeader "content-type"
-        # Name doesn't matter. mime just cares about .css, .js, .png, etc. not the name or if file exists
-        header = getHeader 'blah.' + thimble.compile.getType(assetPath) 
-        res.setHeader('Content-Type', header)          
-      
-      res.send content
+      thimble.compile(assetPath) content, options, (err, str) ->
+        if err
+          return next(err)
+        
+        if !content
+          return next()
+        
+        if not res.getHeader "content-type"
+          # Name doesn't matter. mime just cares about .css, .js, .png, etc. not the name or if file exists
+          header = getHeader 'blah.' + thimble.compile.getType(assetPath) 
+          res.setHeader('Content-Type', header)          
+
+        res.send content
   
 # Implementation pulled from static.js in Connect
 getHeader = (assetPath) ->

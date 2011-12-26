@@ -104,7 +104,7 @@ describe 'proto', ->
       thim = thimble()
       thim.support "handlebars.js"
       
-      files = thim.settings('support files')
+      files = thim.settings['support files']
       files[0].file.should.equal 'handlebars.js'
     
     

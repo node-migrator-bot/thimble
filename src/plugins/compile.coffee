@@ -74,7 +74,7 @@ exports.coffeescript = (content, options, fn) ->
 exports.stylus = (content, options, fn) ->
   engine = requires.stylus || (requires.stylus = require('stylus'))
   
-  styl = engine str
+  styl = engine content
   
   # Try adding nib
   try
