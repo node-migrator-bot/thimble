@@ -15,9 +15,11 @@ describe 'plugin', ->
       
     beforeEach (done) ->
       thim = thimble(options)
-      # console.log thim.settings('support files')
+      
+      # Add the plugins
       thim.use thimble.embed
       thim.use thimble.support
+      
       done()
       
     # Currently does not work at all, options not defined (namespace), support file not checked
@@ -25,6 +27,7 @@ describe 'plugin', ->
       str = "<script type = 'text/template' src = '/template.hb'>"
 
       thim.eval str, {}, (err, content) ->
+        throw err if err
         # Make sure the support file was included
         content.should.include 'Handlebars.registerHelper'
         # Make sure the template was added
