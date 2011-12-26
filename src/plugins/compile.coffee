@@ -12,7 +12,7 @@ thimble = require '../thimble'
   Used to compile languages for both assets and views
 ###
 
-exports = module.exports = (file) ->
+exports = module.exports = (file, locals = {}) ->
   # Allow files or compilers to be specified
   if file.indexOf '.' >= 0
     extname = path.extname(file).substring(1)
@@ -26,7 +26,11 @@ exports = module.exports = (file) ->
 
     # Compile the file
     if compiler
+      if locals
+        options.locals = locals
+        
       compiler content, options, (err, str) ->
+        options.locals = tmpLocals
         return next(err, str)
     else
       return next(null, content)
