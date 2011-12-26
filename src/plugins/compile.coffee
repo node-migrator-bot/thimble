@@ -97,14 +97,19 @@ exports.markdown = (content, options, fn) ->
   engine = requires.markdown || (requires.markdown = require('github-flavored-markdown'))
   
   try
-    markdown = engine.parse content
-    fn null, markdown
+    str = engine.parse content
+    fn null, str
+  catch err
+    fn err
+
+# Jade
+exports.jade = (content, options, fn) ->
+  engine = requires.jade or (requires.jade = require("jade"))
+  
+  try
+    # Compile jade without any locals
+    str = engine.compile(content, options)({})
+    fn null, str
   catch err
     fn err
   
-  
-
-# Jade
-# exports.jade = (content, options, fn) ->
-#   engine = requires.jade or (requires.jade = require("jade"))
-#   engine.renderFile file, options.locals, fn
