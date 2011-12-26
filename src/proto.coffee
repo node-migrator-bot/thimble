@@ -115,49 +115,50 @@ support = exports.support = (file, options = {}) ->
     
   
 ###
-render = exports.render = (file, locals = {}, fn) ->
+render = exports.render = (file, options = {}, fn) ->
   self = this
-
+  
   # If nothing is set, don't do anything
-  if !locals and !fn then return;
+  if !options and !fn then return;
   
   # Obtain the source, and add it to the settings
   source = path.join(self.settings.root, file)
-  self.settings.source = source
+  options.source = source
 
   fs.readFile source, "utf8", (err, content) ->
     return fn(err) if err
 
-    eval.call self, content, locals, fn
+    eval.call self, content, options, fn
 
 ###
   Evaluate a string
 ###
-eval = exports.eval = (content, locals = {}, fn) ->
+eval = exports.eval = (content, options = {}, fn) ->
   self = this
-
+  
   # If nothing is set, don't do anything
-  if !locals and !fn then return;
+  if !options and !fn then return;
 
   # Allow fn to be passed as the 2nd param
-  if('function' is typeof locals)
-    fn = locals
-    locals = {}
+  if('function' is typeof options)
+    fn = options
+    options = {}
 
   # Add settings and other params to options object
-  options = _.extend self.settings,
-    'locals' : locals
+  options = _.extend self.settings, options
 
   # Save a reference to the instance
   options.instance = self
 
   # If theres a layout, add the layout plugin
-  if locals.layout
-    # Instantiate plugin-specific options
-    options.layout = locals.layout
-      
+  if options.layout      
     # Add to the top of the stack
     self.stack.unshift thimble.layout
+  
+  # Compile the template at the end
+  # This should be moved into thim.configure 'dev'
+  if options.locals
+    self.stack.push thimble.compile(options.source)
   
   # Kick off the plugins
   handle.call self, content, options, (err, output) ->
