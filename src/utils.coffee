@@ -1,3 +1,5 @@
+fs = require 'fs'
+
 cache = {}
 
 ###
@@ -7,7 +9,7 @@ cache = {}
 ###
   Read function with caching
 ###
-read = exports.read = (file, options, fn) ->
+read = exports.read = (file, fn) ->
   str = cache[file]
   if str
     return fn(null, str)
@@ -15,7 +17,7 @@ read = exports.read = (file, options, fn) ->
   fs.readFile file, "utf8", (err, str) ->
     return fn(err) if err
     cache[file] = str
-    fn null, str
+    fn(null, str)
     
 ###
   Counter used for async calls

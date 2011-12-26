@@ -32,10 +32,8 @@ exports = module.exports = (configuration = {}) ->
 
   thim = 
     stack : []
-    settings : (setting) ->
-      if this.settings[setting] 
-        return this.settings[setting]
-  
+    settings : {}
+    
   # Get the env from how $ node is run
   env = process.env.NODE_ENV || 'development'
 

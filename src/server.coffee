@@ -66,9 +66,7 @@ render = exports.render = (options) ->
       # Default to .html if no view extension given
       if !path.extname(view)
         view += ".html"
-    
-      view = path.join options.root, view
-
+      
       thim.render view, locals, (err, content) ->
         return next(err) if err
         res.send content

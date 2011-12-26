@@ -120,13 +120,14 @@ render = exports.render = (file, locals = {}, fn) ->
   options = self.settings
   
   # If nothing is set, don't do anything
-  if !locals and !fn then return;
+  if !locals and !fn
+    return;
   
   # Obtain the source, and add it to the settings
-  source = path.join(options.root, file)
-  options.source = source
+  # console.log options.root + '/' + file
+  options.source = path.join(options.root, file)
 
-  fs.readFile source, "utf8", (err, content) ->
+  fs.readFile options.source, "utf8", (err, content) ->
     return fn(err) if err
 
     eval.call self, content, locals, fn
@@ -139,7 +140,8 @@ eval = exports.eval = (content, locals = {}, fn) ->
   options = self.settings
   
   # If nothing is set, don't do anything
-  if !locals and !fn then return;
+  if !locals and !fn
+    return;
 
   # Allow fn to be passed as the 2nd param
   if('function' is typeof locals)
@@ -151,7 +153,7 @@ eval = exports.eval = (content, locals = {}, fn) ->
     options.layout = locals.layout
     # Add to the top of the stack
     self.stack.unshift thimble.layout
-  
+
   # Compile the template at the end
   # This should be moved into thim.configure 'dev'
   if options.source
