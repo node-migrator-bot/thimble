@@ -46,7 +46,7 @@ exports = module.exports = (configuration = {}) ->
     namespace : 'window'
     'support path' : __dirname + '/../support/'
     'support files' : []
-    plugins : ['embed', 'flatten', 'support']
+    plugins : ['support']
     instance : thim
     
   for key, value of configuration

@@ -37,11 +37,6 @@ describe 'plugin', ->
         str.should.include 'return console.log("cool");'
         done()
       
-      # thimble.compile(file) null, options, (err, str) ->
-      #   throw err if err
-      #   str.should.include 'console.log("cool")'
-        
-      
     it 'should compile handlebars', (done) ->
       locals = 
         planet : 'mars'
