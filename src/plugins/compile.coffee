@@ -114,3 +114,12 @@ exports.jade = (content, options, fn) ->
   catch err
     fn err
   
+# Handlebars
+exports.handlebars = (content, options, fn) ->
+  engine = requires.handlebars || (requires.handlebars = require('handlebars'))
+
+  try
+    str = engine.compile(content, options)(options.locals || {})
+    fn null, str
+  catch err
+    fn err

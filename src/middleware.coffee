@@ -48,7 +48,7 @@ middleware = exports.middleware = (options) ->
             # Name doesn't matter. mime just cares about .css, .js, .png, etc. not the name or if file exists
             
             ext = thimble.compile.getType(path) || extname(path)
-            header = getHeader 'blah.' + ext
+            header = getHeader('blah.' + ext)
 
             res.setHeader('Content-Type', header)          
 
