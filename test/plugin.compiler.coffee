@@ -31,6 +31,12 @@ describe 'plugin', ->
     #     
     #     done()
     
+    it 'should compile stylus', (done) ->
+      thim.render 'style.styl', {}, (err, str) ->
+        throw err if err
+        str.should.include 'color: #999;'
+        done()
+    
     it 'should compile coffeescript', (done) ->
       thim.render 'cool.coffee', {}, (err, str) ->
         throw err if err

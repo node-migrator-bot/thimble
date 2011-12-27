@@ -82,7 +82,7 @@ exports.stylus = (content, options, fn) ->
     styl.use(nib())
   catch error
     # Do nothing - nib wasn't added
-  
+
   styl
     .set('filename', options.source)
     .include(options.root)
