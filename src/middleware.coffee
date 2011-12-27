@@ -1,4 +1,5 @@
-path = require "path"
+
+{normalize, join, basename, extname, basename} = require("path")
 fs = require "fs"
 mime = require "mime"
 parse = require('url').parse
@@ -8,46 +9,50 @@ middleware = exports.middleware = (options) ->
   root = options.root
   
   # Add custom paths
-  defaultPath = addPaths options
+  # defaultPath = addPaths options
 
   # Return middleware
   return (req, res, next) ->
-    url = req.url
-    console.log parse req.url
-    
-    # Allow custom paths
-    if url.split(':').length > 1
-      url = path.basename(url)
-      url = defaultPath url
-      
-    if url
-      req.url = url
-    else
+    head = 'HEAD' == req.method
+    get = 'GET' == req.method
+  
+    # Ignore non-get requests
+    if !head and !get
       return next()
-    
-    assetPath = path.resolve(root + '/' + url)
+  
+    url = parse req.url
+    path = decodeURIComponent url.pathname
+  
+    # Join and normalize from root
+    path = normalize(join(options.root, path))
 
-    thimble.utils.read assetPath, (err, content) ->
+    fs.stat path, (err, stat) ->
+      # Ignore ENOENT (no such file or directory)
       if err
-        console.log req.method
-        return next(err)
-      
-      if !content
-        return next()
-        
-      thimble.compile(assetPath) content, options, (err, str) ->
-        if err
-          return next(err)
-        
-        if !content
+        if err.code is 'ENOENT' or err.code is 'ENAMETOOLONG'
           return next()
-        
-        if not res.getHeader "content-type"
-          # Name doesn't matter. mime just cares about .css, .js, .png, etc. not the name or if file exists
-          header = getHeader 'blah.' + thimble.compile.getType(assetPath) 
-          res.setHeader('Content-Type', header)          
+        else
+          return next(err)
+      else if stat.isDirectory()
+        return next()
+    
+    
+      thimble.utils.read path, (err, content) ->
+        if err or !content
+          return next(err)
 
-        res.send content
+        thimble.compile(path) content, options, (err, str) ->
+          if err or !str
+            return next(err)
+          if not res.getHeader "content-type"
+            # Name doesn't matter. mime just cares about .css, .js, .png, etc. not the name or if file exists
+            
+            ext = thimble.compile.getType(path) || extname(path)
+            header = getHeader 'blah.' + ext
+
+            res.setHeader('Content-Type', header)          
+
+          res.send str
   
 # Implementation pulled from static.js in Connect
 getHeader = (assetPath) ->
@@ -63,8 +68,8 @@ addPaths = (options) ->
     files = fs.readdirSync options.root + "/" + p
     
     for file in files
-      ext = path.extname file
-      name = path.basename file, ext
+      ext = extname file
+      name = basename file, ext
       assets[name] = p + "/" + file
     
     paths[namespace] = assets
