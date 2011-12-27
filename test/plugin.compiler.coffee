@@ -14,22 +14,6 @@ describe 'plugin', ->
     beforeEach (done) ->
       thim = thimble(options)
       done()
-      
-    ###
-      Wait till leaky var is fixed
-    ###
-    # it 'should compile stylus', (done) ->
-    #   file = fixtures + '/style.styl'
-    #   
-    #   options = 
-    #     root : fixtures
-    # 
-    #   thimble.compile(file) null, options, (err, str) ->
-    #     throw err if err
-    # 
-    #     str.should.include 'color: #999;'
-    #     
-    #     done()
     
     it 'should compile stylus', (done) ->
       thim.render 'style.styl', {}, (err, str) ->
