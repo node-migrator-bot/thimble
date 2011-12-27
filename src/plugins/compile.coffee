@@ -14,7 +14,7 @@ thimble = require '../thimble'
 
 exports = module.exports = (file, locals = {}) ->
   # Allow files or compilers to be specified
-  if file.indexOf '.' >= 0
+  if ~file.indexOf('.')
     extname = path.extname(file).substring(1)
   else
     extname = file
