@@ -42,29 +42,25 @@ describe 'plugin', ->
       #   str.should.include 'console.log("cool")'
         
       
-    # it 'should compile handlebars', (done) ->
-    #   file = fixtures + '/template.hb'
-    #   options.locals = 
-    #     planet : 'mars'
-    #     
-    #   thimble.compile(file) null, options, (err, str) ->
-    #     throw err if err
-    #     
-    #     str.should.include "hello mars!"
-    #     
-    #     done()
-    #     
-    # it 'should compile jade', (done) ->
-    #   file = fixtures + '/post.jade'
-    #   options = {}
-    #   
-    #   thimble.compile(file) null, options, (err, str) ->
-    #     throw err if err
-    #     
-    #     str.should.include '<p>this is a post</p>'
-    #     
-    #     done()
+    it 'should compile handlebars', (done) ->
+      locals = 
+        planet : 'mars'
         
+      thim.render 'template.hb', locals, (err, str) ->
+        throw err if err
+
+        str.should.include "hello mars!"
+        
+        done()
+
+    it 'should compile jade', (done) ->
+      thim.render 'post.jade', {}, (err, str) ->
+        throw err if err
+        
+        str.should.include '<p>this is a post</p>'
+        
+        done()
+      
     it 'should compile markdown', (done) ->
       thim.use thimble.flatten
       str = '<include src = "markdown.md" />'
