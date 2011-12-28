@@ -50,11 +50,12 @@ flatten = exports.flatten = (html, directory, options = {}, callback) ->
       return callback err if err
       
       # Try to compile the content
-      thimble.compile(filePath) content, options, (err, content) ->
-        return callback err if err
+      thimble.compile(filePath) content, options, (err, str) ->
+        if err and err isnt 'NOCOMPILER'
+          return callback err if err
 
         # Recursively flatten
-        flatten content, path.dirname(filePath), options, (err, flattened) ->
+        flatten str, path.dirname(filePath), options, (err, flattened) ->
           $this.replaceWith flattened
 
           if finished()

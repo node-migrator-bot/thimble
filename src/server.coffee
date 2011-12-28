@@ -3,8 +3,9 @@
   Thimble.coffee boots the middleware
 ###
 
-path = require "path"
+{normalize, extname} = require "path"
 fs = require "fs"
+parse = require('url').parse
 
 express = require "express"
 
@@ -21,11 +22,12 @@ exports.boot = (server) ->
 
   server.configure "development", ->
     stack = server.stack
+
     # Monkey-patch renderer at top of stack
     stack.unshift
       route  : ''
       handle : render.call(thim, options)
-    
+
     staticLayer = false
     for layer, i in server.stack
       if layer.handle and layer.handle.name is 'static'
@@ -39,7 +41,7 @@ exports.boot = (server) ->
     layers.push
       route : ''
       handle : middleware(options)
-    
+
     # Add the static overwrite
     layers.push
       route : ''
@@ -48,7 +50,9 @@ exports.boot = (server) ->
     if staticLayer isnt false
       stack.splice.apply(stack, [staticLayer, 1].concat(layers))
     else
-      stack = stack.concat layers
+      server.stack = stack.concat layers
+
+    # console.log server.stack[4].handle.toString()
 
 ###
   This will monkey-patch render to use thimble's
@@ -56,17 +60,18 @@ exports.boot = (server) ->
 ###
 render = exports.render = (options) ->
   thim = this
-  
+
   return (req, res, next) ->
+    console.log 'render', req.url
     _render = res.render
     res.render = (view, locals = {}, fn) ->
       # Go back to old renderer after it passes through here once
       res.render = _render
-    
+      console.log 'res.render', req.url
       # Default to .html if no view extension given
-      if !path.extname(view)
+      if !extname(view)
         view += ".html"
-      
+
       thim.render view, locals, (err, content) ->
         return next(err) if err
         res.send content
@@ -83,8 +88,11 @@ render = exports.render = (options) ->
   doesn't get called till later on.
 ###
 static = exports.static = (options) ->
-  return (req, res, next) ->
-    if path.extname(req.url) is '.html'
+  return (req, res, next) ->  
+    url = parse req.url
+    path = decodeURIComponent url.pathname
+    
+    if (normalize('/') == path[path.length - 1])
       return next()
     else
       return express.static(options.root)(req, res, next)

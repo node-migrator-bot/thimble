@@ -7,7 +7,7 @@ thimble = require './thimble'
 
 middleware = exports.middleware = (options) ->
   root = options.root
-  
+
   # Add custom paths
   # defaultPath = addPaths options
 
@@ -15,7 +15,7 @@ middleware = exports.middleware = (options) ->
   return (req, res, next) ->
     head = 'HEAD' == req.method
     get = 'GET' == req.method
-  
+    
     # Ignore non-get requests
     if !head and !get
       return next()
@@ -25,7 +25,7 @@ middleware = exports.middleware = (options) ->
   
     # Join and normalize from root
     path = normalize(join(options.root, path))
-
+    
     fs.stat path, (err, stat) ->
       # Ignore ENOENT (no such file or directory)
       if err
@@ -36,7 +36,6 @@ middleware = exports.middleware = (options) ->
       else if stat.isDirectory()
         return next()
     
-    
       thimble.utils.read path, (err, content) ->
         if err or !content
           return next(err)
@@ -44,6 +43,13 @@ middleware = exports.middleware = (options) ->
         thimble.compile(path) content, options, (err, str) ->
           if err or !str
             return next(err)
+          
+          # Move on if compiler didn't do anything 
+          # err == false, rather than undefined or null
+          # Kinda hackish, not my favorite
+          if err is false
+            return next()
+          
           if not res.getHeader "content-type"
             # Name doesn't matter. mime just cares about .css, .js, .png, etc. not the name or if file exists
             
