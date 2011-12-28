@@ -32,7 +32,7 @@ exports = module.exports = (file, locals = {}) ->
       compiler content, options, (err, str) ->
         return next(err, str)
     else
-      return next(null, content)
+      return next(false, content)
 
 ###
   Requires Cache
