@@ -23,7 +23,8 @@ describe 'plugin', ->
       relative = "<h2><include src = 'title.html' /></h2>"
       
       thim.eval relative, options, (err, content) ->
-        throw err if err
+        if err
+          return done(err)
         
         content.should.include 'This is a pretty important title'
         
@@ -33,8 +34,9 @@ describe 'plugin', ->
       absolute = "<h2><include src = '/title.html' /></h2>"
       
       thim.eval absolute, options, (err, content) ->
-        throw err if err
-        
+        if err
+          return done(err)
+                  
         content.should.include 'This is a pretty important title'
         
         done()
@@ -43,8 +45,9 @@ describe 'plugin', ->
       str = "<h2><include src = 'post.jade' /></h2>"
       
       thim.eval str, options, (err, content) ->
-        throw err if err
-        
+        if err
+          return done(err)
+                  
         content.should.include '<p>this is a post</p>'
         
         done()
