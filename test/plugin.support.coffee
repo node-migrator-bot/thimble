@@ -1,3 +1,4 @@
+
 ###
   Needs updating!
 ###
@@ -25,7 +26,7 @@ describe 'plugin', ->
       options['support path'] = __dirname + '/../support/'
 
       thimble.support index, options, (err, content) ->
-        throw err if err
+        return done(err) if err
 
         content.should.equal(index)
         content.should.not.include ".registerHelper"
@@ -40,7 +41,8 @@ describe 'plugin', ->
         options : {}
       
       thimble.support index, options, (err, content) ->
-        throw err if err
+        return done(err) if err
+          
         $ = cheerio.load content
 
         content.should.include ".registerHelper"

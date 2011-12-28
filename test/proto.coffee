@@ -29,7 +29,7 @@ describe 'proto', ->
       
       thim.render title, { layout : layout }, (err, content) ->
         throw err if err
-        
+
         content.should.include '<html>This is a pretty important title</html>'
         
         done()
