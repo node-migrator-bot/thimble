@@ -20,7 +20,9 @@ thim.configure(function() {
 thim.start(server);
 
 server.get('/', function(req, res) {
-   res.render('index'); 
+   res.render('index/index', {
+       layout : 'layout.html'
+   }); 
 });
 
 server.listen(8080);
