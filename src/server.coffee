@@ -62,12 +62,11 @@ render = exports.render = (options) ->
   thim = this
 
   return (req, res, next) ->
-    console.log 'render', req.url
     _render = res.render
     res.render = (view, locals = {}, fn) ->
       # Go back to old renderer after it passes through here once
       res.render = _render
-      console.log 'res.render', req.url
+
       # Default to .html if no view extension given
       if !extname(view)
         view += ".html"

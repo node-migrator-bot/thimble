@@ -10,11 +10,10 @@ exports = module.exports = (content, options, next) ->
     next(err) if err
 
     $ = cheerio.load html
-    # HACK: Load twice, so yield will always look like <yield />
-    $ = cheerio.load $.html()
-    
+
     # Replace yield with the response content
     $('yield').replaceWith(content)
+
     next(null, $.html())
     
   
