@@ -138,7 +138,8 @@ render = exports.render = (file, locals = {}, fn) ->
 eval = exports.eval = (content, locals = {}, fn) ->
   self = this
   options = self.settings
-  
+  stack = _.clone(self.stack)
+
   # If nothing is set, don't do anything
   if !locals and !fn
     return;
@@ -161,6 +162,7 @@ eval = exports.eval = (content, locals = {}, fn) ->
 
   # Kick off the plugins
   handle.call self, content, options, (err, output) ->
+    self.stack = stack
     return fn(err, output)
   
 ###
