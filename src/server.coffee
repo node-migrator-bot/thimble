@@ -3,7 +3,7 @@
   Thimble.coffee boots the middleware
 ###
 
-{normalize, extname} = require "path"
+{normalize, extname, resolve} = require "path"
 fs = require "fs"
 parse = require('url').parse
 
@@ -87,6 +87,8 @@ render = exports.render = (options) ->
   doesn't get called till later on.
 ###
 static = exports.static = (options) ->
+  root = resolve options.root
+  
   return (req, res, next) ->  
     url = parse req.url
     path = decodeURIComponent url.pathname
@@ -94,4 +96,6 @@ static = exports.static = (options) ->
     if (normalize('/') == path[path.length - 1])
       return next()
     else
-      return express.static(options.root)(req, res, next)
+      # console.log req.url
+      # console.log require('path').resolve options.root
+      return express.static(root)(req, res, next)

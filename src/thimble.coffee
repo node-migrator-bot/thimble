@@ -28,6 +28,10 @@ _ = require "underscore"
 ###
 
 exports = module.exports = (configuration = {}) ->
+  # if !configuration.root
+  #   console.log "Thimble: You need to specify a root directory"
+  #   return false
+
   configuration = _.clone(configuration)
 
   thim = 
@@ -39,7 +43,6 @@ exports = module.exports = (configuration = {}) ->
 
   # Set the defaults
   _.defaults configuration,
-    root : ''
     env : env
     paths : {}
     template : 'JST'
