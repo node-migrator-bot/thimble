@@ -80,23 +80,6 @@ use = exports.use = (fn) ->
   return this
 
 ###
-  Public: Pushes plugins immediately next in line
-###
-
-next = exports.next = (fn) ->
-  # Not sure how to do this one right now
-
-###
-  Public: Add support files to your application at runtime
-###
-support = exports.support = (file, options = {}) ->
-  this.set('support files').push
-    file : file
-    options : options
-    
-  return this
-
-###
   Public: renders the application
   
   file - a String that is the main entry point into our application
