@@ -10,7 +10,6 @@ cheerio = require 'cheerio'
 utils = require '../utils'
 
 exports = module.exports = (content, options, next) ->
-    # console.log 'this', this
     files = options['support files']
     
     if files.length
