@@ -10,42 +10,61 @@ fs = require 'fs'
 
 should = require 'should'
 cheerio = require 'cheerio'
+fixtures = __dirname + '/fixtures'
 
 thimble = require '../'
 
 describe 'plugin', ->
   describe '.support', ->
-    fixtures = __dirname + '/fixtures'
-    options = 
+    
+    thim = undefined
+    
+    options =
       root : fixtures
-      'support files' : []
+      
+    beforeEach (done) ->
+      thim = thimble(options)
+      done()
     
     index = fs.readFileSync fixtures + '/index.html', 'utf8'
     
     it 'should not modify the content if no support files are present', (done) ->
-      options['support path'] = __dirname + '/../support/'
-
-      thimble.support index, options, (err, content) ->
+      thim.render 'index.html', {}, (err, content) ->
         return done(err) if err
 
         content.should.equal(index)
         content.should.not.include ".registerHelper"
         
-        done()
+        return done()
+
     
     it 'should append support script to the <head> by default', (done) ->
       # Add the support file
-      options['support path'] = __dirname + '/../support/'
-      options['support files'].push
+      thim.settings['support files'].push
         file : 'handlebars.js'
         options : {}
       
-      thimble.support index, options, (err, content) ->
+      thim.render 'index.html', {}, (err, content) ->
         return done(err) if err
           
-        $ = cheerio.load content
+        content.should.include ".registerHelper"
+
+        done()
+    
+    it 'should put support file in front if tag not present', (done) ->
+      # Add the support file
+      thim.settings['support files'].push
+        file : 'handlebars.js'
+        options : {}
+
+      thim.eval '<h2>hi world</h2>', {}, (err, content) ->
+        return done(err) if err
 
         content.should.include ".registerHelper"
+        before = content.indexOf('.registerHelper')
+        after = content.indexOf('<h2>')
+        # .registerHelper should come before <h2>
+        (before < after).should.be.ok 
         
         done()
     

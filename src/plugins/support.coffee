@@ -49,9 +49,8 @@ exports = module.exports = (content, options, next) ->
           $tag = $(opts.appendTo)
           if $tag.length
             $tag.append($asset)
-            html = $.html()
           else
-            html = $asset.html() + '\n' + $.html()
+            $ = cheerio.load($asset.html() + '\n' + $.html())
         
         if finished()
-          return next(null, html)
+          return next(null, $.html())
