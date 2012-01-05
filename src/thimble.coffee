@@ -3,7 +3,7 @@
   thimble.coffee is the main driver
 ###
 fs = require "fs"
-path = require "path"
+{basename, extname, normalize} = require "path"
 
 _ = require "underscore"
 
@@ -47,7 +47,7 @@ exports = module.exports = (configuration = {}) ->
     paths : {}
     template : 'JST'
     namespace : 'window'
-    'support path' : __dirname + '/../support/'
+    'support path' : normalize(__dirname + '/../support/')
     'support files' : []
     plugins : ['support']
     instance : thim
@@ -104,8 +104,8 @@ exports.middleware = require './middleware'
 ###
 fs.readdirSync(__dirname + "/plugins").forEach (filename) ->
   if not /\.(js|coffee)$/.test(filename) then return
-  ext = path.extname filename
-  name = path.basename(filename, ext)
+  ext = extname filename
+  name = basename(filename, ext)
   
   load = ->
     require "./plugins/" + name

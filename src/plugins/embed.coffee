@@ -3,7 +3,7 @@
   Embed.coffee - Used to embed templates into the document
 ###
 
-path = require 'path'
+{extname, basename, normalize} = require 'path'
 fs = require 'fs'
 
 cheerio = require 'cheerio'
@@ -23,20 +23,20 @@ exports = module.exports = (content, options, next) ->
   $scripts.each ->
     $script = $(this)
     source = $script.attr('src')
-    extname = path.extname source
+    ext = extname source
     
     # Rename our template if we have an ID that's given
     name = $script.attr('id')
-    name = if (name) then name else path.basename source, extname
+    name = if (name) then name else basename source, ext
     prefix = templatePrefix options, name
     
-    extname = extname.substring 1
+    ext = ext.substring 1
 
     # Map to known names
-    extname = if (thimble.extensions[extname]) then thimble.extensions[extname] else extname
+    ext = if (thimble.extensions[ext]) then thimble.extensions[ext] else ext
     
     # Get the precompiler 
-    precompile = exports[extname]    
+    precompile = exports[ext]    
     
     assetPath = options.root + "/" + source
 
@@ -98,10 +98,11 @@ read = (file, options, fn) ->
 
 exports.handlebars = (file, options, fn) ->
   engine = requires.handlebars || (requires.handlebars = require('handlebars'))
-  basename = path.basename file, path.extname file
+  filename = basename file, extname file
   out = []
   
-  options.instance.support 'handlebars.js'
+  # Add a support file
+  options['support files'].push 'handlebars.js'
   
   # Precompile the file
   read file, options, (err, str) ->
@@ -110,14 +111,14 @@ exports.handlebars = (file, options, fn) ->
     out.push """
       (function() {
         var template = Handlebars.template, templates = Handlebars.templates = Handlebars.templates || {};
-        templates['#{basename}'] = template(
+        templates['#{filename}'] = template(
     """
 
     out.push engine.precompile str
   
     out.push """
       );
-      return templates['#{basename}'];
+      return templates['#{filename}'];
     })();\n
     """
     

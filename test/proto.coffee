@@ -96,15 +96,6 @@ describe 'proto', ->
     it 'should return undefined if we get a non-existent setting', ->
       test = thim.set('lolcats') is undefined
       test.should.be.true
-      
-    
-  describe '.support', ->
-    
-    it 'should set the support files of the application', ->
-      thim = thimble()
-      thim.support "handlebars.js"
-      
-      files = thim.settings['support files']
-      files[0].file.should.equal 'handlebars.js'
+
     
     

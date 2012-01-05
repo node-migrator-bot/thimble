@@ -3,7 +3,7 @@
   This is for additional support files that need to be loaded.
 ###
 fs = require 'fs'
-path = require 'path'
+{extname, join} = require 'path'
 
 cheerio = require 'cheerio'
 
@@ -19,34 +19,34 @@ exports = module.exports = (content, options, next) ->
       return next(null, content)
 
     $ = cheerio.load(content)
-    
+
     files.forEach (file) ->
       # Explode object
-      opts = file.options
-      file = file.file
-      
-      # Set defaults
-      opts.appendTo ||= 'head'
-      opts.path ||= options['support path']
-      
-      extname = path.extname(file).substring 1
+      if file.name
+        name = file.name
+        appendTo = file.appendTo || 'head'
+        path = file.path || options['support path']
+      else
+        name = file
+        appendTo = 'head'
+        path = options['support path']
 
-      if extname is 'js'
+      ext = extname(name).substring 1
+      
+      if ext is 'js'
         tag = 'script'
-      else if extname is 'css'
+      else if ext is 'css'
         tag = 'link'
       
-      supportFile = opts.path + '/' + file
+      supportFile = join(path, name)
 
       fs.readFile supportFile, 'utf8', (err, str) ->
         return next(err) if err
 
-        if !tag
-          console.log "Cannot attach support file, " + file + ", not .js or .css"
-        else
+        if tag
           # Attach the support file
           $asset = $('<' + tag + '>').text str
-          $tag = $(opts.appendTo)
+          $tag = $(appendTo)
           if $tag.length
             $tag.append($asset)
           else
