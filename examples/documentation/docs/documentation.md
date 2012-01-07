@@ -49,7 +49,7 @@ Now you'll probably want to set up different plugins for different environments.
     });
     
     thim.configure('staging', function() {
-      thim.use(thimble.bundle('./build'));
+      thim.use(thimble.bundle());
     });
 
 When you do not pass an environment to the configuration, the configuration will run in all environments.
@@ -62,4 +62,6 @@ When all your configuration is set up, you can simply `start` thimble:
 
     thim.start(app);
     
-where `app` is an express server. This call will load the middleware into the server stack, move certain express layers (like `static`) to ensure thimble runs properly, and monkey-patch `res.render` to provide a transparent interface.
+In this example `app` is an express server. This call will configure the express to support thimble by loading the middleware into the server stack and monkey-patching `res.render` to provide a transparent interface.
+
+> Note: Thimble may move certain express middleware layers (like `static`) to ensure a proper runtime.
