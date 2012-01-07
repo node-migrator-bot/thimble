@@ -31,12 +31,7 @@ exports = module.exports = (opts = {}) ->
     assets = $scripts.length + $styles.length
     finished = after(assets)
     
-    done = () ->
-      
-      # Remove all the assets from the page
-      $('link, style').remove()
-      $('script[type="text/javascript"]').remove()
-      
+    done = () ->      
       # Style tag
       style = $('<style>')
         .attr('type', 'text/css')
@@ -49,14 +44,14 @@ exports = module.exports = (opts = {}) ->
             
       # Append the <style> tag to <head>
       head = $('head')
-      if head.length
+      if styles.length and head.length
         $('head').append(style)
       else
         # Figure out later
       
       # Append the <script> tag to <body>
       body = $('body')
-      if body.length
+      if scripts.length and body.length
         $('body').append(script)
       else
         # Figure out later
@@ -67,7 +62,15 @@ exports = module.exports = (opts = {}) ->
     $scripts.each (i) ->
       $script = $(this)
       src = $script.attr('src')
-
+      
+      # skip http://
+      if src and ~src.indexOf 'http://'
+        if finished() then return done() else return
+      
+      # Remove the script tag
+      $script.remove()
+      
+      # Read and compile if external
       if src
         compile src, options, (err, str) ->
           return next(err) if err
@@ -77,6 +80,8 @@ exports = module.exports = (opts = {}) ->
           
           if finished()
             return done()
+            
+      # Otherwise just add it
       else
         scripts[i] = $script.text()
         
@@ -87,7 +92,15 @@ exports = module.exports = (opts = {}) ->
     $styles.each (i) ->
       $style = $(this)
       href = $style.attr('href')
+
+      # skip http://
+      if href and ~href.indexOf 'http://'
+        if finished() then return done() else return
       
+      # Remove the style tag
+      $style.remove()
+      
+      # Read and compile if external
       if href
         compile href, options, (err, str) ->
           return next(err) if err
@@ -96,6 +109,8 @@ exports = module.exports = (opts = {}) ->
           
           if finished()
             return done()
+            
+      # Otherwise just add it
       else
         styles[i] = $style.text()
         

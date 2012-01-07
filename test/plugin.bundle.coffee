@@ -149,4 +149,22 @@ describe 'plugin', ->
         (str1 < str2).should.be.true
         
         done()
+        
+    it 'should ignore http://', (done) ->
+      html = """
+        <head></head>
+        <script type = "text/javascript" src = "http://code.jquery.com/jquery-1.7.1.min.js"></script>
+        <link type = "text/css" href = "http://yui.yahooapis.com/3.4.1/build/cssreset/cssreset-min.css" />
+        <body></body>
+      """
+      
+      thim.eval html, {}, (err, content) ->
+        return done(err) if err
+      
+        $ = cheerio.load content
+        
+        $('script[src]').length.should.equal 1
+        $('link').length.should.equal 1
+        
+        done()
       
