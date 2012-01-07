@@ -1,6 +1,6 @@
 ## How it works ##
 
-Thimble's architecture is heavily influenced by [connect](http://senchalabs.github.com/connect/). Connect's layering system is fantastic for providing modular middleware for the server. Thimble borrows this concept to provide an extensible HTML transformer for page requests.
+Thimble's architecture is heavily influenced by [connect](http://senchalabs.github.com/connect/). Connect's layering system is fantastic for providing modular middleware on the server. Thimble borrows this concept to provide an extensible HTML transformer for page requests.
 
 The following is an example of thimble during the development cycle:
 

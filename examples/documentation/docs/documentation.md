@@ -54,6 +54,8 @@ Now you'll probably want to set up different plugins for different environments.
 
 When you do not pass an environment to the configuration, the configuration will run in all environments.
 
+> Important: When adding multiple plugins, __order matters__. Differing order may yield different results. For example, placing `embed` before `flatten` in the configuration will embed templates in the index source, but not any of the included files.
+
 ### Starting Thimble ###
 
 When all your configuration is set up, you can simply `start` thimble:
