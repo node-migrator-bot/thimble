@@ -13,7 +13,8 @@ var thim = thimble.create({
 });
 
 thim.configure(function() {
-   thim.use(thimble.flatten); 
+   thim.use(thimble.flatten);
+   // thim.use(thimble.bundle());
 });
 
 // Start thimble
