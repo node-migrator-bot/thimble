@@ -1,3 +1,7 @@
-## hi there
+## Introduction ##
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Thimble is a extendable front-end tool that understands and transforms your HTML to automate tedious tasks during web development. Thimble also introduces new features to help you develop more modular web applications. Thimble focuses on optimizing __development productivity__ without sacrificing runtime efficiency.
+
+During development, thimble inserts two middleware layers. The first layer manipulates your page request, running plugins like flatten and embed. The second layer catches requested assets, offering seamless integration with the latest interpreters and preprocessors like coffeescript and stylus. 
+
+For production, thimble provides a build tool that compiles and bundles your assets into a single package that you can dish out to your servers.
