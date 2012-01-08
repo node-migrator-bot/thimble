@@ -3,7 +3,7 @@
   thimble.coffee is the main driver
 ###
 fs = require "fs"
-{basename, extname, normalize} = require "path"
+{basename, extname, normalize, resolve} = require "path"
 
 _ = require "underscore"
 
@@ -28,16 +28,18 @@ _ = require "underscore"
 ###
 
 exports = module.exports = (configuration = {}) ->
-  # if !configuration.root
-  #   console.log "Thimble: You need to specify a root directory"
-  #   return false
-
+  if !configuration.root
+    throw "Thimble: You need to specify a root directory"
+  
   configuration = _.clone(configuration)
 
   thim = 
     stack : []
     settings : {}
-    
+  
+  # Resolve the root path
+  configuration.root = resolve(configuration.root)
+  
   # Get the env from how $ node is run
   env = process.env.NODE_ENV || 'development'
 
