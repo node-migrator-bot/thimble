@@ -9,12 +9,15 @@ server.configure(function() {
 
 // Create the thimble instance
 var thim = thimble.create({
-   root : '.'
+   root : '.',
+   build : './build',
+   public : './public'
 });
 
 thim.configure(function() {
    thim.use(thimble.flatten);
-   // thim.use(thimble.bundle());
+   thim.use(thimble.bundle());
+   thim.use(thimble.package());
 });
 
 // Start thimble
