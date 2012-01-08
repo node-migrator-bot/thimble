@@ -1,5 +1,5 @@
 fs = require "fs"
-path = require "path"
+{join, resolve} = require "path"
 
 _ = require 'underscore'
 
@@ -108,7 +108,7 @@ render = exports.render = (file, locals = {}, fn) ->
   
   # Obtain the source, and add it to the settings
   # console.log options.root + '/' + file
-  options.source = path.join(options.root, file)
+  options.source = resolve(join(options.root, file))
 
   fs.readFile options.source, "utf8", (err, content) ->
     return fn(err) if err
@@ -134,7 +134,7 @@ eval = exports.eval = (content, locals = {}, fn) ->
 
   # If theres a layout, add the layout plugin
   if locals.layout
-    options.layout = locals.layout
+    options.layout = resolve(locals.layout)
     # Add to the top of the stack
     self.stack.unshift thimble.layout
 
