@@ -25,7 +25,7 @@ describe 'plugin', ->
     
     beforeEach (done) ->
       thim = thimble(options)
-      thim.use thimble.package()
+      # thim.use thimble.package()
       done()
     
     it 'should create public and build directories', (done) ->
