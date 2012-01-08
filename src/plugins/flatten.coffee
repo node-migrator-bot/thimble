@@ -1,16 +1,16 @@
 fs      = require "fs"
-path    = require "path"
+{dirname}    = require "path"
 
 cheerio = require "cheerio"
 
 thimble = require "../thimble"
-utils = require "../utils"
+{after, relative} = require "../utils"
 
 # Allows this to be the "main" function that gets called
 exports = module.exports = (content, options, next) ->
   directory = null
   if options.source
-    directory = path.dirname options.source
+    directory = dirname options.source
   else if options.root
     directory = options.root
 
@@ -36,7 +36,7 @@ flatten = exports.flatten = (html, directory, options = {}, callback) ->
   
   # Add focus attribute here
   
-  finished = utils.after $include.length
+  finished = after $include.length
 
   $include.each (i, elem) ->
     $this = $(elem)
@@ -55,7 +55,7 @@ flatten = exports.flatten = (html, directory, options = {}, callback) ->
           return callback err if err
 
         # Recursively flatten
-        flatten str, path.dirname(filePath), options, (err, flattened) ->
+        flatten str, dirname(filePath), options, (err, flattened) ->
           $this.replaceWith flattened
 
           if finished()
@@ -67,18 +67,6 @@ tags = [
   'img'
 ]
 
-findRelative = exports.findRelative = (directory, root) ->
-  directory = path.resolve directory
-  root = path.resolve root
-  dir = directory.split "/"
-  r = root.split "/"
-
-  for d, i in dir
-    if r[i] isnt d
-      return dir.slice(i).join('/')
-
-  return ""
-
 fixPaths = exports.fixPaths = ($, directory, root) ->
   # Hard-code for now..
   for tag in tags
@@ -89,7 +77,7 @@ fixPaths = exports.fixPaths = ($, directory, root) ->
       attr = $elem.attr(attribute)
 
       if attr and attr[0] isnt "/" and !~attr.indexOf('http')
-        relPath = findRelative directory, root
+        relPath = relative directory, root
         
         $elem.attr(attribute, relPath + '/' + attr)
         

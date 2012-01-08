@@ -39,7 +39,7 @@ exports = module.exports = (configuration = {}) ->
   
   # Resolve the root path
   configuration.root = resolve(configuration.root)
-  
+      
   # Get the env from how $ node is run
   env = process.env.NODE_ENV || 'development'
 
@@ -59,7 +59,7 @@ exports = module.exports = (configuration = {}) ->
 
   # Implicit plugins
   implicit = []
-  # console.log thim
+
   # Add the implicit plugins
   for plugin in thim.settings.plugins
     implicit.push exports[plugin]
