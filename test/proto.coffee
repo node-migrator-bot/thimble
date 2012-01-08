@@ -6,19 +6,20 @@
 thimble = require '../'
 fixtures = __dirname + '/fixtures'
 
-# Fixtures
-index = fixtures + '/index.html'
-layout = fixtures + '/layout.html'
-title = fixtures + '/title.html'
-template = fixtures + '/template.hb'
+options =
+  root : fixtures
 
 describe 'proto', ->
   describe '.render', ->
-    thim = thimble()
+    thim = undefined
+
+    beforeEach (done) ->
+      thim = thimble(options)
+      done()
     
     it 'should render basic html correctly', (done) ->
 
-      thim.render index, {}, (err, content) ->
+      thim.render 'index.html', {}, (err, content) ->
         throw err if err
         
         content.should.include "cool story, man."
@@ -27,7 +28,7 @@ describe 'proto', ->
         
     it 'should render with a layout', (done) ->
       
-      thim.render title, { layout : layout }, (err, content) ->
+      thim.render 'title.html', { layout : 'layout.html' }, (err, content) ->
         throw err if err
 
         content.should.include '<html>This is a pretty important title</html>'
@@ -36,7 +37,7 @@ describe 'proto', ->
         
     it 'should take allow a function as the 2nd parameter', (done) ->
       
-      thim.render index, (err, content) ->
+      thim.render 'index.html', (err, content) ->
         throw err if err
         
         content.should.include "cool story, man."
@@ -44,7 +45,11 @@ describe 'proto', ->
         done()
   
   describe '.use', ->
-    thim = thimble()
+    thim = undefined
+    
+    beforeEach (done) ->
+      thim = thimble(options)
+      done()
     
     it 'should add to the stack', ->
       before = thim.stack.length
@@ -55,7 +60,11 @@ describe 'proto', ->
       
    
   describe '.configure', ->
-    thim = thimble()
+    thim = undefined
+    
+    beforeEach (done) ->
+      thim = thimble(options)
+      done()
     
     # stupid minify
     minify = (content, options, next) ->
@@ -66,7 +75,7 @@ describe 'proto', ->
       thim.configure 'production', ->
         thim.use minify
       
-      thim.render index, (err, content) ->
+      thim.render 'index.html', (err, content) ->
         
         content.should.include "cool story, man."
         
@@ -78,13 +87,17 @@ describe 'proto', ->
       thim.configure 'production', ->
         thim.use minify
       
-      thim.render index, (err, content) ->
+      thim.render 'index.html', (err, content) ->
         content.should.include "coolstory,man."
         
         done()
         
   describe '.set', ->
-    thim = thimble()
+    thim = undefined
+    
+    beforeEach (done) ->
+      thim = thimble(options)
+      done()
 
     it 'should get setting if second arg undefined', ->
       thim.set('env').should.equal 'development'
