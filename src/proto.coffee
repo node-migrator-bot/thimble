@@ -108,7 +108,7 @@ render = exports.render = (file, locals = {}, fn) ->
   
   # Obtain the source, and add it to the settings
   # console.log options.root + '/' + file
-  options.source = resolve(join(options.root, file))
+  options.source = join(options.root, file)
 
   fs.readFile options.source, "utf8", (err, content) ->
     return fn(err) if err
