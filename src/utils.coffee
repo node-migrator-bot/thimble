@@ -1,4 +1,5 @@
 fs = require 'fs'
+{normalize} = require 'path'
 
 cache = {}
 
@@ -50,4 +51,20 @@ timer = exports.timer = (name) ->
   results : ->
     "Results #{@name} : " + (@stopTime - @startTime) + "ms"  
     
+###
+  Finds the path relative to another
+###
+relative = exports.relative = (directory, base) ->
+  directory = normalize directory
+  base      = normalize base
+
+  dir = directory.split "/"
+  b = base.split "/"
+
+  for d, i in dir
+    if b[i] isnt d
+      return dir.slice(i).join('/')
+
+  return ""
+
 module.exports = exports

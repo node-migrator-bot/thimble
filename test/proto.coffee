@@ -1,7 +1,4 @@
-
-###
-  Needs updating!
-###
+should = require "should"
 
 thimble = require '../'
 fixtures = __dirname + '/fixtures'
