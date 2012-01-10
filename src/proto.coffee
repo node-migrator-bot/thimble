@@ -99,15 +99,18 @@ use = exports.use = (fn) ->
   
 ###
 render = exports.render = (file, locals = {}, fn) ->
-  self = this
-  options = self.settings
-  
   # If nothing is set, don't do anything
   if !locals and !fn
     return;
+
+  self = this
+  options = self.settings
+  
+  if !options.root
+    err = new Error "Thimble: You need to specify a root directory"
+    return fn(err)
   
   # Obtain the source, and add it to the settings
-  # console.log options.root + '/' + file
   options.source = join(options.root, file)
 
   fs.readFile options.source, "utf8", (err, content) ->
@@ -119,14 +122,21 @@ render = exports.render = (file, locals = {}, fn) ->
   Evaluate a string
 ###
 eval = exports.eval = (content, locals = {}, fn) ->
-  self = this
-  options = self.settings
-  stack = _.clone(self.stack)
-
   # If nothing is set, don't do anything
   if !locals and !fn
     return;
 
+  self = this
+  options = self.settings
+  
+  if !options.root
+    err = new Error "Thimble: You need to specify a root directory"
+    return fn(err)
+
+  # Save the original stack so we don't change it everytime we eval
+  # with a layout
+  stack = _.clone(self.stack)
+  
   # Allow fn to be passed as the 2nd param
   if('function' is typeof locals)
     fn = locals
@@ -183,5 +193,6 @@ handle = (content, options, out) ->
       
   # Kick it off
   next(null, content)
+
 
 module.exports = exports

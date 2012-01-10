@@ -27,18 +27,12 @@ _ = require "underscore"
   Returns: an thimble instance Object 
 ###
 
-exports = module.exports = (configuration = {}) ->
-  if !configuration.root
-    throw "Thimble: You need to specify a root directory"
-  
+exports = module.exports = (configuration = {}) ->  
   configuration = _.clone(configuration)
 
   thim = 
     stack : []
     settings : {}
-
-  # Resolve the root path
-  configuration.root = resolve(configuration.root)
       
   # Get the env from how $ node is run
   env = process.env.NODE_ENV || 'development'
