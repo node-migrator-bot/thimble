@@ -67,4 +67,19 @@ relative = exports.relative = (directory, base) ->
 
   return ""
 
+###
+  Tiny, but flexible step library
+###
+step = exports.step = () ->
+  stack = Array.prototype.slice.call(arguments).reverse()
+  self = this
+  
+  next = () ->
+    args = Array.prototype.slice.call(arguments)
+    if stack.length > 1
+      args.push next
+    stack.pop().apply(self, args)
+
+  stack.pop().call(self, next)
+
 module.exports = exports
