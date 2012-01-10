@@ -12,7 +12,7 @@ express = require "express"
 middleware = require "./middleware"
 error = require "./errors"
 
-exports.boot = (server) ->
+exports.start = (server) ->
   thim = this
   options = thim.settings
   

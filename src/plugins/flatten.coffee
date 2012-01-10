@@ -34,8 +34,6 @@ flatten = exports.flatten = (html, directory, options = {}, callback) ->
   if $include.length is 0
     return callback null, $.html()
   
-  # Add focus attribute here
-  
   finished = after $include.length
 
   $include.each (i, elem) ->
