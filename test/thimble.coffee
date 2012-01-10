@@ -8,7 +8,7 @@ options =
   root : fixtures
 
 
-describe 'proto', ->
+describe 'thimble', ->
   describe '.render', ->
     thim = undefined
 
