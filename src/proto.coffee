@@ -3,8 +3,8 @@ fs = require "fs"
 
 _ = require 'underscore'
 
-thimble = require "./thimble"
-
+thimble = require './thimble'
+error = require './errors'
 ###
   Public: starts thimble and configures our server
   
@@ -107,7 +107,7 @@ render = exports.render = (file, locals = {}, fn) ->
   options = self.settings
   
   if !options.root
-    err = new Error "Thimble: You need to specify a root directory"
+    err = error('no root directory')
     return fn(err)
   
   # Obtain the source, and add it to the settings
@@ -130,8 +130,8 @@ eval = exports.eval = (content, locals = {}, fn) ->
   options = self.settings
   
   if !options.root
-    err = new Error "Thimble: You need to specify a root directory"
-    return fn(err)
+    err = error('no root directory')
+    return fn()
 
   # Save the original stack so we don't change it everytime we eval
   # with a layout
