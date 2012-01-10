@@ -57,7 +57,8 @@ exports.create = (options = {}) ->
     exports.set.call(thimble, key, value)
     
   thimble.stack = []
-  thimble.settings = options
+  # Clone to make sure changes in outside options don't interfere
+  thimble.settings = _.clone(options)
 
   # Get the env from how $ node is run
   env = process.env.NODE_ENV || 'development'
@@ -68,14 +69,11 @@ exports.create = (options = {}) ->
     paths : {}
     template : 'JST'
     namespace : 'window'
-    'support path' : normalize(__dirname + '/../support/')
-    'support files' : []
+    support : []
     
     # Shouldn't be needed
     instance : thimble
-  
-  # Implicit plugins
-  implicit = []
+
   
   # thimble.__proto__ = require './proto'
   thimble.__proto__ = exports
@@ -99,6 +97,18 @@ exports.create = (options = {}) ->
 use = exports.use = (fn) ->
   this.stack.push fn
   return this
+
+###
+  Public: Allow thimble to add support files to application
+###
+
+insert = exports.insert = (file, appendTo = 'head') ->
+  this.settings.support.push
+    file : file
+    appendTo : appendTo
+  
+  return this
+
 
 ###
   Public: configure the application for zero or more callbacks.
@@ -136,7 +146,7 @@ configure = exports.configure = (env, fn) ->
     fn.call self, (plugin) ->
       self.use(plugin)
 
-  return self
+  return this
 
 ###
   Public: starts thimble and configures our server
@@ -146,6 +156,7 @@ configure = exports.configure = (env, fn) ->
 start = exports.start = (app) ->
   server = require "./server"
   server.start.call this, app
+  return this
 
 ###
   Public: renders the application
@@ -186,6 +197,8 @@ render = exports.render = (file, locals = {}, fn) ->
 
     eval.call self, content, locals, fn
 
+  return this
+  
 ###
   Public: Evaluate a string
 ###
@@ -216,6 +229,9 @@ eval = exports.eval = (content, locals = {}, fn) ->
     # Add to the top of the stack
     self.stack.unshift self.layout
 
+  # If there's support files, add them
+  self.stack.push self.support.middleware
+
   # Compile the template at the end
   # This should be moved into thim.configure 'dev'
   if options.source
@@ -226,6 +242,7 @@ eval = exports.eval = (content, locals = {}, fn) ->
     self.stack = stack
     return fn(err, output)
 
+  return this
 
 ###
   Private: Handle the plugin layers
