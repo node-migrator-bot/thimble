@@ -20,7 +20,7 @@ describe 'plugin', ->
       root : fixtures
       
     beforeEach (done) ->
-      thim = thimble(options)
+      thim = thimble.create(options)
       thim.use(thimble.bundle())
       done()
     

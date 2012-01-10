@@ -10,11 +10,11 @@ parse = require('url').parse
 express = require "express"
 
 middleware = require "./middleware"
-error = require "./errors"
+error = require "./error"
 
 exports.start = (server) ->
-  thim = this
-  options = thim.settings
+  thimble = this
+  options = thimble.settings
   
   # We're rolling our own layout, express's is not necessary
   server.set "view options", layout : false
@@ -40,7 +40,7 @@ exports.start = (server) ->
     # Monkey-patch renderer at top of stack
     stack.unshift
       route  : ''
-      handle : render.call(thim, options)
+      handle : render.call(thimble, options)
 
     staticLayer = false
     for layer, i in server.stack
@@ -73,7 +73,7 @@ exports.start = (server) ->
   renderer
 ###
 render = exports.render = (options) ->
-  thim = this
+  thimble = this
 
   return (req, res, next) ->
     _render = res.render
@@ -85,7 +85,7 @@ render = exports.render = (options) ->
       if !extname(view)
         view += ".html"
 
-      thim.render view, locals, (err, content) ->
+      thimble.render view, locals, (err, content) ->
         return next(err) if err
         res.send content
         

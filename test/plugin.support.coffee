@@ -23,7 +23,7 @@ describe 'plugin', ->
       root : fixtures
       
     beforeEach (done) ->
-      thim = thimble(options)
+      thim = thimble.create(options)
       done()
     
     index = fs.readFileSync fixtures + '/index.html', 'utf8'

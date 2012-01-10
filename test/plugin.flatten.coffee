@@ -15,7 +15,7 @@ describe 'plugin', ->
       source : fixtures + '/index.html'
     
     beforeEach (done) ->
-      thim = thimble options
+      thim = thimble.create(options)
       thim.use thimble.flatten
       done()
        

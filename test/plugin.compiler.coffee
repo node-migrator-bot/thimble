@@ -12,7 +12,7 @@ describe 'plugin', ->
       plugins : []
     
     beforeEach (done) ->
-      thim = thimble(options)
+      thim = thimble.create(options)
       done()
     
     it 'should compile stylus', (done) ->
