@@ -85,7 +85,7 @@ extensions = exports.extensions =
   'styl'   : 'stylus'
   'coffee' : 'coffeescript'
   'hb'     : 'handlebars'
-  'mu'     : 'handlebars'
+  'mu'     : 'hogan'
   'md'     : 'markdown'
 
 ###

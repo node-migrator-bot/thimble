@@ -20,9 +20,9 @@ exports = module.exports = (file, locals = {}) ->
     extname = file
 
   extname = if (thimble.extensions[extname]) then thimble.extensions[extname] else extname
+  compiler = exports[extname]
 
   return (content, options, next) ->
-    compiler = exports[extname]
 
     # Compile the file
     if compiler
@@ -30,6 +30,9 @@ exports = module.exports = (file, locals = {}) ->
         options.locals = locals
         
       compiler content, options, (err, str) ->
+        # Reset
+        options.locals = {}
+        
         return next(err, str)
     else
       return next(false, content)
@@ -56,22 +59,28 @@ exports.getType = (file) ->
   type = types[extname]
   return if type then type else false
   
+precompile = (options) ->
+  if(options.locals and options.env is 'production')
+    return true
+  else
+    return false
+ 
 ###
   Asset Compilers
 ###
 
 # Coffeescript
-exports.coffeescript = (content, options, fn) ->
+exports.coffeescript = (content, options, cb) ->
   engine = requires.coffeescript || (requires.coffeescript = require('coffee-script'))
 
   try
     str = engine.compile(content)
-    fn null, str
+    cb null, str
   catch err
-    fn err
+    cb err
 
 # Stylus
-exports.stylus = (content, options, fn) ->
+exports.stylus = (content, options, cb) ->
   engine = requires.stylus || (requires.stylus = require('stylus'))
   
   styl = engine content
@@ -87,39 +96,48 @@ exports.stylus = (content, options, fn) ->
     .set('filename', options.source)
     .include(options.root)
     .render (err, css) ->
-      fn err, css
+      cb err, css
 
 ###
   Compilers
 ###
   
 # Markdown
-exports.markdown = (content, options, fn) ->
+exports.markdown = (content, options, cb) ->
   engine = requires.markdown || (requires.markdown = require('github-flavored-markdown'))
   
   try
     str = engine.parse content
-    fn null, str
+    cb null, str
   catch err
-    fn err
+    cb err
 
 # Jade
-exports.jade = (content, options, fn) ->
+exports.jade = (content, options, cb) ->
   engine = requires.jade or (requires.jade = require("jade"))
   
   try
     # Compile jade without any locals
-    str = engine.compile(content, options)(options.locals || {})
-    fn null, str
+    str = engine.compile(content, options)({})
+    cb null, str
   catch err
-    fn err
-  
+    cb err
+
+###
+  Templating Compilers
+###
+
 # Handlebars
-exports.handlebars = (content, options, fn) ->
+exports.handlebars = (content, options, cb) ->
   engine = requires.handlebars || (requires.handlebars = require('handlebars'))
 
   try
-    str = engine.compile(content, options)(options.locals || {})
-    fn null, str
+    fn = engine.compile(content, options)
+    
+    if precompile(options)
+      cb(null, fn)
+    else
+      cb(null, fn(options.locals || {}))
+
   catch err
-    fn err
+    cb err
