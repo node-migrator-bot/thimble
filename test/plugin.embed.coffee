@@ -11,14 +11,12 @@ describe 'plugin', ->
     
     options = 
       root : __dirname + '/fixtures/'
-      plugins : []
-      
+    
     beforeEach (done) ->
       thim = thimble.create(options)
-      
+
       # Add the plugins
       thim.use thimble.embed
-      thim.use thimble.support
       
       done()
       
@@ -27,7 +25,8 @@ describe 'plugin', ->
       str = "<script type = 'text/template' src = '/template.hb'>"
 
       thim.eval str, {}, (err, content) ->
-        throw err if err
+        return done(err) if err
+        
         # Make sure the support file was included
         content.should.include 'Handlebars.registerHelper'
         # Make sure the template was added
@@ -38,8 +37,10 @@ describe 'plugin', ->
       
     it 'should ignore scripts that arent templates', (done) ->
       str = "<script type = 'text/javascript' src = '/template.hb'>"
-
+      # console.log thim
       thim.eval str, {}, (err, content) ->
+        return done(err) if err
+        
         content.should.include "src = '/template.hb'"
         content.should.not.include "window.JST['template']"
         content.should.not.include 'Handlebars.registerHelper'
@@ -50,7 +51,8 @@ describe 'plugin', ->
       str = '<script type = "text/template" src = "/template.newb">'
       
       thim.eval str, {}, (err, content) ->
-
+        return done(err) if err
+        
         content.should.include 'src = "/template.newb"'
         content.should.not.include "window.JST['template']"
         content.should.not.include 'Handlebars.registerHelper'

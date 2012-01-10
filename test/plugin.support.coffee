@@ -40,8 +40,7 @@ describe 'plugin', ->
     
     it 'should append support script to the <head> by default', (done) ->
       # Add the support file
-      thim.settings['support files'].push
-        name : 'handlebars.js'
+      thim.insert __dirname + '/../support/handlebars.js'
       
       thim.render 'index.html', {}, (err, content) ->
         return done(err) if err
@@ -52,8 +51,7 @@ describe 'plugin', ->
     
     it 'should put support file in front if tag not present', (done) ->
       # Add the support file
-      thim.settings['support files'].push
-        name : 'handlebars.js'
+      thim.insert __dirname + '/../support/handlebars.js'
 
       thim.eval '<h2>hi world</h2>', {}, (err, content) ->
         return done(err) if err

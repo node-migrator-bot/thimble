@@ -3,15 +3,15 @@ should = require "should"
 thimble = require '../'
 fixtures = __dirname + '/fixtures'
 
+    
+options =
+  root : fixtures
 
 
 describe 'proto', ->
   describe '.render', ->
     thim = undefined
-    
-    options =
-      root : fixtures
-      
+
     beforeEach (done) ->
       thim = thimble.create(options)
       done()
@@ -46,9 +46,6 @@ describe 'proto', ->
   describe '.use', ->
     thim = undefined
     
-    options =
-      root : fixtures
-      
     beforeEach (done) ->
       thim = thimble.create(options)
       done()
@@ -63,10 +60,7 @@ describe 'proto', ->
    
   describe '.configure', ->
     thim = undefined
-    
-    options =
-      root : fixtures
-    
+
     beforeEach (done) ->
       thim = thimble.create(options)
       done()
@@ -99,10 +93,7 @@ describe 'proto', ->
         
   describe '.set', ->
     thim = undefined
-    
-    options =
-      root : fixtures
-      
+
     beforeEach (done) ->
       thim = thimble.create(options)
       done()
@@ -114,9 +105,6 @@ describe 'proto', ->
   describe '.get', ->
     thim = undefined
 
-    options =
-      root : fixtures
-      
     beforeEach (done) ->
       thim = thimble.create(options)
       done()

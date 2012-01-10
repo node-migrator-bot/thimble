@@ -11,6 +11,8 @@ cheerio = require 'cheerio'
 thimble = require '../thimble'
 utils = require '../utils'
 
+support = __dirname + '/../../support'
+
 exports = module.exports = (content, options, next) ->
   $ = cheerio.load content
   $scripts = $('script[type=text/template]')
@@ -19,7 +21,7 @@ exports = module.exports = (content, options, next) ->
     return next(null, content)
   else
     finished = utils.after $scripts.length
-
+  
   $scripts.each ->
     $script = $(this)
     source = $script.attr('src')
@@ -102,8 +104,10 @@ exports.handlebars = (file, options, fn) ->
   out = []
   
   # Add a support file
-  options['support files'].push 'handlebars.js'
-  
+  options.support.push
+    file : support + '/handlebars.js'
+    appendTo : 'head'
+
   # Precompile the file
   read file, options, (err, str) ->
     return fn(err) if err
