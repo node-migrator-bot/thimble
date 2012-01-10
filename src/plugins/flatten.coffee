@@ -53,7 +53,7 @@ flatten = exports.flatten = (html, directory, options = {}, callback) ->
       if (extname(filePath) is extname(options.source))
         return next(err, content)
       else
-        return thimble.compile(filePath) content, options, next
+        return thimble.compile(filePath)(content, options, next)
     
     flattener = (err, str, done) ->
       return callback(err) if err
@@ -66,6 +66,7 @@ flatten = exports.flatten = (html, directory, options = {}, callback) ->
       if finished()
         return callback err, $.html()
     
+    # Step through each of the functions
     step(read, compile, flattener, done)
 
 tags = [
