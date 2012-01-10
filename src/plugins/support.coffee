@@ -12,7 +12,7 @@ utils = require '../utils'
 ###
   Public: Add support files to our response
 ###
-exports.middleware = (content, options, next) ->
+exports = module.exports = (content, options, next) ->
   files = options.support
 
   if files.length
@@ -48,5 +48,3 @@ exports.middleware = (content, options, next) ->
       
       if finished()
         return next(null, $.html())
-
-module.exports = exports

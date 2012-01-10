@@ -230,7 +230,7 @@ eval = exports.eval = (content, locals = {}, fn) ->
     self.stack.unshift self.layout
 
   # If there's support files, add them
-  self.stack.push self.support.middleware
+  self.stack.push self.support
 
   # Compile the template at the end
   # This should be moved into thim.configure 'dev'
