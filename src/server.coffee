@@ -10,17 +10,31 @@ parse = require('url').parse
 express = require "express"
 
 middleware = require "./middleware"
+error = require "./errors"
 
 exports.boot = (server) ->
   thim = this
   options = thim.settings
-  root = options.root 
   
   # We're rolling our own layout, express's is not necessary
   server.set "view options", layout : false
-  server.set "views", root
+  
+  server.configure "production", ->
+    err = null
+    if !options.public
+      err = error('no public directory')
+      
+    if !options.build
+      err = error('no build directory')
 
+    throw err if err  
+    
   server.configure "development", ->
+    if !options.root
+      throw error('no root directory')
+    
+    server.set "views", options.root
+  
     stack = server.stack
 
     # Monkey-patch renderer at top of stack
