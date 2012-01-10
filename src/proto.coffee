@@ -12,7 +12,7 @@ error = require './errors'
 ###
 start = exports.start = (app) ->
   server = require "./server"
-  server.boot.call this, app
+  server.start.call this, app
 
 ###
   Public: configure the application for zero or more callbacks.
