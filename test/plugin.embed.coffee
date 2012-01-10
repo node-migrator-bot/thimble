@@ -14,7 +14,7 @@ describe 'plugin', ->
       plugins : []
       
     beforeEach (done) ->
-      thim = thimble(options)
+      thim = thimble.create(options)
       
       # Add the plugins
       thim.use thimble.embed

@@ -3,15 +3,17 @@ should = require "should"
 thimble = require '../'
 fixtures = __dirname + '/fixtures'
 
-options =
-  root : fixtures
+
 
 describe 'proto', ->
   describe '.render', ->
     thim = undefined
-
+    
+    options =
+      root : fixtures
+      
     beforeEach (done) ->
-      thim = thimble(options)
+      thim = thimble.create(options)
       done()
     
     it 'should render basic html correctly', (done) ->
@@ -44,8 +46,11 @@ describe 'proto', ->
   describe '.use', ->
     thim = undefined
     
+    options =
+      root : fixtures
+      
     beforeEach (done) ->
-      thim = thimble(options)
+      thim = thimble.create(options)
       done()
     
     it 'should add to the stack', ->
@@ -59,8 +64,11 @@ describe 'proto', ->
   describe '.configure', ->
     thim = undefined
     
+    options =
+      root : fixtures
+    
     beforeEach (done) ->
-      thim = thimble(options)
+      thim = thimble.create(options)
       done()
     
     # stupid minify
@@ -92,20 +100,31 @@ describe 'proto', ->
   describe '.set', ->
     thim = undefined
     
+    options =
+      root : fixtures
+      
     beforeEach (done) ->
-      thim = thimble(options)
+      thim = thimble.create(options)
       done()
-
-    it 'should get setting if second arg undefined', ->
-      thim.set('env').should.equal 'development'
     
     it 'should set the setting if second arg is present', ->
       thim.set('env', 'staging')
       thim.settings.env.should.equal 'staging'
+
+  describe '.get', ->
+    thim = undefined
+
+    options =
+      root : fixtures
       
+    beforeEach (done) ->
+      thim = thimble.create(options)
+      done()
+    
+    it 'should get setting if second arg undefined', ->
+      thim.get('env').should.equal 'development'
+
     it 'should return undefined if we get a non-existent setting', ->
-      test = thim.set('lolcats') is undefined
+      test = thim.get('lolcats') is undefined
       test.should.be.true
 
-    
-    
