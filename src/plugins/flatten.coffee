@@ -1,10 +1,10 @@
 fs      = require "fs"
-{dirname}    = require "path"
+{dirname, extname}    = require "path"
 
 cheerio = require "cheerio"
 
 thimble = require "../thimble"
-{after, relative} = require "../utils"
+{after, relative, step} = require "../utils"
 
 # Allows this to be the "main" function that gets called
 exports = module.exports = (content, options, next) ->
@@ -44,20 +44,29 @@ flatten = exports.flatten = (html, directory, options = {}, callback) ->
     else
       filePath = directory + "/" + src
 
-    fs.readFile filePath, 'utf8', (err, content) ->
-      return callback err if err
+    read = (next) ->
+      fs.readFile(filePath, 'utf8', next)
+
+    compile = (err, content, next) ->
+      return callback(err) if err
       
-      # Try to compile the content
-      thimble.compile(filePath) content, options, (err, str) ->
-        if err and err isnt 'NOCOMPILER'
-          return callback err if err
-
-        # Recursively flatten
-        flatten str, dirname(filePath), options, (err, flattened) ->
-          $this.replaceWith flattened
-
-          if finished()
-            return callback null, $.html()
+      if (extname(filePath) is extname(options.source))
+        return next(err, content)
+      else
+        return thimble.compile(filePath) content, options, next
+    
+    flattener = (err, str, done) ->
+      return callback(err) if err
+      flatten str, dirname(filePath), options, done
+      
+    done = (err, flattened) ->
+      return callback(err) if err
+      $this.replaceWith flattened
+      
+      if finished()
+        return callback err, $.html()
+    
+    step(read, compile, flattener, done)
 
 tags = [
   'script'
