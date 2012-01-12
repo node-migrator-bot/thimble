@@ -1,1 +1,16 @@
-# This file will be used as a build script
+#!/usr/bin/env node
+
+/*
+  Module dependencies
+*/
+var fs = require('fs'),
+    thimble = require('../'),
+    program = require('commander'),
+    _ = require('underscore'),
+    options = {};
+
+// Get the program version
+program
+  .version(thimble.version);
+  
+
