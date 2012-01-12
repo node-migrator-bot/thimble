@@ -53,8 +53,8 @@ exports.get = (key) ->
 exports.create = (options = {}) ->
   # Set the default function
   # Need to bind it, to have thimble scope
-  thimble = (key, value) ->
-    exports.set.call(thimble, key, value)
+  thimble = (options = {}) ->
+    return exports.create(options)
     
   thimble.stack = []
   # Clone to make sure changes in outside options don't interfere
@@ -140,7 +140,11 @@ configure = exports.configure = (env, fn) ->
   envs = "all"
   args = [].slice.call(arguments)
   fn = args.pop()
-
+  
+  # Allow option settings to be passed through here
+  if _.isObject(env)
+    return this.set(env)
+  
   envs = args if args.length
   if "all" is envs or ~envs.indexOf(self.settings.env)
     fn.call self, (plugin) ->
