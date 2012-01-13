@@ -7,20 +7,22 @@ thimble = require "../thimble"
 {after, relative, step} = require "../utils"
 
 # Allows this to be the "main" function that gets called
-exports = module.exports = (content, options, next) ->
-  directory = null
-  if options.source
-    directory = dirname options.source
-  else if options.root
-    directory = options.root
-
-  if !directory
-    return next null, content
+exports = module.exports = (opts = {}) ->
   
-  # Flatten the content
-  flatten content, directory, options, (err, html) ->
-    # Pass the err and modified content down the chain
-    next err, html
+  return (content, options, next) ->
+    directory = null
+    if options.source
+      directory = dirname options.source
+    else if options.root
+      directory = options.root
+
+    if !directory
+      return next null, content
+  
+    # Flatten the content
+    flatten content, directory, options, (err, html) ->
+      # Pass the err and modified content down the chain
+      next err, html
 
 flatten = exports.flatten = (html, directory, options = {}, callback) ->
   root = options.root || directory

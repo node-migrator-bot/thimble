@@ -14,7 +14,7 @@ describe 'plugin', ->
     
     beforeEach (done) ->
       thim = thimble.create(options)
-      thim.use thimble.layout
+      thim.use thimble.layout()
       done()
     
     it 'should place content within <yield /> tag', (done) ->

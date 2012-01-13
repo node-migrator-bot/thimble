@@ -52,7 +52,7 @@ describe 'thimble', ->
     
     it 'should add to the stack', ->
       before = thim.stack.length
-      thim.use thimble.support
+      thim.use thimble.support()
       after = thim.stack.length
       
       after.should.equal before + 1

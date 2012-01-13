@@ -16,7 +16,7 @@ describe 'plugin', ->
     
     beforeEach (done) ->
       thim = thimble.create(options)
-      thim.use thimble.flatten
+      thim.use thimble.flatten()
       done()
        
     it 'should include relative files', (done) ->

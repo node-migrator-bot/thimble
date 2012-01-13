@@ -64,7 +64,7 @@ thimble(options)
 
 // Configure thimble
 thimble.configure(function(use) {
-  use(thimble.flatten)
+  use(thimble.flatten())
 });
 
 thimble.render(app, options, function(err, content) {

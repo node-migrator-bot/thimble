@@ -227,10 +227,10 @@ eval = exports.eval = (content, locals = {}, fn) ->
   if locals.layout
     options.layout = join(options.root, locals.layout)
     # Add to the top of the stack
-    self.stack.unshift self.layout
+    self.stack.unshift self.layout()
 
   # If there's support files, add them
-  self.stack.push self.support
+  self.stack.push self.support()
 
   # Compile the template at the end
   # This should be moved into thim.configure 'dev'
