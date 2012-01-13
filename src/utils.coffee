@@ -1,5 +1,5 @@
 fs = require 'fs'
-{normalize, resolve} = require 'path'
+{normalize, resolve, exists} = require 'path'
 
 cache = {}
 
@@ -50,22 +50,21 @@ timer = exports.timer = (name) ->
 
   results : ->
     "Results #{@name} : " + (@stopTime - @startTime) + "ms"  
-    
+
 ###
-  Finds the path relative to another
+  checks an arbitrary number of paths
 ###
-relative = exports.relative = (directory, base) ->
-  directory = normalize directory
-  base      = normalize base
-
-  dir = directory.split "/"
-  b = base.split "/"
-
-  for d, i in dir
-    if b[i] isnt d
-      return dir.slice(i).join('/')
-
-  return ""
+check = exports.check = (paths..., fn) ->
+  finished = after(paths.length)
+  found = false
+  paths.forEach (path) ->
+    exists path, (exist) ->
+      if found then return
+      else if exist
+        found = true
+        return fn(path)
+      else if finished()
+        return fn(false)
 
 relative = exports.relative = (from, to) ->
 
