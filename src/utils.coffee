@@ -1,5 +1,5 @@
 fs = require 'fs'
-{normalize} = require 'path'
+{normalize, resolve} = require 'path'
 
 cache = {}
 
@@ -66,6 +66,46 @@ relative = exports.relative = (directory, base) ->
       return dir.slice(i).join('/')
 
   return ""
+
+relative = exports.relative = (from, to) ->
+
+  trim = (arr) ->
+    start = 0
+    while start < arr.length
+      break  if arr[start] isnt ""
+      start++
+    end = arr.length - 1
+    while end >= 0
+      break  if arr[end] isnt ""
+      end--
+    return []  if start > end
+    arr.slice start, end - start + 1
+    
+  from = resolve(from).substr(1)
+  to = resolve(to).substr(1)
+  
+  fromParts = trim(from.split("/"))
+  toParts = trim(to.split("/"))
+  
+  length = Math.min(fromParts.length, toParts.length)
+  
+  samePartsLength = length
+  i = 0
+
+  while i < length
+    if fromParts[i] isnt toParts[i]
+      samePartsLength = i
+      break
+    i++
+  outputParts = []
+  i = samePartsLength
+
+  while i < fromParts.length
+    outputParts.push ".."
+    i++
+    
+  outputParts = outputParts.concat(toParts.slice(samePartsLength))
+  outputParts.join "/"
 
 ###
   Tiny, but flexible step library

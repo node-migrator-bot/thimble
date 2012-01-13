@@ -14,11 +14,11 @@ describe 'utils', ->
       a = '/hi/there'
       b = '/hi/there'
       
-      utils.relative(a, b).should.equal ""
+      utils.relative(b, a).should.equal ""
       
     it 'should find relative from root', ->
       
       root = '/root/'
       file = '/root/index/a.txt'
       
-      utils.relative(file, root).should.equal "index/a.txt"
+      utils.relative(root, file).should.equal "index/a.txt"
