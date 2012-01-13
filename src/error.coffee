@@ -5,18 +5,23 @@
 
 errors = 
   'no public directory' : '''
-    In the production environment, you need to specify a 
-    public directory where your assets will live
+    Error: In the production environment, you need to 
+    specify a public directory where your assets will live
   '''
   
   'no build directory' : '''
-    In the production environment, you need to specify
-    a build directory to place your views
+    Error: In the production environment, you need to
+    specify a build directory to place your views
    '''
   
   'no root directory' : '''
-    In the development environment, you need to specify
-    a root directory where your application lives
+    Error: In the development environment, you need to
+    specify a root directory where your application lives
+  '''
+  
+  'cannot find source' : '''
+    Error: Cannot find the source directory, tried relative to 
+    the current working directory, and tried relative to the root
   '''
   
 

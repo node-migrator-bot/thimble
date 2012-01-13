@@ -33,7 +33,7 @@ exports.start = (server) ->
     if !options.root
       throw error('no root directory')
     
-    server.set "views", options.root
+    server.set "views", resolve(options.root)
   
     stack = server.stack
 

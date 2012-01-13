@@ -54,7 +54,7 @@ timer = exports.timer = (name) ->
 ###
   checks an arbitrary number of paths
 ###
-check = exports.check = (paths..., fn) ->
+check = exports.check = (paths = [], fn) ->
   finished = after(paths.length)
   found = false
   paths.forEach (path) ->
