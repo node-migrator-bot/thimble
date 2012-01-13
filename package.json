@@ -22,5 +22,6 @@
 		"github-flavored-markdown" : "1.x"
 	}
   , "main": "index"
+  , "bin": { "thimble": "./bin/thimble"}
   , "engines": { "node": "0.4.x" }
 }

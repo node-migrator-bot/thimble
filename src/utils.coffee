@@ -15,10 +15,10 @@ read = exports.read = (file, fn) ->
   # str = cache[file]
   # if str
   #   return fn(null, str)
-    
   fs.readFile file, "utf8", (err, str) ->
     return fn(err) if err
     cache[file] = str
+
     fn(null, str)
     
 ###
