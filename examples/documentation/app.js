@@ -8,7 +8,7 @@ server.configure(function() {
 });
 
 var options = {
-  root : '.',
+  root : './client',
   build : './build',
   public : './public'
 };

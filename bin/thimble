@@ -43,10 +43,10 @@ try {
 program.parse(process.argv);
 
 // Application entry point
-var source = program.args[0] || options.source;
+var source = program.args[0] || program.source;
 
 // Ensure we have specified the required parameters
-if (!program.source) {
+if (!source) {
   console.log('Error: you didn\'t specify a source file');
   process.exit();
 } else if (!program.root) {
@@ -70,7 +70,7 @@ if(options.layout)
   options.layout = join(cwd, program.layout);
 
 // Add the options to thimble
-thimble(options)
+thimble(options);
 
 // Configure thimble
 thimble.configure(function(use) {

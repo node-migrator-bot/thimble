@@ -12,7 +12,7 @@ layout = exports.layout = (content, options, next) ->
   if(!options.layout)
     return next(null, content);
     
-  read options.layout, 'utf8', (err, html) ->
+  read options.layout, (err, html) ->
     next(err) if err
 
     $ = cheerio.load html

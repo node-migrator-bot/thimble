@@ -109,8 +109,8 @@ setup = exports.setup = (fn) ->
   Package up the view
 ###        
 packageView = exports.packageView = ($, fn) ->
-  if extname(view) is '.html'
-    console.log view
+  # if extname(view) is '.html'
+  #   console.log view
     
   fn(null)
 
