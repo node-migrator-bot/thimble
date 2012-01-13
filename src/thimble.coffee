@@ -51,10 +51,10 @@ exports.get = (key) ->
   Returns: an thimble instance Object 
 ###  
 exports.create = (options = {}) ->
-  # Set the default function
+  # Set the default function to setting options
   # Need to bind it, to have thimble scope
   thimble = (options = {}) ->
-    return exports.create(options)
+    return thimble.set(options)
     
   thimble.stack = []
   # Clone to make sure changes in outside options don't interfere
