@@ -32,7 +32,7 @@ Once you have created an instance, you'll want to add plugins. Currently, thimbl
 
 This is how you add a plugin:
 
-    thim.use(thimble.flatten);
+    thim.use(thimble.flatten());
     
 Now when you make requests to views, its source will pass through the `flatten` plugin.
 
@@ -40,7 +40,7 @@ Now you'll probably want to set up different plugins for different environments.
     
     thim.configure(function() {
       thim.use(thimble.layout);
-      thim.use(thimble.flatten);
+      thim.use(thimble.flatten());
       thim.use(thimble.embed);
     });
     

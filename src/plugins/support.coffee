@@ -12,7 +12,10 @@ utils = require '../utils'
 ###
   Public: Add support files to our response
 ###
-exports = module.exports = (content, options, next) ->
+exports = module.exports = (options = {}) ->
+  return support
+
+support = exports.support = (content, options, next) ->
   files = options.support
 
   if files.length

@@ -47,7 +47,7 @@ describe 'plugin', ->
         done()
       
     it 'should compile markdown', (done) ->
-      thim.use thimble.flatten
+      thim.use thimble.flatten()
       str = '<include src = "markdown.md" />'
       thim.eval str, {}, (err, str) ->
         throw err if err

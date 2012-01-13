@@ -13,7 +13,10 @@ utils = require '../utils'
 
 support = __dirname + '/../../support'
 
-exports = module.exports = (content, options, next) ->
+exports = module.exports = (options = {}) ->
+  return embed
+
+embed = exports.embed = (content, options, next) ->
   $ = cheerio.load content
   $scripts = $('script[type=text/template]')
 

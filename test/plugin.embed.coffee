@@ -16,7 +16,7 @@ describe 'plugin', ->
       thim = thimble.create(options)
 
       # Add the plugins
-      thim.use thimble.embed
+      thim.use thimble.embed()
       
       done()
       
