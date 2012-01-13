@@ -39,9 +39,9 @@ Now when you make requests to views, its source will pass through the `flatten` 
 Now you'll probably want to set up different plugins for different environments. For this, you'll need `thim.configure`. Here's an example:
     
     thim.configure(function() {
-      thim.use(thimble.layout);
+      thim.use(thimble.layout());
       thim.use(thimble.flatten());
-      thim.use(thimble.embed);
+      thim.use(thimble.embed());
     });
     
     thim.configure('development', function() {

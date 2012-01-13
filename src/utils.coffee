@@ -66,6 +66,24 @@ check = exports.check = (paths = [], fn) ->
       else if finished()
         return fn(false)
 
+###
+  Ensures the object contains the following keys
+###
+
+needs = exports.needs = (keys..., obj, fn) ->
+  for key in keys
+    if !obj[key]
+      err = new Error('Error: object is missing the "' + key + '" key')
+      if fn
+        return fn(err)
+      else
+        throw err
+  if fn
+    return fn(null)
+
+###
+  Generates a relative path from a base to another file
+###
 relative = exports.relative = (from, to) ->
 
   trim = (arr) ->

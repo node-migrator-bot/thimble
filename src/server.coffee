@@ -11,6 +11,7 @@ express = require "express"
 
 middleware = require "./middleware"
 error = require "./error"
+{needs} = require "./utils"
 
 exports.start = (server) ->
   thimble = this
@@ -20,18 +21,12 @@ exports.start = (server) ->
   server.set "view options", layout : false
   
   server.configure "production", ->
-    err = null
-    if !options.public
-      err = error('no public directory')
-      
-    if !options.build
-      err = error('no build directory')
-
-    throw err if err  
+    needs 'public', 'build', options, (err) ->
+      if err then throw err
     
   server.configure "development", ->
-    if !options.root
-      throw error('no root directory')
+    needs 'root', options, (err) ->
+      if err then throw err
     
     server.set "views", resolve(options.root)
   
