@@ -8,7 +8,7 @@ fs = require "fs"
 _ = require "underscore"
 
 error = require('./error')
-{check} = require './utils'
+{check, needs} = require './utils'
 
 # Load all the static functions (plugins)
 exports = require './static'
@@ -186,9 +186,9 @@ render = exports.render = (file, locals = {}, fn) ->
   self = this
   options = self.settings
 
-  if !options.root
-    err = error('no root directory')
-    return fn(err)
+  # Root needs to exist
+  needs 'root', options, (err) ->
+    if err then return fn(err)
 
   # Make sure the root path is absolute
   options.root = resolve(options.root)
@@ -202,11 +202,12 @@ render = exports.render = (file, locals = {}, fn) ->
   
   # If one of the paths exists, proceed.
   check paths, (path) ->
-    if path is false
-      err = error('cannot find source', paths)
-      return fn(err)
+    if path
+      options.source = path
     
-    options.source = path
+    # Root needs to exist
+    needs 'source', options, (err) ->
+      if err then return fn(err)
     
     fs.readFile options.source, "utf8", (err, content) ->
       return fn(err) if err
@@ -225,10 +226,9 @@ eval = exports.eval = (content, locals = {}, fn) ->
 
   self = this
   options = self.settings
-
-  if !options.root
-    err = error('no root directory')
-    return fn()
+  
+  needs 'root', options, (err) ->
+    if err then return fn(err)
 
   # Save the original stack so we don't change it everytime we eval
   # with a layout

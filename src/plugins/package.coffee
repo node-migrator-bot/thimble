@@ -10,7 +10,7 @@ mkdirp = require('mkdirp')
 cheerio = require('cheerio')
 
 thimble = require('../thimble')
-{after, relative} = require('../utils')
+{after, relative, needs} = require('../utils')
 
 public     = undefined
 build      = undefined
@@ -20,30 +20,13 @@ stylesheet = undefined
 javascript = undefined
 
 exports = module.exports = (opts = {}) ->
+  
   return (content, options, next) ->
-    # Directories
-    options.public = options.public || opts.public || undefined
-    options.build  = options.build  || opts.build  || undefined
-    options.source = options.source || opts.source || undefined
-    
-    if !options.public or !options.build or !options.source
-      err = new Error """
-        package needs a little more information, you are missing something:
-        
-        - public (#{options.public})
-        - build (#{options.build})
-        - source (#{options.source})
-      """  
+    needs 'public', 'build', 'source', 'root', options, (err) ->
+      if err then return next(err)
       
-      return next(err)
-    
-    # Make paths absolute
-    options.public = resolve options.public
-    options.build = resolve options.build
-    options.source = resolve options.source
-    
     # Directories
-    directory = relative(dirname(options.source), options.root)
+    directory = relative(options.root, dirname(options.source))
     public    = join(options.public, directory)
     build     = join(options.build, directory)
 
@@ -91,7 +74,7 @@ setup = exports.setup = (fn) ->
   ]
   
   finished = after todo.length
-
+  
   mkdirp public, 0755, (err) ->
     return fn(err) if err
     
