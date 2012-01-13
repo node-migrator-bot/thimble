@@ -17,13 +17,13 @@ describe 'plugin', ->
     
     it 'should compile stylus', (done) ->
       thim.render 'style.styl', {}, (err, str) ->
-        throw err if err
+        return done(err) if err
         str.should.include 'color: #999;'
         done()
     
     it 'should compile coffeescript', (done) ->
       thim.render 'cool.coffee', {}, (err, str) ->
-        throw err if err
+        return done(err) if err
         str.should.include 'return console.log("cool");'
         done()
       
@@ -32,7 +32,7 @@ describe 'plugin', ->
         planet : 'mars'
         
       thim.render 'template.hb', locals, (err, str) ->
-        throw err if err
+        return done(err) if err
 
         str.should.include "hello mars!"
         
@@ -40,7 +40,7 @@ describe 'plugin', ->
 
     it 'should compile jade', (done) ->
       thim.render 'post.jade', {}, (err, str) ->
-        throw err if err
+        return done(err) if err
         
         str.should.include '<p>this is a post</p>'
         
@@ -50,7 +50,7 @@ describe 'plugin', ->
       thim.use thimble.flatten()
       str = '<include src = "markdown.md" />'
       thim.eval str, {}, (err, str) ->
-        throw err if err
+        return done(err) if err
 
         str.should.include "<h1>Header 1</h1>"
         str.should.include "<strong>hi there</strong>"
