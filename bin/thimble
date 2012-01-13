@@ -4,13 +4,75 @@
   Module dependencies
 */
 var fs = require('fs'),
+    path = require('path'),
+    join = path.join,
     thimble = require('../'),
     program = require('commander'),
     _ = require('underscore'),
+    cwd = process.cwd(),
     options = {};
 
-// Get the program version
+// Get thimble's version
 program
-  .version(thimble.version);
+  .version(thimble.version)
+  .usage('[options] [app]');
   
+// Thimble's options
+program
+  .option('-r, --root <dir>', 'root directory - [required] where your source application lives')
+  .option('-b, --build <dir>', 'build directory - [required] where your compiled will be placed')
+  .option('-p, --public <dir>', 'public directory - [required] where your static assets will be placed');
+  
+// Support for thimble.opts
+try {
+  var opts = fs.readFileSync('test/thimble.opts', 'utf8')
+    .trim()
+    .split(/\s+/);
 
+  process.argv = process.argv
+    .slice(0, 2)
+    .concat(opts.concat(process.argv.slice(2)));
+} catch (err) {
+  // ignore
+}
+
+// Parse the args
+program.parse(process.argv);
+
+// Application entry point
+var app = program.args[0];
+
+// Ensure we have specified the required parameters
+if (!program.root) {
+  console.log('Error: you didn\'t specify a root directory');
+  process.exit();
+} else if (!program.build) {
+  console.log('Error: you didn\'t specify a build directory');
+  process.exit();
+} else if (!program.public) {
+  console.log('Error: you didn\'t specify a public directory');
+  process.exit();
+}
+
+// Load in the options
+options.root = join(cwd, program.root);
+options.build = join(cwd, program.build);
+options.public = join(cwd, program.public);
+
+// Add the options to thimble
+thimble(options)
+
+// Configure thimble
+thimble.configure(function(use) {
+  use(thimble.flatten)
+});
+
+thimble.render(app, options, function(err, content) {
+  if(err) {
+    console.log(err.message);
+    process.exit();
+  }
+  
+  console.log(content);
+  process.exit();
+});

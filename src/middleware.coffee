@@ -3,6 +3,7 @@
 fs = require "fs"
 mime = require "mime"
 parse = require('url').parse
+{read}  = require('./utils')
 thimble = require './thimble'
 
 middleware = exports.middleware = (options) ->
@@ -36,7 +37,7 @@ middleware = exports.middleware = (options) ->
       else if stat.isDirectory()
         return next()
     
-      thimble.utils.read path, (err, content) ->
+      read path, (err, content) ->
         if err or !content
           return next(err)
 

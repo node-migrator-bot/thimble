@@ -141,10 +141,6 @@ configure = exports.configure = (env, fn) ->
   args = [].slice.call(arguments)
   fn = args.pop()
   
-  # Allow option settings to be passed through here
-  if _.isObject(env)
-    return this.set(env)
-  
   envs = args if args.length
   if "all" is envs or ~envs.indexOf(self.settings.env)
     fn.call self, (plugin) ->
