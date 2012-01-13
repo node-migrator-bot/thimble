@@ -3,11 +3,16 @@ fs      = require "fs"
 
 cheerio = require 'cheerio'
 
+{read} = require '../utils'
+
 exports = module.exports = (options = {}) ->
   return layout
 
 layout = exports.layout = (content, options, next) ->
-  fs.readFile options.layout, 'utf8', (err, html) ->
+  if(!options.layout)
+    return next(null, content);
+    
+  read options.layout, 'utf8', (err, html) ->
     next(err) if err
 
     $ = cheerio.load html
