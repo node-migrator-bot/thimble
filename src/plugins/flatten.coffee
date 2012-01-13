@@ -87,7 +87,7 @@ fixPaths = exports.fixPaths = ($, directory, root) ->
       attr = $elem.attr(attribute)
 
       if attr and attr[0] isnt "/" and !~attr.indexOf('http')
-        relPath = relative directory, root
+        relPath = relative root, directory
         
         $elem.attr(attribute, relPath + '/' + attr)
         
