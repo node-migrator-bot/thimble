@@ -1,4 +1,4 @@
-## Documentation ##
+## API ##
 
 Thimble's API is based off of [express](http://expressjs.com/) and is intentionally minimal. 
 
