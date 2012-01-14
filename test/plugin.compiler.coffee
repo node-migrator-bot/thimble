@@ -58,4 +58,16 @@ describe 'plugin', ->
 
         done()
 
+    it 'should render hogan in development', (done) ->
+      thim.set('source', 'test.mu')
+      str = """
+        hello {{planet}}!
+      """
+      
+      thim.eval str, {planet : 'Mars'}, (err, str) ->
+        return done(err) if err
+        str.should.equal "hello Mars!"
+        done()
+
+      
       

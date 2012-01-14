@@ -101,6 +101,33 @@ read = (file, options, fn) ->
   Precompilers
 ###
 
+exports.hogan = (file, options, fn) ->
+  engine = requires.handlebars || (requires.handlebars = require('hogan.js'))
+  filename = basename file, extname file
+  out = []
+  
+  # Add the hogan.js support file
+  options.support.push
+    file : support + '/hogan.js'
+    appendTo : 'head'
+    
+  read file, options, (err, str) ->
+    return fn(err) if err
+    
+    out.push """
+      (function() {
+        return new Hogan.Template(
+    """
+    
+    out.push engine.compile(str, {asString : true})
+    
+    out.push """
+        ).render;
+      })();\n
+    """
+    
+    fn(null, out.join('\n'))
+
 exports.handlebars = (file, options, fn) ->
   engine = requires.handlebars || (requires.handlebars = require('handlebars'))
   filename = basename file, extname file
