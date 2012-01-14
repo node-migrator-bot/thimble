@@ -199,12 +199,12 @@ render = exports.render = (file, locals = {}, fn) ->
     resolve(file)
     join(options.root, file)
   ]
-  
+
   # If one of the paths exists, proceed.
   check paths, (path) ->
     if path
       options.source = path
-    
+
     # Root needs to exist
     needs 'source', options, (err) ->
       if err then return fn(err)
@@ -249,7 +249,6 @@ eval = exports.eval = (content, locals = {}, fn) ->
   self.stack.push self.support()
 
   # Compile the template at the end
-  # This should be moved into thim.configure 'dev'
   if options.source
     self.stack.push self.compile(options.source, locals)
 

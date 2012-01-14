@@ -46,6 +46,7 @@ flatten = exports.flatten = (html, directory, options = {}, callback) ->
     else
       filePath = directory + "/" + src
 
+    # Step functions - next() to move through them
     read = (next) ->
       fs.readFile(filePath, 'utf8', next)
 
