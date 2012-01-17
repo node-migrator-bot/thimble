@@ -10,7 +10,7 @@ server.configure(function() {
 var options = {
   root : './client',
   build : './build',
-  public : './public'
+  'public' : './public'
 };
 
 // Pass through the options
@@ -18,8 +18,8 @@ thimble(options);
 
 thimble.configure(function(use) {
   use(thimble.flatten());
-  use(thimble.bundle());
-  use(thimble.package());
+  // use(thimble.bundle());
+  // use(thimble.package());
 });
 
 // Start thimble

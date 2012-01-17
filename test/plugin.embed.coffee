@@ -39,8 +39,11 @@ describe 'plugin', ->
       
       thim.eval str, {}, (err, content) ->
         return done(err) if err
-        console.log content
         
+        content.should.include "Hogan.Template.prototype"
+        content.should.include "window.JST['template']"
+        content.should.include '_.f("planet"'
+
         done()
       
     it 'should ignore scripts that arent templates', (done) ->

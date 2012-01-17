@@ -59,7 +59,9 @@ describe 'plugin', ->
         done()
 
     it 'should render hogan in development', (done) ->
+      # Fake page
       thim.set('source', 'test.mu')
+      
       str = """
         hello {{planet}}!
       """
