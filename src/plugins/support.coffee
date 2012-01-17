@@ -6,6 +6,7 @@ fs = require 'fs'
 {extname, join} = require 'path'
 
 cheerio = require 'cheerio'
+_ = require 'underscore'
 
 utils = require '../utils'
 
@@ -17,8 +18,9 @@ exports = module.exports = (options = {}) ->
 
 support = exports.support = (content, options, next) ->
   files = options.support
-
+  
   if files.length
+    files = _.uniq(files)
     finished = utils.after files.length
   else
     return next(null, content)

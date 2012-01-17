@@ -3,31 +3,23 @@ var express = require('express'),
     
     server = express.createServer();
 
-server.configure(function() {
-    server.use(express.favicon());
-});
-
 var options = {
-  root : './client',
-  build : './build',
-  'public' : './public'
+  root : __dirname
 };
 
 // Pass through the options
 thimble(options);
 
 thimble.configure(function(use) {
-  use(thimble.flatten());
-  // use(thimble.bundle());
-  // use(thimble.package());
+  use(thimble.embed());
 });
 
 // Start thimble
 thimble.start(server);
 
 server.get('/', function(req, res) {
-   res.render('index/index', {
-       layout : 'layout.html'
+   res.render('index.mu', {
+     computer : 'server'
    }); 
 });
 
