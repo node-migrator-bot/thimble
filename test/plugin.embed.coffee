@@ -19,21 +19,7 @@ describe 'plugin', ->
       thim.use thimble.embed()
       
       done()
-      
-    # Currently does not work at all, options not defined (namespace), support file not checked
-    it 'should precompile handlebars', (done) ->
-      str = "<script type = 'text/template' src = '/template.hb'>"
 
-      thim.eval str, {}, (err, content) ->
-        return done(err) if err
-        
-        # Make sure the support file was included
-        content.should.include 'Handlebars.registerHelper'
-        # Make sure the template was added
-        content.should.include "window.JST['template']"
-
-        done()
-    
     it 'should precompile hogan templates', (done) ->
       str = "<script type = 'text/template' src = '/template.mu'>"
       
@@ -47,14 +33,14 @@ describe 'plugin', ->
         done()
       
     it 'should ignore scripts that arent templates', (done) ->
-      str = "<script type = 'text/javascript' src = '/template.hb'>"
-      # console.log thim
+      str = "<script type = 'text/javascript' src = '/template.mu'>"
+
       thim.eval str, {}, (err, content) ->
         return done(err) if err
         
-        content.should.include "src = '/template.hb'"
+        content.should.include "src = '/template.mu'"
+        content.should.not.include "Hogan.Template.prototype"
         content.should.not.include "window.JST['template']"
-        content.should.not.include 'Handlebars.registerHelper'
         
         done()
         
@@ -65,7 +51,7 @@ describe 'plugin', ->
         return done(err) if err
         
         content.should.include 'src = "/template.newb"'
+        content.should.not.include "Hogan.Template.prototype"
         content.should.not.include "window.JST['template']"
-        content.should.not.include 'Handlebars.registerHelper'
         
         done()

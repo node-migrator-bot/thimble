@@ -130,35 +130,4 @@ exports.hogan = (file, options, fn) ->
     
     fn(null, out.join('\n'))
 
-exports.handlebars = (file, options, fn) ->
-  engine = requires.handlebars || (requires.handlebars = require('handlebars'))
-  filename = basename file, extname file
-  out = []
-  
-  # Add a support file
-  options.support.push
-    file : support + '/handlebars.js'
-    appendTo : 'head'
-
-  # Precompile the file
-  read file, options, (err, str) ->
-    return fn(err) if err
-    
-    out.push """
-      (function() {
-        var template = Handlebars.template, templates = Handlebars.templates = Handlebars.templates || {};
-        templates['#{filename}'] = template(
-    """
-
-    out.push engine.precompile str
-  
-    out.push """
-      );
-      return templates['#{filename}'];
-    })();\n
-    """
-    
-    fn null, out.join '\n'
-
-
  

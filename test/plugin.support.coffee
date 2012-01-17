@@ -33,31 +33,31 @@ describe 'plugin', ->
         return done(err) if err
 
         content.should.equal(index)
-        content.should.not.include ".registerHelper"
+        content.should.not.include "Hogan.Template.prototype"
         
         return done()
 
     
     it 'should append support script to the <head> by default', (done) ->
       # Add the support file
-      thim.insert __dirname + '/../support/handlebars.js'
+      thim.insert __dirname + '/../support/hogan.js'
       
       thim.render 'index.html', {}, (err, content) ->
         return done(err) if err
           
-        content.should.include ".registerHelper"
+        content.should.include "Hogan.Template.prototype"
 
         done()
     
     it 'should put support file in front if tag not present', (done) ->
       # Add the support file
-      thim.insert __dirname + '/../support/handlebars.js'
+      thim.insert __dirname + '/../support/hogan.js'
 
       thim.eval '<h2>hi world</h2>', {}, (err, content) ->
         return done(err) if err
 
-        content.should.include ".registerHelper"
-        before = content.indexOf('.registerHelper')
+        content.should.include "Hogan.Template.prototype"
+        before = content.indexOf('Hogan.Template.prototype')
         after = content.indexOf('<h2>')
         # .registerHelper should come before <h2>
         (before < after).should.be.ok 
