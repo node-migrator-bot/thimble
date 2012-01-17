@@ -10,7 +10,6 @@ parse = require('url').parse
 express = require "express"
 
 middleware = require "./middleware"
-error = require "./error"
 {needs} = require "./utils"
 
 exports.start = (server) ->
