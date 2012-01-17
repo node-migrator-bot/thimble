@@ -6,6 +6,8 @@
 path = require 'path'
 fs = require 'fs'
 
+_ = require "underscore"
+
 thimble = require '../thimble'
 
 ###
@@ -133,11 +135,18 @@ exports.handlebars = (content, options, cb) ->
 
   try
     fn = engine.compile(content, options)
-    
-    if precompile(options)
-      cb(null, fn)
-    else
-      cb(null, fn(options.locals || {}))
-
+    str = fn(options.locals || {})
+    cb(null, str)
   catch err
     cb err
+    
+# Hogan
+exports.hogan = (content, options, cb) ->
+  engine = requires.hogan || (requires.hogan = require('hogan.js'))
+  
+  try
+    fn = engine.compile(content, options)
+    str = fn.render(options.locals || {})
+    cb(null, str)
+  catch err
+    cb(err)

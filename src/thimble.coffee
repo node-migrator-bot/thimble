@@ -199,12 +199,12 @@ render = exports.render = (file, locals = {}, fn) ->
     resolve(file)
     join(options.root, file)
   ]
-  
+
   # If one of the paths exists, proceed.
   check paths, (path) ->
     if path
       options.source = path
-    
+
     # Root needs to exist
     needs 'source', options, (err) ->
       if err then return fn(err)
@@ -245,13 +245,16 @@ eval = exports.eval = (content, locals = {}, fn) ->
     # Add to the top of the stack
     self.stack.unshift self.layout()
 
-  # If there's support files, add them
-  self.stack.push self.support()
 
   # Compile the template at the end
-  # This should be moved into thim.configure 'dev'
   if options.source
     self.stack.push self.compile(options.source, locals)
+
+  # If there's support files, add them
+  # This needs to be placed after compile, because compiled
+  # templates will hit client-side templating scripts, since
+  # they're looking for the same thing.
+  self.stack.push self.support()
 
   # Kick off the plugins
   handle.call self, content, options, (err, output) ->

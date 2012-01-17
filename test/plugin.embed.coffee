@@ -33,7 +33,18 @@ describe 'plugin', ->
         content.should.include "window.JST['template']"
 
         done()
+    
+    it 'should precompile hogan templates', (done) ->
+      str = "<script type = 'text/template' src = '/template.mu'>"
       
+      thim.eval str, {}, (err, content) ->
+        return done(err) if err
+        
+        content.should.include "Hogan.Template.prototype"
+        content.should.include "window.JST['template']"
+        content.should.include '_.f("planet"'
+
+        done()
       
     it 'should ignore scripts that arent templates', (done) ->
       str = "<script type = 'text/javascript' src = '/template.hb'>"
