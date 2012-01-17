@@ -15,7 +15,6 @@
   ,"devDependencies": {
 		"mocha" : "0.x",
 		"should" : "*",
-		"handlebars" : "1.x",
 		"hogan.js" : "1.x",
 		"stylus" : "0.x",
 		"jade" : "0.x",

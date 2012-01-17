@@ -15,7 +15,6 @@ exports.__defineGetter__ 'version', ->
 extensions = exports.extensions = 
   'styl'   : 'stylus'
   'coffee' : 'coffeescript'
-  'hb'     : 'handlebars'
   'mu'     : 'hogan'
   'md'     : 'markdown'
 

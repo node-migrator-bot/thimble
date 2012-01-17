@@ -128,17 +128,6 @@ exports.jade = (content, options, cb) ->
 ###
   Templating Compilers
 ###
-
-# Handlebars
-exports.handlebars = (content, options, cb) ->
-  engine = requires.handlebars || (requires.handlebars = require('handlebars'))
-
-  try
-    fn = engine.compile(content, options)
-    str = fn(options.locals || {})
-    cb(null, str)
-  catch err
-    cb err
     
 # Hogan
 exports.hogan = (content, options, cb) ->

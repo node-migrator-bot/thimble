@@ -26,17 +26,6 @@ describe 'plugin', ->
         return done(err) if err
         str.should.include 'return console.log("cool");'
         done()
-      
-    it 'should compile handlebars', (done) ->
-      locals = 
-        planet : 'mars'
-        
-      thim.render 'template.hb', locals, (err, str) ->
-        return done(err) if err
-
-        str.should.include "hello mars!"
-        
-        done()
 
     it 'should compile jade', (done) ->
       thim.render 'post.jade', {}, (err, str) ->
