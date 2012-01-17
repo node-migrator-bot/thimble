@@ -18,7 +18,9 @@ thimble.configure(function(use) {
 thimble.start(server);
 
 server.get('/', function(req, res) {
-   res.render('index.html'); 
+   res.render('index.mu', {
+     computer : 'server'
+   }); 
 });
 
 server.listen(8080);

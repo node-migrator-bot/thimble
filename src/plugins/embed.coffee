@@ -102,7 +102,7 @@ read = (file, options, fn) ->
 ###
 
 exports.hogan = (file, options, fn) ->
-  engine = requires.handlebars || (requires.handlebars = require('hogan.js'))
+  engine = requires.hogan || (requires.hogan = require('hogan.js'))
   filename = basename file, extname file
   out = []
   
@@ -110,19 +110,21 @@ exports.hogan = (file, options, fn) ->
   options.support.push
     file : support + '/hogan.js'
     appendTo : 'head'
-    
+  
   read file, options, (err, str) ->
     return fn(err) if err
-    
+
     out.push """
       (function() {
-        return new Hogan.Template(
+        var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+            tpl = new Hogan.Template(
     """
-    
+
     out.push engine.compile(str, {asString : true})
     
     out.push """
-        ).render;
+        );
+        return __bind(tpl.render, tpl);
       })();\n
     """
     
