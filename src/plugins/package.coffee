@@ -6,18 +6,11 @@
 fs = require('fs')
 {join, resolve, basename, dirname, extname} = require('path')
 
-mkdirp = require('mkdirp')
+_ = require('underscore')
 cheerio = require('cheerio')
 
 thimble = require('../thimble')
-{after, relative, needs} = require('../utils')
-
-public     = undefined
-build      = undefined
-directory  = undefined
-view       = undefined
-stylesheet = undefined
-javascript = undefined
+{after, relative, needs, mkdirs, step} = require('../utils')
 
 exports = module.exports = (opts = {}) ->
   
@@ -29,119 +22,117 @@ exports = module.exports = (opts = {}) ->
     directory = relative(options.root, dirname(options.source))
     public    = join(options.public, directory)
     build     = join(options.build, directory)
-
+    
     # Filenames
     ext  = extname(options.source)
-    view = basename(options.source)
-    base = basename(view, ext)
+    file = basename(options.source)
+    base = basename(file, ext)
 
+    # Asset names
     stylesheet   = base + '.css'
     javascript   = base + '.js'
 
-    # Set up the package directories
-    setup (err) ->
-      return next(err) if err
+    opts = _.extend opts,
+      directory : directory
+      public : public
+      build : build
+      ext : ext
+      view : file
+      base : base
+      stylesheet : stylesheet
+      javascript : javascript
       
-      todo = [
-        'package css'
-        'package js'
-      ]
-      
-      finished = after todo.length
-      
-      $ = cheerio.load content
-      
-      done = (err) ->
-        if err
-          return next(err)
-        else
-          return next(null, content)
-      
-      packageJS $, (err) ->
-        if finished()
-          packageView($, done)
-      
-      packageCSS $, (err) ->
-        if finished()
-          packageView($, done)
-      
-
+    $ = cheerio.load content
     
-setup = exports.setup = (fn) ->
-  todo = [
-    'make public directory'
-    'make build directory'
-  ]
+    before = (next) ->
+      mkdirs public, build, (err) ->
+        next(err, $, opts)
+
+    after = (err, content) ->
+      next(err, content)
+
+    # Run through the following steps in series
+    step before, css, js, view, after
+    
+###
+  Package the css
+###
+css = exports.css = (err, $, opts, next) ->
+  return next(err) if err
+
+  $style  = $('head').find('style')
+  {public, directory, stylesheet} = opts
+
+  if !$style.length
+    return next(null, $, opts)
+
+  # Get text and trim it
+  str = $style.text().trim()
+
+  # Remove style tag
+  $style.remove()
   
-  finished = after todo.length
+  # Add stylesheet to public folder
+  path = join(public, stylesheet)
+  public = join(directory, stylesheet)
+
+  # Add a new link tag
+  $link = $('<link>')
+    .attr('type', 'text/css')
+    .attr('href', '/' + public)
   
-  mkdirp public, 0755, (err) ->
-    return fn(err) if err
-    
-    if finished()
-      return fn(null, build, public)
-      
-  mkdirp build, 0755, (err) ->
-    return fn(err) if err
-    
-    if finished()
-      return fn(null, build, public)
-
+  $('head').append($link)
+  
+  # Write css file
+  fs.writeFile path, str, 'utf8', (err) ->
+    return next(err, $, opts)
 
 ###
-  Package up the view
-###        
-packageView = exports.packageView = ($, fn) ->
-  # if extname(view) is '.html'
-  #   console.log view
-    
-  fn(null)
+  Package the javascript
+###
 
-###
-  Package up the JS
-###
-packageJS = exports.packageJS = ($, fn) ->
-  $script = $('body').find('script')
+js = exports.js = (err, $, opts, next) ->
+  return next(err) if err
+  
+  $script = $('script')
+  {public, directory, javascript} = opts
 
   if !$script.length
-    return fn(null)
-  else
-    # Write javascript file
-    js = $script.text()
-    $script.remove()
-    path = join(public, javascript)
-  
-    fs.writeFile path, js, 'utf8', (err) ->
-      if err
-        return fn(err)
-      else
-        return fn(null)
+    return next(null, $, opts)
 
-###
-  Package up the CSS
-###
-packageCSS = exports.packageCSS = ($, fn) ->
-  $style  = $('head').find('style')
+  # Get text and trim it
+  str = $script.text().trim()
   
-  if !$style.length
-    return fn(null)
-  else
-    css = $style.text()
+  # Remove javascript tag
+  $script.remove()
+  
+  # Add javascript to public
+  path = join(public, javascript)
+  public = join(directory, javascript)
 
-    # Remove style tag
-    $style.remove()
-    path = join(public, stylesheet)
-    
-    # Add a new link tag
-    $link = $('<link>')
-      .attr('type', 'text/css')
-      .attr('href', '/' + stylesheet + "")
-    
-    # Write css file
-    fs.writeFile path, css, 'utf8', (err) ->
-      if err
-        return fn(err)
-      else
-        return fn(null)
+  # Add a new script tag
+  $script = $('<script>')
+    .attr('type', 'text/javascript')
+    .attr('src', '/' + public)
   
-        
+  $('body').append($script)
+
+  # Write the js file
+  fs.writeFile path, str, 'utf8', (err) ->
+    return next(err, $, opts)
+  
+###
+  Package the view
+###
+
+view = exports.view = (err, $, opts, next) ->
+  return next(err) if err
+  
+  {build, ext} = opts
+  file = opts.view
+
+  content = $.html()
+  path = join(build, file)
+
+  fs.writeFile path, content, 'utf8', (err) ->
+    return next(err, content)
