@@ -1,6 +1,8 @@
 fs = require 'fs'
 {normalize, resolve, exists} = require 'path'
 
+mkdirp = require('mkdirp')
+
 cache = {}
 
 ###
@@ -123,6 +125,23 @@ relative = exports.relative = (from, to) ->
     
   outputParts = outputParts.concat(toParts.slice(samePartsLength))
   outputParts.join "/"
+
+###
+  Mkdirs
+###
+
+mkdirs = exports.mkdirs = (dirs..., fn) ->
+  if dirs.length
+    finished = after dirs.length
+  else
+    return fn(null)
+
+  dirs.forEach (dir) ->
+    mkdirp dir, 0755, (err) ->
+      return fn(err) if err
+
+      if finished()
+        return fn(null)
 
 ###
   Tiny, but flexible step library
