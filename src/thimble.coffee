@@ -7,7 +7,6 @@ fs = require "fs"
 
 _ = require "underscore"
 
-error = require('./error')
 {check, needs} = require './utils'
 
 # Load all the static functions (plugins)
