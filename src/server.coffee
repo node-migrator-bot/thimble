@@ -3,14 +3,14 @@
   Thimble.coffee boots the middleware
 ###
 
-{normalize, extname, resolve} = require "path"
+{normalize, extname, resolve, join} = require "path"
 fs = require "fs"
 parse = require('url').parse
 
 express = require "express"
 
 middleware = require "./middleware"
-{needs} = require "./utils"
+{needs, read} = require "./utils"
 
 exports.start = (server) ->
   thimble = this
@@ -22,6 +22,20 @@ exports.start = (server) ->
   server.configure "production", ->
     needs 'public', 'build', options, (err) ->
       if err then throw err
+    
+    build = options.build = resolve(options.build)
+    public = options.public = resolve(options.public)
+    
+    server.set 'views', resolve(build)
+    
+    stack = server.stack
+    
+    server.use express.static(public)
+    
+    # Monkey-patch renderer at top of stack
+    stack.unshift
+      route  : ''
+      handle : render.call(thimble, options)
     
   server.configure "development", ->
     needs 'root', options, (err) ->
@@ -78,10 +92,17 @@ render = exports.render = (options) ->
       # Default to .html if no view extension given
       if !extname(view)
         view += ".html"
-
-      thimble.render view, locals, (err, content) ->
-        return next(err) if err
-        res.send content
+      
+      if options.env is 'production'
+        read join(options.build, view), (err, str) ->
+          return next(err) if err
+          thimble.compile(view, locals) str, options, (err, content) ->
+            return next(err) if err
+            res.send content
+      else
+        thimble.render view, locals, (err, content) ->
+          return next(err) if err
+          res.send content
         
     # Be on your way.
     return next()
