@@ -4,7 +4,9 @@ var express = require('express'),
     server = express.createServer();
 
 var options = {
-  root : __dirname
+  root : __dirname,
+  build : "./build",
+  public : "./public"
 };
 
 // Pass through the options
@@ -12,6 +14,8 @@ thimble(options);
 
 thimble.configure(function(use) {
   use(thimble.embed());
+  use(thimble.bundle());
+  use(thimble.package());
 });
 
 // Start thimble
