@@ -2,3 +2,5 @@
 node_modules
 *.sock
 thimble.tmproj
+examples/*/build
+examples/*/public
