@@ -18,8 +18,8 @@ thimble(options);
 
 thimble.configure(function(use) {
   use(thimble.flatten());
-  // use(thimble.bundle());
-  // use(thimble.package());
+  use(thimble.bundle());
+  use(thimble.package());
 });
 
 // Start thimble
