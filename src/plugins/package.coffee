@@ -48,7 +48,7 @@ exports = module.exports = (opts = {}) ->
       mkdirs public, build, (err) ->
         next(err, $, opts)
 
-    after = (err, content) ->
+    after = (err) ->
       next(err, content)
 
     # Run through the following steps in series
@@ -80,7 +80,8 @@ css = exports.css = (err, $, opts, next) ->
   $link = $('<link>')
     .attr('type', 'text/css')
     .attr('href', '/' + public)
-  
+    .attr('rel', 'stylesheet')
+    
   $('head').append($link)
   
   # Write css file
@@ -114,7 +115,7 @@ js = exports.js = (err, $, opts, next) ->
   $script = $('<script>')
     .attr('type', 'text/javascript')
     .attr('src', '/' + public)
-  
+    
   $('body').append($script)
 
   # Write the js file
@@ -134,5 +135,4 @@ view = exports.view = (err, $, opts, next) ->
   content = $.html()
   path = join(build, file)
 
-  fs.writeFile path, content, 'utf8', (err) ->
-    return next(err, content)
+  fs.writeFile path, content, 'utf8', next
