@@ -112,6 +112,7 @@ describe 'plugin', ->
         done()
         
     it 'should write view file to build directory', (done) ->
+      # Use arbitrary source that is one directory deep
       thimble.set 'source', join fixtures, 'index/index.html'
       
       b = join build, 'index/index.html'
@@ -127,5 +128,26 @@ describe 'plugin', ->
         v.should.include '/index/index.js'
 
         done()
+        
+    it 'should write images to public directory', (done) ->
+      thimble.set 'source', join fixtures, 'index.html'
+      
+      html = "<img src = 'chameleon.jpg' />"
+      
+      img = join public, 'chameleon.jpg'
+      b = join build, 'index.html'
+      
+      thimble.eval html, {}, (err, content) ->
+        return done(err) if err
+
+        exists(img).should.be.ok
+        exists(b).should.be.ok
+
+        view = read(b)
+        view.should.include '/chameleon.jpg'
+
+        done()
+      
+      
       
       

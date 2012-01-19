@@ -57,7 +57,35 @@ package = exports.package = (opts = {}) ->
       next(err, content)
 
     # Run through the following steps in series
-    step before, css, js, view, after
+    step before, images, css, js, view, after
+
+###
+  Package images
+###
+
+images = exports.images = (err, $, opts, next) ->
+  return next(err) if err
+  
+  {public, directory} = opts
+  $imgs = $('img')
+  
+  if !$imgs.length
+    return next(null, $, opts)
+  else
+    finished = after $imgs.length
+    
+  path = join(public, directory)
+
+  $imgs.each ->
+    $img = $(this)
+    source = $img.attr('src')
+    asset = join(directory, source)
+    $img.attr('src', '/' + asset)
+    
+    # Copy file over to public
+    # ...
+    
+  return next(null, $, opts)
     
 ###
   Package the css
