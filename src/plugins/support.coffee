@@ -44,7 +44,10 @@ support = exports.support = (content, options, next) ->
 
       if tag
         # Attach the support file
-        $asset = $('<' + tag + '>').text str
+        $asset = $('<' + tag + '>')
+          .addClass('support')
+          .text(str)
+          
         $tag = $(appendTo)
         if $tag.length
           $tag.append($asset)
