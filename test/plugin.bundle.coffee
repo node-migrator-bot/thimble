@@ -31,10 +31,10 @@ describe 'plugin', ->
         <script type = "text/javascript">alert('two');</script>
         <body></body>
       """
-      
+
       thim.eval html, {}, (err, content) ->
-        return done(err) if err
         
+        return done(err) if err
         $ = cheerio.load content
         $('script').length.should.equal 1
         $('body').find('script').length.should.equal 1

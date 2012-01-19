@@ -15,11 +15,15 @@ thimble = require('../thimble')
 ###
 
 exports = module.exports = (opts = {}) ->
-  
+  # Prefer to be on the bottom
   return (content, options, next) ->
-    
+    options.instance.use(bundle(opts))
+    next(null, content)
+      
+bundle = exports.bundle = (opts = {}) ->   
+  return (content, options, next) ->
     $ = cheerio.load content
-    
+
     scripts = []
     styles = []
 
