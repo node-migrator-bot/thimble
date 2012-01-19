@@ -22,7 +22,7 @@ package = exports.package = (opts = {}) ->
   return (content, options, next) ->
     needs 'public', 'build', 'source', 'root', options, (err) ->
       if err then return next(err)
-      
+
     # Directories
     directory = relative(options.root, dirname(options.source))
     public    = join(options.public, directory)
@@ -137,7 +137,7 @@ view = exports.view = (err, $, opts, next) ->
   {build, ext} = opts
   file = opts.view
 
-  content = $.html()
   path = join(build, file)
+  content = $.html()
 
   fs.writeFile path, content, 'utf8', next

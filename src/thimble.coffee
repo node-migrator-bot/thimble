@@ -137,12 +137,12 @@ insert = exports.insert = (file, appendTo = 'head') ->
 ###
 configure = exports.configure = (env, fn) ->
   self = this
-  envs = "all"
+  envs = "development"
   args = [].slice.call(arguments)
   fn = args.pop()
   
   envs = args if args.length
-  if "all" is envs or ~envs.indexOf(self.settings.env)
+  if ~envs.indexOf('all') or ~envs.indexOf(self.settings.env)
     fn.call self, (plugin) ->
       self.use(plugin)
 
