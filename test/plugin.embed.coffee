@@ -10,6 +10,7 @@ describe 'plugin', ->
     thim = undefined
     
     options = 
+      source : 'test.html'
       root : __dirname + '/fixtures/'
     
     beforeEach (done) ->
@@ -54,4 +55,17 @@ describe 'plugin', ->
         content.should.not.include "Hogan.Template.prototype"
         content.should.not.include "window.JST['template']"
         
+        done()
+        
+    it 'should work when both client and server using same templating', (done) ->
+      thim.set 'source', 'test.mu'
+      str = "<script type = 'text/template' src = '/template.mu'>"
+      
+      thim.eval str, { lulcatz : 'herro' }, (err, content) ->
+        return done(err) if err
+        
+        content.should.include "Hogan.Template.prototype"
+        content.should.include "window.JST['template']"
+        content.should.include '_.f("planet"'
+
         done()
