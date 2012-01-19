@@ -13,7 +13,12 @@ thimble = require('../thimble')
 {after, relative, needs, mkdirs, step} = require('../utils')
 
 exports = module.exports = (opts = {}) ->
-  
+  # Prefer to be on the bottom
+  return (content, options, next) ->
+    options.instance.use(package(opts))
+    next(null, content)
+
+package = exports.package = (opts = {}) ->
   return (content, options, next) ->
     needs 'public', 'build', 'source', 'root', options, (err) ->
       if err then return next(err)

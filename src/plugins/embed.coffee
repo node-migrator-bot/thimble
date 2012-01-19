@@ -13,7 +13,8 @@ utils = require '../utils'
 
 support = __dirname + '/../../support'
 
-exports = module.exports = (options = {}) ->
+
+exports = module.exports = (opts = {}) ->
   return embed
 
 embed = exports.embed = (content, options, next) ->

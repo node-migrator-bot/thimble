@@ -36,8 +36,13 @@ support = exports.support = (content, options, next) ->
     
     if ext is 'js'
       tag = 'script'
+      attrs = 
+        type : 'text/javascript'
     else if ext is 'css'
       tag = 'link'
+      attrs = 
+        type : 'text/css'
+        rel  : 'stylesheet'
 
     fs.readFile supportFile, 'utf8', (err, str) ->
       return next(err) if err
@@ -46,6 +51,7 @@ support = exports.support = (content, options, next) ->
         # Attach the support file
         $asset = $('<' + tag + '>')
           .addClass('support')
+          .attr(attrs)
           .text(str)
           
         $tag = $(appendTo)
