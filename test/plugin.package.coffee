@@ -23,7 +23,9 @@ html = """
 <html>
   <head>
     <style type = "text/css">
-      h2 { color : black }
+      h2 { 
+        color : black;
+      }
     </style>
   </head>
   <body>
@@ -149,6 +151,34 @@ describe 'plugin', ->
 
         done()
       
+    it 'should pull images out from css', (done) ->
+      thimble.set 'source', join fixtures, 'index.html'
       
+      html = """
+      <html>
+        <head>
+          <style>
+            body {
+              background : url('chameleon.jpeg');
+            }
+          </style>
+        </head>
+        <body></body>
+      </html>
+      """
+      
+      img = join public, 'chameleon.jpeg'
+      css = join public, 'index.css'
+      thimble.eval html, {}, (err, content) ->
+        return done(err) if err
+        
+        exists(img).should.be.ok
+        exists(css).should.be.ok
+        
+        css = read(css)
+
+        css.should.include "background: url('/chameleon.jpeg');"
+        
+        done()
       
       

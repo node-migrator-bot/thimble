@@ -61,7 +61,7 @@ package = exports.package = (opts = {}) ->
       next(err, content)
 
     # Run through the following steps in series
-    step before, images, css, js, view, done
+    step before, images, backgroundImages, css, js, view, done
 
 ###
   Package images
@@ -83,8 +83,8 @@ images = exports.images = (err, $, opts, next) ->
   $imgs.each ->
     $img = $(this)
     source = $img.attr('src')
+
     base = basename(source)
-    console.log base
     asset = join('/', directory, base)
   
     $img.attr('src', asset)
@@ -103,7 +103,75 @@ images = exports.images = (err, $, opts, next) ->
         return next(err) 
       else if finished()
         return next(null, $, opts)
-        
+
+###
+  Package the background images
+###
+backgroundImages = exports.backgroundImages = (err, $, opts, next) ->
+  # Parse the CSS
+  cssom = require('cssom')
+  $style = $('style')
+  style = $style.text()
+  if !style
+    return next(null, $, opts)
+    
+  {public, directory, root} = opts  
+  
+  css = cssom.parse(style)
+  imgs = []
+  
+  for selector in css.cssRules
+    selector = selector.style
+    
+    # Get the background and save which attribute it is
+    background = selector[attr = 'background'] || 
+                 selector[attr = 'background-image']
+    
+    if !(background)
+      continue;
+    
+    url = background.match(/url\([\'\"]([\w.\-]+)[\'\"]\)/)[1]
+    
+    if !url
+      continue;
+    
+    # Get basename of image
+    base = basename(url)
+    asset = join('/', directory, base)
+    
+    # Replace attribute in css
+    selector[attr] = background.replace(url, asset)
+    
+    # Copy file over to public
+    if url[0] is '/'
+      src = join(root, url)
+    else
+      src  = join(root, asset)
+    
+    # Put in top level app folder
+    dest = join(public, base)
+    
+    imgs.push
+      src : src
+      dest : dest
+  
+  if !imgs.length
+    return next(null, $, opts)
+
+  finished = after imgs.length
+  
+  # Put modified css back into <style> tag
+  $style.text(css.toString())
+  
+  # Copy images over to public directory
+  imgs.forEach (image) ->
+    {src, dest} = image
+    copy src, dest, (err) ->
+      if err
+        return next(err)
+      else if finished()
+        return next(null, $, opts)
+
 ###
   Package the css
 ###
