@@ -139,13 +139,11 @@ describe 'plugin', ->
       b = join build, 'index.html'
 
       thimble.eval html, {}, (err, content) ->
-        console.log err
-        console.log content
         return done(err) if err
-
+        
         exists(img).should.be.ok
         exists(b).should.be.ok
-
+        
         view = read(b)
         view.should.include '/chameleon.jpeg'
 

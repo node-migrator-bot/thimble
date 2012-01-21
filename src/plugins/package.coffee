@@ -24,6 +24,8 @@ package = exports.package = (opts = {}) ->
       if err then return next(err)
 
     # Directories
+    # CONSIDER: This is potentially confusing, public/build should probably
+    # be public/ build/ not public/index build/index
     directory = relative(options.root, dirname(options.source))
     public    = join(options.public, directory)
     build     = join(options.build, directory)
@@ -55,6 +57,7 @@ package = exports.package = (opts = {}) ->
         next(err, $, opts)
 
     done = (err) ->
+      # ** Return original content, so we don't break dev**
       next(err, content)
 
     # Run through the following steps in series
@@ -80,12 +83,20 @@ images = exports.images = (err, $, opts, next) ->
   $imgs.each ->
     $img = $(this)
     source = $img.attr('src')
-    asset = join('/', directory, source)
+    base = basename(source)
+    console.log base
+    asset = join('/', directory, base)
+  
     $img.attr('src', asset)
-    console.log $.root.children[0]
+
     # Copy file over to public
-    src  = join(root, asset)
-    dest = join(public, asset)
+    if source[0] is '/'
+      src = join(root, source)
+    else
+      src  = join(root, asset)
+      
+    # Put in top level app folder
+    dest = join(public, base)
 
     copy src, dest, (err) ->
       if err
@@ -101,7 +112,7 @@ css = exports.css = (err, $, opts, next) ->
 
   $style  = $('head').find('style')
   {public, directory, stylesheet} = opts
-
+  
   if !$style.length
     return next(null, $, opts)
 
@@ -173,5 +184,5 @@ view = exports.view = (err, $, opts, next) ->
 
   path = join(build, file)
   content = $.html()
-
+  # console.log content
   fs.writeFile path, content, 'utf8', next

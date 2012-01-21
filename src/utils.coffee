@@ -158,15 +158,24 @@ copy = exports.copy = (src, dst, fn) ->
   Tiny, but flexible step library
 ###
 step = exports.step = () ->
+  # Reverse initially so we can do pops instead of shifts
   stack = Array.prototype.slice.call(arguments).reverse()
   self = this
   
-  next = () ->
+  next = (err) ->
+    # Jump to last func if error occurs
+    if(err)
+      return stack[0].call(self, err)
+    
+    # Otherwise gather arguments and add next function to end
     args = Array.prototype.slice.call(arguments)
     if stack.length > 1
       args.push next
+      
+    # Call the next function on the stack with given args
     stack.pop().apply(self, args)
-
+  
+  # Kick us off
   stack.pop().call(self, next)
 
 module.exports = exports
