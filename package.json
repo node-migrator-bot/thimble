@@ -10,7 +10,8 @@
     "mime" : "1.2.x",
     "express" : "2.x",
     "mkdirp" : "0.x",
-    "commander" : "0.x"
+    "commander" : "0.x",
+    "cssom" : "0.2.x"
   }
   ,"devDependencies": {
 		"mocha" : "0.x",
