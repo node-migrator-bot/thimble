@@ -10,7 +10,7 @@ _ = require('underscore')
 cheerio = require('cheerio')
 
 thimble = require('../thimble')
-{after, relative, needs, mkdirs, step} = require('../utils')
+{after, relative, needs, mkdirs, step, copy} = require('../utils')
 
 exports = module.exports = (opts = {}) ->
   # Prefer to be on the bottom
@@ -46,6 +46,7 @@ package = exports.package = (opts = {}) ->
       base : base
       stylesheet : stylesheet
       javascript : javascript
+      root : options.root
       
     $ = cheerio.load content
     
@@ -53,11 +54,11 @@ package = exports.package = (opts = {}) ->
       mkdirs public, build, (err) ->
         next(err, $, opts)
 
-    after = (err) ->
+    done = (err) ->
       next(err, content)
 
     # Run through the following steps in series
-    step before, images, css, js, view, after
+    step before, images, css, js, view, done
 
 ###
   Package images
@@ -66,27 +67,32 @@ package = exports.package = (opts = {}) ->
 images = exports.images = (err, $, opts, next) ->
   return next(err) if err
   
-  {public, directory} = opts
+  {public, directory, root} = opts
   $imgs = $('img')
-  
+
   if !$imgs.length
     return next(null, $, opts)
   else
-    finished = after $imgs.length
+    finished = after($imgs.length)
     
   path = join(public, directory)
 
   $imgs.each ->
     $img = $(this)
     source = $img.attr('src')
-    asset = join(directory, source)
-    $img.attr('src', '/' + asset)
-    
+    asset = join('/', directory, source)
+    $img.attr('src', asset)
+    console.log $.root.children[0]
     # Copy file over to public
-    # ...
-    
-  return next(null, $, opts)
-    
+    src  = join(root, asset)
+    dest = join(public, asset)
+
+    copy src, dest, (err) ->
+      if err
+        return next(err) 
+      else if finished()
+        return next(null, $, opts)
+        
 ###
   Package the css
 ###
