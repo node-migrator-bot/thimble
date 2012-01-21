@@ -70,6 +70,7 @@ exports.create = (options = {}) ->
     template : 'JST'
     namespace : 'window'
     support : []
+    compile : true
     
     # Shouldn't be needed
     instance : thimble
@@ -247,7 +248,7 @@ eval = exports.eval = (content, locals = {}, fn) ->
 
 
   # Compile the template at the end
-  if options.source
+  if options.source and options.compile
     self.stack.push self.compile(options.source, locals)
 
   # If there's support files, add them
