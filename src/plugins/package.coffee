@@ -130,9 +130,9 @@ backgroundImages = exports.backgroundImages = (err, $, opts, next) ->
     if !(background)
       continue;
     
-    url = background.match(/url\([\'\"]([\w.\-]+)[\'\"]\)/)[1]
+    url = background.match(/url\([\'\"]([\w.\-]+)[\'\"]\)/)
     
-    if !url
+    if !(url && url[1])
       continue;
     
     # Get basename of image
