@@ -144,6 +144,17 @@ mkdirs = exports.mkdirs = (dirs..., fn) ->
         return fn(null)
 
 ###
+  Copy
+###
+
+copy = exports.copy = (src, dst, fn) ->
+  fs.stat src, (err) ->
+    return fn(err) if err
+    io = fs.createReadStream(src)
+    os  = fs.createWriteStream(dst)
+    util.pump io, os, fn
+
+###
   Tiny, but flexible step library
 ###
 step = exports.step = () ->
