@@ -10,6 +10,7 @@ var fs = require('fs'),
     program = require('commander'),
     _ = require('underscore'),
     cwd = process.cwd(),
+    locals  = {},
     options = {};
 
 // Get thimble's version
@@ -65,9 +66,14 @@ options.root = join(cwd, program.root);
 options.build = join(cwd, program.build);
 options.public = join(cwd, program.public);
 
+console.log(source);
+
 // Add a layout if specified
-if(options.layout)
-  options.layout = join(cwd, program.layout);
+if(program.layout)
+  locals.layout = program.layout
+
+// Dont compile the template
+options.compile = false;
 
 // Add the options to thimble
 thimble(options);
@@ -80,7 +86,7 @@ thimble.configure(function(use) {
   use(thimble.package());
 });
 
-thimble.render(source, options, function(err, content) {
+thimble.render(source, locals, function(err, content) {
   if(err) {
     console.log(err.message);
     process.exit();
