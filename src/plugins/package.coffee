@@ -134,7 +134,8 @@ backgroundImages = exports.backgroundImages = (err, $, opts, next) ->
     
     if !(url && url[1])
       continue;
-    
+
+    url = url[1]
     # Get basename of image
     base = basename(url)
     asset = join('/', directory, base)
