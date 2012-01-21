@@ -195,7 +195,7 @@ render = exports.render = (file, locals = {}, fn) ->
   # Obtain the source, and add it to the settings,
   # Try a few different paths
   paths = [
-    resolve(file)
+    # resolve(file)
     join(options.root, file)
   ]
 
@@ -203,7 +203,8 @@ render = exports.render = (file, locals = {}, fn) ->
   check paths, (path) ->
     if path
       options.source = path
-
+    # console.log 'paths', paths
+    # console.log 'resolved path', path
     # Root needs to exist
     needs 'source', options, (err) ->
       if err then return fn(err)
