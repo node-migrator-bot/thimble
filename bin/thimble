@@ -5,10 +5,14 @@
 */
 var fs = require('fs'),
     path = require('path'),
+    existsSync = path.existsSync,
+    resolve = path.resolve,
     join = path.join,
     thimble = require('../'),
     program = require('commander'),
     _ = require('underscore'),
+    utils = thimble.utils,
+    relative = utils.relative,
     cwd = process.cwd(),
     locals  = {},
     options = {};
@@ -61,16 +65,41 @@ if (!source) {
   process.exit();
 }
 
+
+
 // Load in the options
 options.root = join(cwd, program.root);
 options.build = join(cwd, program.build);
 options.public = join(cwd, program.public);
 
-console.log(source);
+// Check a few paths for the source
+var relativeSource = join(options.root, source), 
+    absoluteSource = resolve(source);
+    
+if(existsSync(absoluteSource)) {
+  source = relative(options.root, absoluteSource);
+} else if (!existsSync(relativeSource)) {
+  throw new Error('Cannot find source provided: ' + source);
+}
+
 
 // Add a layout if specified
-if(program.layout)
-  locals.layout = program.layout
+if(program.layout) {
+  // Check a few paths for the layout
+  var layout = program.layout,
+      relativeLayout = join(options.root, layout), 
+      absoluteLayout = resolve(layout);
+  
+  
+  if(existsSync(absoluteLayout)) {
+    layout = relative(options.root, absoluteLayout);
+  } else if (!existsSync(relativeLayout)) {
+    throw new Error('Cannot find source provided: ' + layout);
+  }
+  
+  locals.layout = layout
+}
+
 
 // Dont compile the template
 options.compile = false;

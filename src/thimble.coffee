@@ -7,7 +7,7 @@ fs = require "fs"
 
 _ = require "underscore"
 
-{check, needs} = require './utils'
+{needs} = require './utils'
 
 # Load all the static functions (plugins)
 exports = require './static'
@@ -75,6 +75,8 @@ exports.create = (options = {}) ->
     # Shouldn't be needed
     instance : thimble
 
+  # Attach utils
+  thimble.utils = require('./utils')
   
   # thimble.__proto__ = require './proto'
   thimble.__proto__ = exports
@@ -192,28 +194,14 @@ render = exports.render = (file, locals = {}, fn) ->
 
   # Make sure the root path is absolute
   options.root = resolve(options.root)
-
-  # Obtain the source, and add it to the settings,
-  # Try a few different paths
-  paths = [
-    # resolve(file)
-    join(options.root, file)
-  ]
-
-  # If one of the paths exists, proceed.
-  check paths, (path) ->
-    if path
-      options.source = path
-    # console.log 'paths', paths
-    # console.log 'resolved path', path
-    # Root needs to exist
-    needs 'source', options, (err) ->
-      if err then return fn(err)
+  
+  # Append the root onto the source file
+  options.source = join(options.root, file)
     
-    fs.readFile options.source, "utf8", (err, content) ->
-      return fn(err) if err
+  fs.readFile options.source, "utf8", (err, content) ->
+    return fn(err) if err
 
-      eval.call self, content, locals, fn
+    eval.call self, content, locals, fn
 
   return this
   

@@ -1,5 +1,5 @@
 fs = require 'fs'
-{normalize, resolve, exists} = require 'path'
+{normalize, resolve, exists, existsSync} = require 'path'
 util = require 'util'
 mkdirp = require('mkdirp')
 
