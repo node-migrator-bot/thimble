@@ -120,7 +120,7 @@ var fixPaths = exports.fixPaths = function($, directory, root) {
       
       // If not absolute path, and if doesn't have http, make relative
       if(attr && attr[0] != '/' && !~attr.indexOf('http')) {
-        $elem.attr(attribute, join(relPath, attr));
+        $tag.attr(attribute, join(relPath, attr));
       }
     });
   }

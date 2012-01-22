@@ -267,7 +267,7 @@ var css = exports.css = function(err, $, opts, next) {
   $link = $('<link>')
     .attr('type', 'text/css')
     .attr('href', public)
-    .attr('rel', stylesheet);
+    .attr('rel', 'stylesheet');
   
   // Append <link> to <head>
   $('head').append($link);

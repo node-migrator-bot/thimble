@@ -99,7 +99,7 @@ var boilerplate = function(options, name) {
   out.push('\n' + JST + ' = ');
   
   // window.JST || {}
-  out.push(JST + ' || {};');
+  out.push(JST + ' || {}; ');
   
   // window.JST['template'] =
   out.push(JST + '[\'' + name + '\'] = ');
@@ -130,13 +130,16 @@ exports.hogan = function(file, options, fn) {
     if(err) return fn(err);
 
     out.push('(function() {');
-    out.push('var __bind = function(fn, me) {');
-    out.push('return function() { fn.apply(me, arguments); }; },');
-    out.push('tpl = new Hogan.Template(');
+    out.push('  var __bind = function(fn, me) {');
+    out.push('    return function() { fn.apply(me, arguments); };');
+    out.push('  },');
+    out.push('  tpl = new Hogan.Template(');
     
-    out.push(engine.compile(str, {asString : true}));
+    out.push('    ' + engine.compile(str, {asString : true}));
     
-    out.push('); return __bind(tpl.render, tpl); })();\n');
+    out.push('  );');
+    out.push('  return __bind(tpl.render, tpl);');
+    out.push('})();');
     
     return fn(null, out.join('\n'));
     
