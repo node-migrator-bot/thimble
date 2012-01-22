@@ -129,6 +129,8 @@ exports.hogan = function(file, options, fn) {
   read(file, function(err, str) {
     if(err) return fn(err);
 
+    // Need to bind, because render loses object
+    // Call template on clientside with: JST['template'](locals)
     out.push('(function() {');
     out.push('  var __bind = function(fn, me) {');
     out.push('    return function() { return fn.apply(me, arguments); };');
