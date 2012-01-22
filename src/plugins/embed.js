@@ -108,10 +108,12 @@ var boilerplate = function(options, name) {
 };
 
 /*
-  Precompiles
+  Precompilers
 */
 
-// Hogan.js
+/*
+  Hogan.js - Fast mustache templating
+*/
 exports.hogan = function(file, options, fn) {
   var engine = requires.hogan || (requires.hogan = require('hogan.js')),
       filename = basename(file, extname(file)),
