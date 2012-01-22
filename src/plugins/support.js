@@ -87,7 +87,7 @@ exports = module.exports = function(opts) {
           $ = cheerio.load($asset.html() + '\n' + $.html());
         }
         
-        // If we've added all the assets, 
+        // If we've added all the assets, render html and return
         if(finished()) return next(null, $.html());
         
       });
