@@ -4,7 +4,7 @@
 ###
 should = require 'should'
 
-utils = require '../src/utils'
+utils = require('../').utils
 
 describe 'utils', ->
   describe '.relative', ->
