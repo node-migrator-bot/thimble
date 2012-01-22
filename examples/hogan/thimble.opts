@@ -1,0 +1,4 @@
+--root .
+--build ./build
+--public ./public
+--source index.mu
