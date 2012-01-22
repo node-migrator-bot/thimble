@@ -15,7 +15,7 @@ describe 'utils', ->
       b = '/hi/there'
       
       utils.relative(b, a).should.equal ""
-      
+    
     it 'should find relative from root', ->
       
       root = '/root/'
