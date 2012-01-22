@@ -131,7 +131,7 @@ exports.hogan = function(file, options, fn) {
 
     out.push('(function() {');
     out.push('  var __bind = function(fn, me) {');
-    out.push('    return function() { fn.apply(me, arguments); };');
+    out.push('    return function() { return fn.apply(me, arguments); };');
     out.push('  },');
     out.push('  tpl = new Hogan.Template(');
     
