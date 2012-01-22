@@ -44,7 +44,8 @@ var middleware = exports.middleware = function(options) {
       if(err) {
         if(err.code === 'ENOENT' || err.code === 'ENAMETOOLONG')
           return next();
-        else return next(err);
+        else 
+          return next(err);
       } else if(stat.isDirectory())
         return next();
       
