@@ -5,6 +5,6 @@ test:
 		--growl
 
 mate:
-	@mate src/ test/
+	@mate lib/ test/ examples/ bin/ package.json index.js
 
 .PHONY: test
