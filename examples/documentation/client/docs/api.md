@@ -4,22 +4,29 @@ Thimble's API is based off of [express](http://expressjs.com/) and is intentiona
 
 ### Creating a thimble instance ###
 
-To create an instance of thimble on your server, simply run invoke the thimble function, passing in a set of options.
+By default when you require thimble, it will automatically create an instance:
 
-    var thimble = require('thimble'), 
-        thim = thimble(options);
+    var thimble = require('thimble');
 
-The only option that is required is `root`. Here's an example:
+If you'd like to create another instance of thimble you can call the command `create`:
+    
+    var friend = thimble.create([options]);
 
-    var thim = thimble({
-      root : "./views"
+You can add options by calling the thimble function. Here's an example:
+
+    thimble({
+      root : './views',
+      build : './build',
+      public : './public'
     });
-  
-The `root` is where all your client-side views will live. If you use the `flatten` plugin, your assets should be in this directory as well.
 
-Additional `options` may include:
+To get started you'll only need to specify the `root` property. However, if you're looking to eventually deploy application using thimble, it's a good idea to add the `public` and `build` directories as well.
+
+Additional `options` you can add include:
   
-  * `root` : Required. Directory containing your views.
+  * `root` : Main client-side directory. Required for `development`.
+  * `public` : Where your assets will go when built. Required for `production`.
+  * `build` : Where your views will go when built. Required for `production`.
   * `env` : The current environment. Defaults to `development`.
   * `template` : The variable templates will be saved under. Defaults to `JST`.
   * `namespace` : The namespace used on the client-side. Defaults to `window`.
@@ -28,40 +35,40 @@ Additional `options` may include:
 
 ### Adding plugins ###
 
-Once you have created an instance, you'll want to add plugins. Currently, thimble does not include any plugins by default, so you'll want to explicitly add them.
+Once you have created an instance, you'll want to add plugins. This is how you add a plugin:
 
-This is how you add a plugin:
-
-    thim.use(thimble.flatten());
+    thimble.use(thimble.flatten());
     
-Now when you make requests to views, its source will pass through the `flatten` plugin.
+Now when you make request, its source will pass through the `flatten` plugin. You can also use the `configure` function to add many plugins at once. For getting started, I'd recommend the following configuration:
 
-Now you'll probably want to set up different plugins for different environments. For this, you'll need `thim.configure`. Here's an example:
-    
-    thim.configure(function() {
-      thim.use(thimble.layout());
-      thim.use(thimble.flatten());
-      thim.use(thimble.embed());
+    thimble.configure(function(use) {
+      use(thimble.flatten());
+      use(thimble.embed());
     });
+
+You can also configure the stack for different environments:
     
-    thim.configure('development', function() {
+    // Runs in all environments
+    thim.configure('all', function() {
       thim.use(thimble.focus('.menu'));
     });
     
+    // Runs when NODE_ENV=staging
     thim.configure('staging', function() {
       thim.use(thimble.bundle());
     });
 
-When you do not pass an environment to the configuration, the configuration will run in all environments.
+When you do not pass an environment to the configuration, the configuration will run in the `development` environment.
 
-> Important: When adding multiple plugins, __order matters__. Differing order may yield different results. For example, placing `embed` before `flatten` in the configuration will embed templates in the index source, but not any of the included files.
+> **Important**: When adding multiple plugins, **order matters**. Differing order may yield different results. For example, placing `embed` before `flatten` in the configuration will embed templates in the index source, but not any of the included files.
 
 ### Starting Thimble ###
 
 When all your configuration is set up, you can simply `start` thimble:
 
-    thim.start(app);
+    thimble.start(app);
     
 In this example `app` is an express server. This call will configure the express to support thimble by loading the middleware into the server stack and monkey-patching `res.render` to provide a transparent interface.
 
 > Note: Thimble may move certain express middleware layers (like `static`) to ensure a proper runtime.
+ 
