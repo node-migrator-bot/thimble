@@ -26,7 +26,7 @@ thimble.configure(function(use) {
 thimble.start(server);
 
 server.get('/', function(req, res) {
-   res.render('index/index', {
+   res.render('index', {
        layout : 'layout.html'
    }); 
 });
