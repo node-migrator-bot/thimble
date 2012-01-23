@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv = "Content-type" content = "text/html; charset=utf-8"/>
+    <title>Thimble | Documentation</title>
+    
+    
+  <link type = "text/css" href = "index.css" rel = "stylesheet"/></head>
+  <body>
+    <div id = "wrapper">
+      <!-- Add the styling -->
+
+
+<!-- Add the header -->
+<div id = "header">
+  <!-- <img src="../images/thimble.png" alt="thimble" /> -->
+  <div class = "intro">
+    <h1>Thimble</h1>
+    <p>Painless frontend development</p>
+  </div>
+</div>
+
+
+<!-- Load the documentation -->
+<div id = "documentation">
+    <h2>Introduction</h2>
+
+<p>Thimble is a extendable frontend tool that understands and transforms your HTML to automate tedious tasks during web development. Thimble also introduces new features to help you develop more modular web applications. </p>
+
+<p><strong><em>Thimble supercharges developer productivity without sacrificing runtime efficiency</em></strong>.</p>
+
+<p>During development, thimble inserts two middleware layers. The first layer manipulates your page request, running plugins like flatten and embed. The second layer catches requested assets, offering seamless integration with the latest interpreters and preprocessors like coffeescript and stylus. </p>
+
+<p>For production, thimble provides a build tool that compiles and bundles your assets into a single package that you can dish out to your servers.</p>
+    <h2>Installation</h2>
+
+<pre><code>npm install -g thimble
+</code></pre>
+    <h2>How it works</h2>
+
+<p>Thimble's architecture is heavily influenced by <a href = "http://senchalabs.github.com/connect/">connect</a>. Connect's layering system is fantastic for providing modular middleware on the server. Thimble borrows this concept to provide an extensible HTML transformer for page requests.</p>
+
+<p>The following is an example of thimble during the development cycle:</p>
+
+<p><img src = "how-it-works.png" alt = "diagram" title //></p>
+
+<p>In this diagram our requested page passes through thimble's plugins that transform its source before reaching you, the developer. These plugins do things like include other files, embed templates, dim distracting elements, and expose functions and objects from the server to the frontend.</p>
+    
+    <!-- Plugins section -->
+    <div class = "plugins">
+      <h2>Bundled Plugins</h2>
+
+<p>The following plugins are bundled with thimble:</p>
+
+<ul class = "plugins">
+  <li>
+    <h3>Flatten</h3>
+
+<p>Flatten introduces the <code>include</code> tag to your HTML. By using flatten you can modularize your web application and break free from traditional directory structures. Flatten allows you to include HTML from your HTML. The following is an example of including <code>menu.html</code>:</p>
+
+<pre><code>&lt;include src = "menu.html" /&gt;
+</code></pre>
+
+<p>Flatten also supports languages that compile into HTML. Currently, thimble has compilers for <a href = "http://daringfireball.net/projects/markdown/">markdown</a> and <a href = "http://jade-lang.com/">jade</a>, allowing you to write: </p>
+
+<pre><code>&lt;include src = "intro.md" /&gt;
+&lt;include src = "body.jade" /&gt;
+</code></pre>
+
+<p>The most important feature of flatten is that <strong>paths become relative to included file's directory</strong>. This allows you to have a directory structure like:</p>
+
+<p><strong>app/</strong><br //>&nbsp;&nbsp;&nbsp;• app.html<br //>&nbsp;&nbsp;&nbsp;<strong>menu/</strong><br //>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• menu.html<br //>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• menu.css</p>
+
+<p>Then in <code>app.html</code>:</p>
+
+<pre><code>&lt;include src = "menu/menu.html" /&gt;
+</code></pre>
+
+<p>And then do the following in <code>menu.html</code>:</p>
+
+<pre><code>&lt;link href = "menu.css" /&gt;
+</code></pre>
+
+<p>This feature allows you to focus on one piece of your application, without worrying about the directory structure outside.</p>
+  </li>
+  <li>
+    <h3>Embed</h3>
+
+<p>Embed compiles your client-side templates into functions. When the embed plugin runs, it looks for <code>script</code> tags that have <code>type = "text/template"</code>, compiles them, and attaches them to the <code>namespace</code>.<code>template</code> object, where both <code>namespace</code> and <code>template</code> are configurable. Therefore when you run your application, your templates are ready to be called.</p>
+
+<p>For example:</p>
+
+<pre><code>&lt;script src = "contact.mu" type = "text/template"&gt;&lt;/script&gt;
+</code></pre>
+
+<p>Will compile to:</p>
+
+<pre><code>&lt;script type = "text/javascript"&gt;
+  window.JST['contact'] = 
+    function(locals) { ... };
+&lt;/script&gt;
+</code></pre>
+
+<p>That can be called by: </p>
+
+<pre><code>window.JST['contact']({
+  name : "Matt Mueller",
+  age  : 22
+});
+</code></pre>
+
+<blockquote>
+  <p>Note: By default, your templates are attached to the <code>window.JST</code> object.</p>
+</blockquote>
+  </li>
+  <li>
+    <h3>Layout</h3>
+
+<p>Layout introduces the <code>yield</code> tag. Layouts work in the same way express provides layouts, by adding them through <code>res.render</code>. Here's an example:</p>
+
+<pre><code>res.render('index/index', {
+  name : "Matt",
+  layout : "/layout.html"
+});
+</code></pre>
+
+<blockquote>
+  <p>Note: Currently, thimble squelches express's layout functionality, so layouts work with other bundles. Additionally, you will need to set layouts in <code>res.render</code> each time because there is not yet support for adding one default layout.</p>
+</blockquote>
+  </li>
+  <li>
+    <h3>Bundle</h3>
+
+<p>Bundle adds order to your chaotic asset structure. Bundle takes all <code>script</code>, <code>style</code>, and <code>link</code> tags and bundle them into one <code>script</code> tag and one <code>style</code> tag. The <code>script</code> tag will be placed at the bottom of the <code>body</code>, while the <code>style</code> tag will be appended to the <code>head</code>. </p>
+
+<p>Bundle is often used as a preliminary step in the build process before pulling out these assets and minifying them.</p>
+
+<p>Bundle will skip assets that contain <code>http://</code> as they often link to external CDNs.</p>
+
+<blockquote>
+  <p>Note: Make sure your script tags contain the attribute, <code>type = "text/javascript"</code>. Thimble needs this to differentiate between templates and scripts.</p>
+</blockquote>
+  </li>
+  <li>
+    <h3>Focus</h3>
+
+<p>Focus provides a glimpse at the power of thimble. This plugin allows you can specify a selector to focus on. Say for example we have a chat window we want to focus on. We could write:</p>
+
+<pre><code>thim.use(thimble.focus('#chat'));
+</code></pre>
+
+<p>This will add transparency to all of the <code>#chat</code> element's siblings, allowing you to focus on what's important at the moment.</p>
+  </li>
+  <li>
+    <h3>Minify</h3>
+
+<p>The minify plugin will compress your assets.</p>
+  </li>
+  <li>
+    <h3>Package</h3>
+
+<p>Package will compile your application into a view, a javascript file, and a css file.</p>
+  </li>
+</ul>
+    </div>
+
+    <h2>API</h2>
+
+<p>Thimble's API is based off of <a href = "http://expressjs.com/">express</a> and is intentionally minimal. </p>
+
+<h3>Creating a thimble instance</h3>
+
+<p>By default when you require thimble, it will automatically create an instance:</p>
+
+<pre><code>var thimble = require('thimble');
+</code></pre>
+
+<p>If you'd like to create another instance of thimble you can call the command <code>create</code>:</p>
+
+<pre><code>var friend = thimble.create([options]);
+</code></pre>
+
+<p>You can add options by calling the thimble function. Here's an example:</p>
+
+<pre><code>thimble({
+  root : './views',
+  build : './build',
+  public : './public'
+});
+</code></pre>
+
+<p>To get started you'll only need to specify the <code>root</code> property. However, if you're looking to eventually deploy application using thimble, it's a good idea to add the <code>public</code> and <code>build</code> directories as well.</p>
+
+<p>Additional <code>options</code> you can add include:</p>
+
+<ul>
+<li><code>root</code> : Main client-side directory. Required for <code>development</code>.</li>
+<li><code>public</code> : Where your assets will go when built. Required for <code>production</code>.</li>
+<li><code>build</code> : Where your views will go when built. Required for <code>production</code>.</li>
+<li><code>env</code> : The current environment. Defaults to <code>development</code>.</li>
+<li><code>template</code> : The variable templates will be saved under. Defaults to <code>JST</code>.</li>
+<li><code>namespace</code> : The namespace used on the client-side. Defaults to <code>window</code>.</li>
+</ul>
+
+<blockquote>
+  <p>Note: You can always set these options later in the application using <code>thimble.set(option, value)</code>.</p>
+</blockquote>
+
+<h3>Adding plugins</h3>
+
+<p>Once you have created an instance, you'll want to add plugins. This is how you add a plugin:</p>
+
+<pre><code>thimble.use(thimble.flatten());
+</code></pre>
+
+<p>Now when you make request, its source will pass through the <code>flatten</code> plugin. You can also use the <code>configure</code> function to add many plugins at once. For getting started, I'd recommend the following configuration:</p>
+
+<pre><code>thimble.configure(function(use) {
+  use(thimble.flatten());
+  use(thimble.embed());
+});
+</code></pre>
+
+<p>You can also configure the stack for different environments:</p>
+
+<pre><code>// Runs in all environments
+thim.configure('all', function() {
+  thim.use(thimble.focus('.menu'));
+});
+
+// Runs when NODE_ENV=staging
+thim.configure('staging', function() {
+  thim.use(thimble.bundle());
+});
+</code></pre>
+
+<p>When you do not pass an environment to the configuration, the configuration will run in the <code>development</code> environment.</p>
+
+<blockquote>
+  <p><strong>Important</strong>: When adding multiple plugins, <strong>order matters</strong>. Differing order may yield different results. For example, placing <code>embed</code> before <code>flatten</code> in the configuration will embed templates in the index source, but not any of the included files.</p>
+</blockquote>
+
+<h3>Starting Thimble</h3>
+
+<p>When all your configuration is set up, you can simply <code>start</code> thimble:</p>
+
+<pre><code>thimble.start(app);
+</code></pre>
+
+<p>In this example <code>app</code> is an express server. This call will configure the express to support thimble by loading the middleware into the server stack and monkey-patching <code>res.render</code> to provide a transparent interface.</p>
+
+<blockquote>
+  <p>Note: Thimble may move certain express middleware layers (like <code>static</code>) to ensure a proper runtime.</p>
+</blockquote>
+    <h2>Example</h2>
+
+<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+    <h2>Credits</h2>
+
+<p>Thimble has been quite the project. I first started thinking about thimble a year ago and it took three complete re-writes to get it to where it is today. This project also spawned the development of <a href = "https://github.com/MatthewMueller/cheerio">cheerio</a>, the HTML library that powers thimble because I wanted a faster and more intuitive alternative to <a href = "https://github.com/tmpvar/jsdom">JSDOM</a>.</p>
+
+<p>Many thanks to the contributors and users of cheerio for battle-testing the library. I'd also like to thank <a href = "https://github.com/visionmedia">TJ Holowaychuk</a> - many of the libraries for this project are his and much of what I learned about clean asynchronous programming is a result of studying his coding style.</p>
+</div>
+
+<!-- Add the footer -->
+<!-- <include src = "footer.html" /> -->
+
+
+    </div>
+  </body>
+</html>
+
