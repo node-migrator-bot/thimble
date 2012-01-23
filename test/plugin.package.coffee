@@ -126,12 +126,13 @@ describe 'plugin', ->
         exists(b).should.be.ok
 
         v = read(b)
-        v.should.include '/index/index.css'
+        v.should.include 'index/index.css'
         v.should.include 'hi there'
-        v.should.include '/index/index.js'
+        v.should.include 'index/index.js'
 
         done()
-        
+    
+    # This has become a somewhat pointless test, i believe
     it 'should write images to public directory', (done) ->
       thimble.set 'source', join fixtures, 'index.html'
       
@@ -147,7 +148,7 @@ describe 'plugin', ->
         exists(b).should.be.ok
         
         view = read(b)
-        view.should.include '/chameleon.jpeg'
+        view.should.include 'chameleon.jpeg'
 
         done()
       
@@ -177,7 +178,7 @@ describe 'plugin', ->
         
         css = read(css)
 
-        css.should.include "background: url('/chameleon.jpeg');"
+        css.should.include "background: url('chameleon.jpeg');"
         
         done()
       
