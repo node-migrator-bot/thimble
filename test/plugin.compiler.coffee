@@ -4,31 +4,30 @@ should = require 'should'
 
 describe 'plugin', ->
   describe '.compile', ->
-    thim = undefined
-    
+      
     fixtures = __dirname + '/fixtures'
     options = 
       root : fixtures
       plugins : []
     
     beforeEach (done) ->
-      thim = thimble.create(options)
+      thimble = thimble.create(options)
       done()
     
     it 'should compile stylus', (done) ->
-      thim.render 'style.styl', {}, (err, str) ->
+      thimble.render 'style.styl', {}, (err, str) ->
         return done(err) if err
         str.should.include 'color: #999;'
         done()
     
     it 'should compile coffeescript', (done) ->
-      thim.render 'cool.coffee', {}, (err, str) ->
+      thimble.render 'cool.coffee', {}, (err, str) ->
         return done(err) if err
         str.should.include 'return console.log("cool");'
         done()
 
     it 'should compile jade', (done) ->
-      thim.render 'post.jade', {}, (err, str) ->
+      thimble.render 'post.jade', {}, (err, str) ->
         return done(err) if err
         
         str.should.include '<p>this is a post</p>'
@@ -36,9 +35,9 @@ describe 'plugin', ->
         done()
       
     it 'should compile markdown', (done) ->
-      thim.use thimble.flatten()
+      thimble.use thimble.flatten()
       str = '<include src = "markdown.md" />'
-      thim.eval str, {}, (err, str) ->
+      thimble.eval str, {}, (err, str) ->
         return done(err) if err
 
         str.should.include "<h1>Header 1</h1>"
@@ -49,13 +48,13 @@ describe 'plugin', ->
 
     it 'should render hogan in development', (done) ->
       # Fake page
-      thim.set('source', 'test.mu')
+      thimble.set('source', 'test.mu')
       
       str = """
         hello {{planet}}!
       """
       
-      thim.eval str, {planet : 'Mars'}, (err, str) ->
+      thimble.eval str, {planet : 'Mars'}, (err, str) ->
         return done(err) if err
         str.should.equal "hello Mars!"
         done()
