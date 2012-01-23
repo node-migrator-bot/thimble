@@ -9,16 +9,16 @@ options =
 
 
 describe 'thimble', ->
-  describe '.render', ->
-    thim = undefined
 
-    beforeEach (done) ->
-      thim = thimble.create(options)
-      done()
+  beforeEach (done) ->
+    thimble = thimble.create(options)
+    done()
+    
+  describe '.render', ->
     
     it 'should render basic html correctly', (done) ->
 
-      thim.render 'index.html', {}, (err, content) ->
+      thimble.render 'index.html', {}, (err, content) ->
         throw err if err
         
         content.should.include "cool story, man."
@@ -27,7 +27,7 @@ describe 'thimble', ->
         
     it 'should render with a layout', (done) ->
       
-      thim.render 'title.html', { layout : 'layout.html' }, (err, content) ->
+      thimble.render 'title.html', { layout : 'layout.html' }, (err, content) ->
         throw err if err
 
         content.should.include '<html>This is a pretty important title</html>'
@@ -36,7 +36,7 @@ describe 'thimble', ->
         
     it 'should take allow a function as the 2nd parameter', (done) ->
       
-      thim.render 'index.html', (err, content) ->
+      thimble.render 'index.html', (err, content) ->
         throw err if err
         
         content.should.include "cool story, man."
@@ -44,75 +44,55 @@ describe 'thimble', ->
         done()
   
   describe '.use', ->
-    thim = undefined
-    
-    beforeEach (done) ->
-      thim = thimble.create(options)
-      done()
     
     it 'should add to the stack', ->
-      before = thim.stack.length
-      thim.use thimble.support()
-      after = thim.stack.length
+      before = thimble.stack.length
+      thimble.use thimble.support()
+      after = thimble.stack.length
       
       after.should.equal before + 1
       
    
   describe '.configure', ->
-    thim = undefined
-
-    beforeEach (done) ->
-      thim = thimble.create(options)
-      done()
-    
+  
     # stupid minify
     minify = (content, options, next) ->
       next null, content.replace /\s+/g, ''
       
     it 'doesnt minify in development', (done) ->
       
-      thim.configure 'production', ->
-        thim.use minify
+      thimble.configure 'production', ->
+        thimble.use minify
       
-      thim.render 'index.html', (err, content) ->
+      thimble.render 'index.html', (err, content) ->
         
         content.should.include "cool story, man."
         
         done()
         
     it 'minifies in production', (done) ->
-      thim.settings.env = 'production'
+      thimble.settings.env = 'production'
       
-      thim.configure 'production', ->
-        thim.use minify
+      thimble.configure 'production', ->
+        thimble.use minify
       
-      thim.render 'index.html', (err, content) ->
+      thimble.render 'index.html', (err, content) ->
         content.should.include "coolstory,man."
         
         done()
         
   describe '.set', ->
-    thim = undefined
-
-    beforeEach (done) ->
-      thim = thimble.create(options)
-      done()
     
     it 'should set the setting if second arg is present', ->
-      thim.set('env', 'staging')
-      thim.settings.env.should.equal 'staging'
+      thimble.set('env', 'staging')
+      thimble.settings.env.should.equal 'staging'
 
   describe '.get', ->
-    thim = undefined
-
-    beforeEach (done) ->
-      thim = thimble.create(options)
-      done()
     
     it 'should get setting if second arg undefined', ->
-      thim.get('env').should.equal 'development'
+      thimble.get('env').should.equal 'development'
 
     it 'should return undefined if we get a non-existent setting', ->
-      test = thim.get('lolcats') is undefined
+      test = thimble.get('lolcats') is undefined
       test.should.be.true
 

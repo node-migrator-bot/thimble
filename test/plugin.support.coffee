@@ -16,20 +16,18 @@ thimble = require '../'
 
 describe 'plugin', ->
   describe '.support', ->
-    
-    thim = undefined
-    
+        
     options =
       root : fixtures
       
     beforeEach (done) ->
-      thim = thimble.create(options)
+      thimble = thimble.create(options)
       done()
     
     index = fs.readFileSync fixtures + '/index.html', 'utf8'
     
     it 'should not modify the content if no support files are present', (done) ->
-      thim.render 'index.html', {}, (err, content) ->
+      thimble.render 'index.html', {}, (err, content) ->
         return done(err) if err
 
         content.should.equal(index)
@@ -40,9 +38,9 @@ describe 'plugin', ->
     
     it 'should append support script to the <head> by default', (done) ->
       # Add the support file
-      thim.insert __dirname + '/../support/hogan.js'
+      thimble.insert __dirname + '/../support/hogan.js'
       
-      thim.render 'index.html', {}, (err, content) ->
+      thimble.render 'index.html', {}, (err, content) ->
         return done(err) if err
           
         content.should.include "Hogan.Template.prototype"
@@ -51,9 +49,9 @@ describe 'plugin', ->
     
     it 'should put support file in front if tag not present', (done) ->
       # Add the support file
-      thim.insert __dirname + '/../support/hogan.js'
+      thimble.insert __dirname + '/../support/hogan.js'
 
-      thim.eval '<h2>hi world</h2>', {}, (err, content) ->
+      thimble.eval '<h2>hi world</h2>', {}, (err, content) ->
         return done(err) if err
 
         content.should.include "Hogan.Template.prototype"

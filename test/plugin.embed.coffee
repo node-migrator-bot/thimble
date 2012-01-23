@@ -7,24 +7,23 @@ thimble = require '../'
 
 describe 'plugin', ->
   describe '.embed', ->
-    thim = undefined
     
     options = 
       source : 'test.html'
       root : __dirname + '/fixtures/'
     
     beforeEach (done) ->
-      thim = thimble.create(options)
+      thimble = thimble.create(options)
 
       # Add the plugins
-      thim.use thimble.embed()
+      thimble.use thimble.embed()
       
       done()
 
     it 'should precompile hogan templates', (done) ->
       str = "<script type = 'text/template' src = '/template.mu'>"
       
-      thim.eval str, {}, (err, content) ->
+      thimble.eval str, {}, (err, content) ->
         return done(err) if err
         
         content.should.include "Hogan.Template.prototype"
@@ -36,7 +35,7 @@ describe 'plugin', ->
     it 'should ignore scripts that arent templates', (done) ->
       str = "<script type = 'text/javascript' src = '/template.mu'>"
 
-      thim.eval str, {}, (err, content) ->
+      thimble.eval str, {}, (err, content) ->
         return done(err) if err
         
         content.should.include "src = '/template.mu'"
@@ -48,7 +47,7 @@ describe 'plugin', ->
     it 'should skip templates that it doesnt understand', (done) ->
       str = '<script type = "text/template" src = "/template.newb">'
       
-      thim.eval str, {}, (err, content) ->
+      thimble.eval str, {}, (err, content) ->
         return done(err) if err
         
         content.should.include 'src = "/template.newb"'
@@ -58,10 +57,10 @@ describe 'plugin', ->
         done()
         
     it 'should work when both client and server using same templating', (done) ->
-      thim.set 'source', 'test.mu'
+      thimble.set 'source', 'test.mu'
       str = "<script type = 'text/template' src = '/template.mu'>"
       
-      thim.eval str, { lulcatz : 'herro' }, (err, content) ->
+      thimble.eval str, { lulcatz : 'herro' }, (err, content) ->
         return done(err) if err
         
         content.should.include "Hogan.Template.prototype"

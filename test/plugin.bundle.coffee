@@ -13,15 +13,12 @@ thimble = require '../'
 
 describe 'plugin', ->
   describe '.bundle', ->
-    
-    thim = undefined
-    
     options =
       root : fixtures
       
     beforeEach (done) ->
-      thim = thimble.create(options)
-      thim.use(thimble.bundle())
+      thimble = thimble.create(options)
+      thimble.use(thimble.bundle())
       done()
     
     it 'should merge two inline scripts', (done) ->
@@ -32,7 +29,7 @@ describe 'plugin', ->
         <body></body>
       """
 
-      thim.eval html, {}, (err, content) ->
+      thimble.eval html, {}, (err, content) ->
         
         return done(err) if err
         $ = cheerio.load content
@@ -49,7 +46,7 @@ describe 'plugin', ->
         <style type = "text/css">h2 { background-color : blue }</style>
       """
       
-      thim.eval html, {}, (err, content) ->
+      thimble.eval html, {}, (err, content) ->
         return done(err) if err
         
         $ = cheerio.load content
@@ -68,7 +65,7 @@ describe 'plugin', ->
         <body></body>
       """
       
-      thim.eval html, {}, (err, content) ->
+      thimble.eval html, {}, (err, content) ->
         return done(err) if err
       
         $ = cheerio.load content
@@ -104,7 +101,7 @@ describe 'plugin', ->
         <body></body>
       """
       
-      thim.eval html, {}, (err, content) ->
+      thimble.eval html, {}, (err, content) ->
         return done(err) if err
       
         $ = cheerio.load content
@@ -125,7 +122,7 @@ describe 'plugin', ->
         <body></body>
       """
       
-      thim.eval html, {}, (err, content) ->
+      thimble.eval html, {}, (err, content) ->
         return done(err) if err
       
         $ = cheerio.load content
@@ -158,7 +155,7 @@ describe 'plugin', ->
         <body></body>
       """
       
-      thim.eval html, {}, (err, content) ->
+      thimble.eval html, {}, (err, content) ->
         return done(err) if err
       
         $ = cheerio.load content
