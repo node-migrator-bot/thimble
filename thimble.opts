@@ -1,5 +1,0 @@
---root ./client
---build ./build
---public ./public
---source ./client/index.html
---layout ./client/layout.html
