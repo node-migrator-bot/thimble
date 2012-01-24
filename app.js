@@ -8,8 +8,8 @@ server.configure(function() {
 
 var options = {
   root : './client',
-  build : '../',
-  'public' : '../'
+  build : '.',
+  'public' : '.'
 };
 
 // Pass through the options

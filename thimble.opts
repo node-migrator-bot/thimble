@@ -1,5 +1,5 @@
 --root ./client
---build ../
---public ../
+--build .
+--public .
 --source ./client/index.html
 --layout ./client/layout.html
