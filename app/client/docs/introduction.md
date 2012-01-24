@@ -1,6 +1,6 @@
 ## Introduction ##
 
-Thimble is a extendable frontend tool that understands and transforms your HTML to automate tedious tasks during web development. Thimble also introduces new features to help you develop more modular web applications. 
+Thimble is an extendable frontend tool that transforms your HTML to automate tedious tasks during web development. Thimble also introduces new features to help you develop more modular web applications. 
 
 ___Thimble supercharges developer productivity without sacrificing runtime efficiency___.
 
