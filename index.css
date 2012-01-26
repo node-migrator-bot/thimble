@@ -1,0 +1,40 @@
+@font-face {font-family: 'Open Sans'; font-style: normal; font-weight: 700; src: local('Open Sans Bold'), local('OpenSans-Bold'), url('https://themes.googleusercontent.com/static/fonts/opensans/v6/k3k702ZOKiLJc3WVjuplzKRDOzjiPcYnFooOUGCOsRk.woff') format('woff');}
+@font-face {font-family: 'Open Sans'; font-style: normal; font-weight: 600; src: local('Open Sans Semibold'), local('OpenSans-Semibold'), url('https://themes.googleusercontent.com/static/fonts/opensans/v6/MTP_ySUJH_bn48VBG8sNSqRDOzjiPcYnFooOUGCOsRk.woff') format('woff');}
+@font-face {font-family: 'Open Sans'; font-style: normal; font-weight: 400; src: local('Open Sans'), local('OpenSans'), url('https://themes.googleusercontent.com/static/fonts/opensans/v6/cJZKeOuBrn4kERxqtaUH3bO3LdcAZYWl9Si6vvxL-qU.woff') format('woff');}
+@font-face {font-family: 'Open Sans'; font-style: normal; font-weight: 300; src: local('Open Sans Light'), local('OpenSans-Light'), url('https://themes.googleusercontent.com/static/fonts/opensans/v6/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff') format('woff');}
+html,
+head,
+body {margin: 0; padding: 0; font-family: "Helvetica Neue", "Helvetica"; -webkit-font-smoothing: antialiased; background-color: #e5e5e5; color: #555;}
+ul {padding: 0; margin: 0; list-style-type: none;}
+h1,
+h2,
+h3,
+h4 {margin: 8px 0;}
+h1 {font-weight: bold; font-size: 42px; color: #666; text-shadow: 0 1px 1px #fff;}
+h3 {font-size: 18px;}
+h4 {font-size: 14px;}
+h2,
+h3,
+h4 {font-weight: 300; text-shadow: 0 1px 1px #fff; white-space: nowrap; color: #91959c; font-family: 'open sans', arial, sans-serif;}
+small {font-size: 75%; color: #91959c; text-shadow: 0 1px 1px #fff; font-family: 'open sans', arial, sans-serif;}
+p {font-size: 16px; color: #555; text-align: justify; line-height: 22px; text-shadow: 0 1px 1px #fff;}
+p img {width: 100%;}
+p a {font-weight: bold; color: #555;}
+pre {margin-left: 10px; white-space: -o-pre-wrap; word-wrap: break-word;}
+pre,
+code {font-size: 16px; font-family: monospace, serif; line-height: 22px;}
+blockquote {border-left: 4px solid #555; margin-left: 10px; padding-left: 10px; font-style: italic; font-size: 80%;}
+a {text-decoration: none;}
+a:hover {color: #22a6f4;}
+.item a {color: #91959c;}
+.item a:hover {color: #22a6f4;}
+ul ul {margin-left: 10px;}
+#wrapper {margin: 12px 20px 10px 12px; overflow-x: none;}
+#top {height: 75px; text-align: center;}
+#top h1 {margin-bottom: 0px;}
+#top small {position: relative; top: -7px;}
+#left {width: 120px; position: fixed;}
+#icon {height: 107px; background: url("thimble.png"); background-repeat: no-repeat; position: relative; margin: 0 auto; width: 102px;}
+#menu {margin-top: 10px; margin-left: 11px;}
+#right {margin-left: 138px; max-width: 620px; min-width: 200px;}
+#main {min-height: 200px;}
