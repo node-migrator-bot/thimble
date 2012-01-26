@@ -1,34 +1,29 @@
 var express = require('express'),
-    thimble = require('thimble'),
-    server = express.createServer();
+    thimble = require('thimble');
+  
+var app = express.createServer();
 
-server.configure(function() {
-    server.use(express.favicon());
+app.configure(function() {
+  app.use(express.methodOverride());
+  app.use(express.bodyParser());
+  app.use(express['static']('./public'));
+  app.use(express.favicon());
 });
 
-var options = {
-  root : './client',
-  build : '.',
-  'public' : '.'
-};
-
-// Pass through the options
-thimble(options);
+thimble({
+  root : './client'
+});
 
 thimble.configure(function(use) {
   use(thimble.flatten());
-  use(thimble.bundle());
-  use(thimble.package());
 });
 
-// Start thimble
-thimble.start(server);
+thimble.start(app);
 
-server.get('/', function(req, res) {
-   res.render('index', {
-       layout : 'layout.html'
-   }); 
+app.get('/', function(req, res) {
+
+  res.render('index.html');
+
 });
 
-server.listen(8080);
-console.log('Server listening on port 8080');
+app.listen(8080);
