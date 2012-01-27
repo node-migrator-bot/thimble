@@ -294,7 +294,7 @@ Thimble successfully built your application
   <p><strong>Note:</strong> thimble does not support jade local variables</p>
 </blockquote>
 
-<p>The most important feature of flatten is that <strong>paths become relative to included file's directory</strong>. This allows you to have a directory structure like this:</p>
+<p>The most important feature of flatten is that <strong>paths become relative to the included file's directory</strong>. This allows you to have a directory structure like this:</p>
 
 <pre><code>app/
   app.html
@@ -356,7 +356,7 @@ Thimble successfully built your application
 
 <p>The markup compilers render non-HTML markup languages into HTML. The supported markup compilers include <a href = "http://daringfireball.net/projects/markdown/">markdown</a> and <a href = "http://jade-lang.com/">jade</a>.</p>
 
-<p>The template compilers are used for templating. The supported template compiler is <a href = "http://twitter.github.com/hogan.js/">hogan</a>.</p>
+<p>The template compilers are used for templating. Template compilers allow you to pass in local variables before rendering the markup. The supported template compiler is <a href = "http://twitter.github.com/hogan.js/">hogan</a>. </p>
 
 <blockquote>
   <p><strong>Note:</strong> Performance is very important to thimble, so the template compilers are limited to HTML-like languages, because our HTML parser needs to understand their syntax. HTML-like languages include mustache and EJS languages.</p>
@@ -366,7 +366,7 @@ Thimble successfully built your application
     <a name = "layout"></a>
     <h3>Layout</h3>
 
-<p>Layout introduces the <code>yield</code> tag. Layouts work in the same way express provides layouts, by adding them through <code>res.render</code>. Here's an example:</p>
+<p>Layout introduces the <code>yield</code> tag. Layouts work in the same as express - by adding them through <code>res.render</code>. Here's an example:</p>
 
 <pre><code>res.render('index/index', {
   name : "Matt",
@@ -385,6 +385,8 @@ Thimble successfully built your application
     <h3>Bundle</h3>
 
 <p>Bundle adds order to your chaotic asset structure. Bundle takes all <code>script</code>, <code>style</code>, and <code>link</code> tags and bundle them into one <code>script</code> tag and one <code>style</code> tag. The <code>script</code> tag will be placed at the bottom of the <code>body</code>, while the <code>style</code> tag will be appended to the <code>head</code>. </p>
+
+<p>The Bundle plugin compiles asset files like coffeescript and stylus before merging them.</p>
 
 <p>Bundle is often used as a preliminary step in the build process before pulling out these assets and minifying them.</p>
 

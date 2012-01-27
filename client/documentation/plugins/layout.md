@@ -1,6 +1,6 @@
 ### Layout ###
 
-Layout introduces the `yield` tag. Layouts work in the same way express provides layouts, by adding them through `res.render`. Here's an example:
+Layout introduces the `yield` tag. Layouts work in the same as express - by adding them through `res.render`. Here's an example:
 
     res.render('index/index', {
       name : "Matt",

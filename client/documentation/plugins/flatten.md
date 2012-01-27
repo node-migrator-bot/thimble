@@ -11,7 +11,7 @@ Flatten also supports markup languages that compile into HTML. Currently, thimbl
 
 > **Note:** thimble does not support jade local variables
 
-The most important feature of flatten is that __paths become relative to included file's directory__. This allows you to have a directory structure like this:
+The most important feature of flatten is that __paths become relative to the included file's directory__. This allows you to have a directory structure like this:
 
     app/
       app.html
