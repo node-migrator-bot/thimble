@@ -20,9 +20,9 @@ To get started you'll only need to specify the `root` property. However, if you'
 
 Additional `options` may include:
   
-  * `root` : Main client-side directory. Required for `development`.
-  * `public` : Where your assets will go when built. Required for `production`.
-  * `build` : Where your views will go when built. Required for `production`.
+  * `root` : Main client-side directory. **Required for `development`**.
+  * `public` : Where your assets will go when built. **Required for `production`**.
+  * `build` : Where your views will go when built. **Required for `production`**.
   * `env` : The current environment. Defaults to `development`.
   * `template` : The variable templates will be saved under. Defaults to `JST`.
   * `namespace` : The namespace used on the client-side. Defaults to `window`.

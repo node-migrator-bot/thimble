@@ -1,6 +1,6 @@
 ### Starting Thimble ###
 
-When all your configuration is set up, you can simply `start` thimble:
+When all your configuration is set up, you simply `start` thimble:
 
     thimble.start(app);
     
