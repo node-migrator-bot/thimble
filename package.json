@@ -1,8 +1,8 @@
 {
     "name": "thimble"
-  , "version": "0.0.1"
-  , "description": "W3C moves too slow. It's time to take HTML into our own hands."
-  , "keywords": []
+  , "version": "0.0.2"
+  , "description": "Painless web development for Node.js"
+  , "keywords": ["painless", "express", "connect", "web", "development"]
   , "author": "Matt Mueller <mattmuelle@gmail.com>"
   , "dependencies": {
     "cheerio" : "0.x",
