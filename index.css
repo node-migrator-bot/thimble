@@ -17,8 +17,8 @@ h4 {font-size: 16px;}
 h2,
 h3,
 h4,
-h5 {font-weight: 300; text-shadow: 0 1px 1px #fff; white-space: nowrap; color: #91959c; font-family: 'open sans', arial, sans-serif;}
-small {font-size: 75%; color: #91959c; text-shadow: 0 1px 1px #fff; font-family: 'open sans', arial, sans-serif;}
+h5 {font-weight: 300; text-shadow: 0 1px 1px #fff; white-space: nowrap; color: #4e5664; font-family: 'open sans', arial, sans-serif;}
+small {font-size: 75%; color: #4e5664; text-shadow: 0 1px 1px #fff; font-family: 'open sans', arial, sans-serif;}
 p {font-size: 16px; color: #555; text-align: justify; line-height: 22px; text-shadow: 0 1px 1px #fff;}
 p img {width: 100%;}
 p a {font-weight: bold; color: #555;}
@@ -28,7 +28,7 @@ code {font-size: 16px; font-family: monospace, serif; line-height: 22px;}
 blockquote {border-left: 4px solid #555; margin-left: 10px; padding-left: 10px; font-style: italic; font-size: 80%;}
 a {text-decoration: none;}
 a:hover {color: #22a6f4;}
-.item a {color: #91959c;}
+.item a {color: #4e5664;}
 .item a:hover {color: #22a6f4;}
 ul ul {margin-left: 10px;}
 #wrapper {margin: 15px 20px 10px 12px; overflow-x: none;}
