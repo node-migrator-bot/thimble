@@ -1,6 +1,6 @@
 ### Build your application ###
 
-When you are ready to build your application, thimble provides a build script. Thimble will bundle and package up your application to prepare it production. You run the build script from the command line. You can specify the following `options`:
+When you are ready to build your application, thimble provides a build script. Thimble will bundle and package up your application to prepare it for production. You run the build script from the command line. You can specify the following `options`:
   
 * `source` : Entry-point in your application. **Required**. 
 * `root` : Main client-side directory. **Required**. 
