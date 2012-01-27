@@ -31,12 +31,12 @@ a:hover {color: #22a6f4;}
 .item a {color: #91959c;}
 .item a:hover {color: #22a6f4;}
 ul ul {margin-left: 10px;}
-#wrapper {margin: 12px 20px 10px 12px; overflow-x: none;}
+#wrapper {margin: 15px 20px 10px 12px; overflow-x: none;}
 #top {height: 75px; text-align: center;}
 #top h1 {margin-bottom: 0px;}
 #top small {position: relative; top: -7px;}
 #left {width: 120px; position: fixed;}
 #icon {height: 107px; background: url("thimble.png"); background-repeat: no-repeat; position: relative; margin: 0 auto; width: 102px;}
 #menu {margin-top: 10px; margin-left: 20px;}
-#right {margin-left: 138px; max-width: 620px; min-width: 200px;}
+#right {margin-left: 135px; max-width: 620px; min-width: 200px;}
 #main {min-height: 200px;}
