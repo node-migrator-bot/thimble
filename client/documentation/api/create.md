@@ -1,6 +1,6 @@
 ### Creating a thimble instance ###
 
-By default when you require thimble, it will automatically create an instance:
+By default when you require thimble, it will automatically create a new instance:
 
     var thimble = require('thimble');
 
@@ -16,9 +16,9 @@ You can add options by calling the thimble function. Here's an example:
       public : './public'
     });
 
-To get started you'll only need to specify the `root` property. However, if you're looking to eventually deploy application using thimble, it's a good idea to add the `public` and `build` directories as well.
+To get started you'll only need to specify the `root` property. However, if you're looking to eventually deploy your application, it's a good idea to add the `public` and `build` directories as well.
 
-Additional `options` you can add include:
+Additional `options` may include:
   
   * `root` : Main client-side directory. Required for `development`.
   * `public` : Where your assets will go when built. Required for `production`.
@@ -27,4 +27,4 @@ Additional `options` you can add include:
   * `template` : The variable templates will be saved under. Defaults to `JST`.
   * `namespace` : The namespace used on the client-side. Defaults to `window`.
 
-> Note: You can always set these options later in the application using `thimble.set(option, value)`.
+> Note: You can always set additional options later by calling the thimble function again or by using `thimble.set(option, value)`.

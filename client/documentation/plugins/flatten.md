@@ -4,24 +4,24 @@ Flatten introduces the `include` tag to your HTML. By using flatten you can modu
 
     <include src = "menu.html" />
 
-Flatten also supports languages that compile into HTML. Currently, thimble has compilers for [markdown](http://daringfireball.net/projects/markdown/) and [jade](http://jade-lang.com/), allowing you to write: 
+Flatten also supports markup languages that compile into HTML. Currently, thimble has compilers for [markdown](http://daringfireball.net/projects/markdown/) and [jade](http://jade-lang.com/), allowing you to write: 
 
     <include src = "intro.md" />
     <include src = "body.jade" />
 
-The most important feature of flatten is that __paths become relative to included file's directory__. This allows you to have a directory structure like:
+The most important feature of flatten is that __paths become relative to included file's directory__. This allows you to have a directory structure like this:
 
-__app/__
-&nbsp;&nbsp;&nbsp;• app.html
-&nbsp;&nbsp;&nbsp;__menu/__
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• menu.html
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• menu.css
+    app/
+      app.html
+      menu/
+        menu.html
+        menu.css
 
-Then in `app.html`:
+Then in `app.html` you include the menu:
 
     <include src = "menu/menu.html" />
     
-And then do the following in `menu.html`:
+And in `menu.html` you include `menu.css` that is relative to the `menu/` directory:
 
     <link href = "menu.css" />
     

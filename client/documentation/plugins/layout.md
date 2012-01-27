@@ -6,5 +6,7 @@ Layout introduces the `yield` tag. Layouts work in the same way express provides
       name : "Matt",
       layout : "/layout.html"
     });
-    
-> Note: Currently, thimble squelches express's layout functionality, so layouts work with other bundles. Additionally, you will need to set layouts in `res.render` each time because there is not yet support for adding one default layout.
+
+The layout plugin is added automatically when you specify the `layout` property.
+
+> **Note:** Currently, thimble squelches express's layout functionality, so layouts work with other bundles. Additionally, you will need to set layouts in `res.render` each time because there is not yet support for adding one default layout.

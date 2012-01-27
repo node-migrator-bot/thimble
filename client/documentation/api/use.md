@@ -23,6 +23,6 @@ You can also configure the stack for different environments:
       thim.use(thimble.bundle());
     });
 
-When you do not pass an environment to the configuration, the configuration will run in the `development` environment.
+When you do not pass an environment to the configuration, the configuration defaults to the `development` environment.
 
-> **Important**: When adding multiple plugins, **order matters**. Differing order may yield different results. For example, placing `embed` before `flatten` in the configuration will embed templates in the index source, but not any of the included files.
+> **Important**: When adding multiple plugins, **order matters**. Differing the order will likely yield different results. For example, placing `embed` before `flatten` in the configuration will embed templates in the index source, but not any of the included files.
