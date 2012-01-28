@@ -1,0 +1,4 @@
+--root ./client
+--build .
+--public .
+--source ./client/index.html
