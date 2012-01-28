@@ -17,8 +17,8 @@ h4 {font-size: 16px;}
 h2,
 h3,
 h4,
-h5 {font-weight: 400; text-shadow: 0 1px 1px #fff; white-space: nowrap; color: #4e5664; font-family: 'open sans', arial, sans-serif;}
-small {font-size: 75%; color: #4e5664; text-shadow: 0 1px 1px #fff; font-family: 'open sans', arial, sans-serif;}
+h5 {font-weight: 400; text-shadow: 0 1px 1px #fff; white-space: nowrap; color: #4e5664; font-family: "open sans", arial, sans-serif;}
+small {font-size: 75%; color: #4e5664; text-shadow: 0 1px 1px #fff; font-family: "open sans", arial, sans-serif;}
 p {font-size: 16px; color: #555; text-align: justify; line-height: 22px; text-shadow: 0 1px 1px #fff;}
 p img {width: 100%;}
 p a {font-weight: bold; color: #555;}
@@ -38,5 +38,5 @@ ul ul {margin-left: 10px;}
 #left {width: 120px; position: fixed;}
 #icon {height: 107px; background: url("thimble.png"); background-repeat: no-repeat; position: relative; margin: 0 auto; width: 102px;}
 #menu {margin-top: 10px; margin-left: 20px;}
-#right {margin-left: 135px; max-width: 620px; min-width: 200px;}
+#right {margin-left: 142px; max-width: 620px; min-width: 200px;}
 #main {min-height: 200px;}
