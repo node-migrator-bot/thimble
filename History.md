@@ -1,3 +1,10 @@
+0.0.3 / 2012-02-1
+==================
+  
+  * Layout plugin now compiles know extensions
+  * Root defaults to app.settings.views if not given
+  * thimble.set('view engine') now an option, defaulting to the express setting
+
 0.0.2 / 2012-01-26
 ==================
 
