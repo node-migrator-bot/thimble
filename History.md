@@ -1,3 +1,8 @@
+0.0.4 / 2012-02-1
+==================
+
+  * Minor fix to layout plugin, locals variables didn't show for first request.
+
 0.0.3 / 2012-02-1
 ==================
   
