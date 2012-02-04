@@ -3,6 +3,7 @@
 */
 
 var thimble = require('../'),
+    should = require('should'),
     fixtures = __dirname + '/fixtures';
 
 describe ('plugin', function() {
@@ -24,12 +25,21 @@ describe ('plugin', function() {
       
       thimble.render('minify.html', {}, function(err, content) {
         if(err) return done(err);
-        console.log(content);
+        content.should.include('h1{background-color:blue}');
         done();
       });
       
     });
     
-    
+    it('should minify js', function(done) {
+      
+      thimble.render('minify.html', {}, function(err, content) {
+        if(err) return done(err);
+        content.should.include('var step=exports.step=function(){');
+        done();
+      });
+      
+    });
+
   });
 });
