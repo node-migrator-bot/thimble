@@ -1,3 +1,9 @@
+0.0.6 / 2012-02-5
+==================
+
+  * Added minify plugin to build script
+  * Made minify plugin move to bottom if placed higher up
+
 0.0.5 / 2012-02-3
 ==================
 
