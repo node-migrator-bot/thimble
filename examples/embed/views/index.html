@@ -1,0 +1,27 @@
+<script type="text/template" src = "contact.mu"></script>
+
+<script type="text/javascript">
+    
+    function add() {
+      var first = document.getElementById('first').value,
+          last = document.getElementById('last').value;
+
+      var contact = JST['contact']({
+          first : first,
+          last : last
+      });
+
+      document.getElementById('contacts').innerHTML = contact;
+    }
+    
+</script>
+
+<label for="first">First Name:</label>
+<input type="text" id = "first" /><br/>
+
+<label for="last">Last Name:</label>
+<input type="text" id = "last" />
+
+<button onclick = "add();">Add</button>
+
+<div id="contacts"></div>
