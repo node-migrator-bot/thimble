@@ -38,7 +38,7 @@ describe 'plugin', ->
       thimble.eval str, {}, (err, content) ->
         return done(err) if err
         
-        content.should.include "src = '/template.mu'"
+        content.should.include 'src = "/template.mu"'
         content.should.not.include "Hogan.Template.prototype"
         content.should.not.include "window.JST['template']"
         
