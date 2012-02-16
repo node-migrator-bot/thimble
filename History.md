@@ -1,3 +1,10 @@
+0.0.7 / 2012-02-15
+==================
+
+  * Refactored paths to be more durable
+  * Added embed and flatten examples
+  * Fixed bug that kept adding support files to the page
+
 0.0.6 / 2012-02-5
 ==================
 
