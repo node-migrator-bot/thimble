@@ -68,3 +68,16 @@ describe 'plugin', ->
         content.should.include '_.f("planet"'
 
         done()
+        
+    it 'should work with json strings', (done) ->
+      thimble.set 'source', 'test.mu'
+      str = "<script type = 'text/template' src = '/testdata.json'>"
+      
+      thimble.eval str, (err, content) ->
+        return done(err) if err
+        
+        console.log content
+        
+        done()
+      
+      
