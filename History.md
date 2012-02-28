@@ -1,3 +1,9 @@
+0.0.8 / 2012-02-27
+==================
+
+  * Added default paths (index.html) to flatten
+  * Added JSON support in the embed plugin
+
 0.0.7 / 2012-02-15
 ==================
 
