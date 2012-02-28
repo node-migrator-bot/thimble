@@ -6,4 +6,4 @@
 
 This will add transparency to all of the `#chat` element's siblings, allowing you to focus on what's important at the moment. -->
 
-*Coming Soon!*
+*Coming Soon!* This plugin allows you to specify certain selectors to focus on, dimming distracting elements so you can focus on parts of the UI that matter to you.
