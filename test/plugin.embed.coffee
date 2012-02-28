@@ -16,7 +16,9 @@ describe 'plugin', ->
       thimble = thimble.create(options)
 
       # Add the plugins
-      thimble.use thimble.embed()
+      thimble.use thimble.embed({
+        json : 'testdata'
+      })
       
       done()
 
@@ -71,12 +73,14 @@ describe 'plugin', ->
         
     it 'should work with json strings', (done) ->
       thimble.set 'source', 'test.mu'
-      str = "<script type = 'text/template' src = '/testdata.json'>"
+      str = "<script type = 'text/template' id = 'package' src = '/testdata.json'>"
       
       thimble.eval str, (err, content) ->
         return done(err) if err
         
-        console.log content
+        content.should.include "window.testdata['package']"
+        content.should.include "JSON.parse("
+        content.should.include "oh herro"
         
         done()
       
