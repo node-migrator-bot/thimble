@@ -42,7 +42,7 @@ Thimble successfully built your application
     menu.css
 </code></pre><p>Then in <code>app.html</code> you include the menu:</p><pre><code>&lt;include src = "menu/menu.html" /&gt;
 </code></pre><p>And in <code>menu.html</code> you include <code>menu.css</code> that is relative to the <code>menu/</code> directory:</p><pre><code>&lt;link href = "menu.css" /&gt;
-</code></pre><p>This feature allows you to focus on one piece of your application, without worrying about the directory structure outside.</p><blockquote><p>Note: If you include a directory, <code>index.html</code> will be the default file it loads</p></blockquote></li><li><a name = "embed"></a><h3>Embed</h3><p>Embed compiles your client-side templates into functions. When the embed plugin runs, it looks for <code>script</code> tags that have <code>type = "text/template"</code>, compiles them, and attaches them to the <code>namespace</code>.<code>template</code> object, where both <code>namespace</code> and <code>template</code> are configurable. Therefore when you run your application, your templates are ready to be called.</p><p>For example:</p><pre><code>&lt;script src = "contact.mu" type = "text/template"&gt;&lt;/script&gt;
+</code></pre><p>This feature allows you to focus on one piece of your application, without worrying about the directory structure outside.</p><blockquote><p>Note: If you include a directory, <code>index.html</code> will be the default file it loads</p></blockquote></li><li><a name = "embed"></a><h3>Embed</h3><h4>Templating</h4><p>Embed compiles your client-side templates into functions. When the embed plugin runs, it looks for <code>script</code> tags that have <code>type = "text/template"</code>, compiles them, and attaches them to the <code>namespace</code>.<code>template</code> object, where both <code>namespace</code> and <code>template</code> are configurable. Therefore when you run your application, your templates are ready to be called.</p><p>For example:</p><pre><code>&lt;script src = "contact.mu" type = "text/template"&gt;&lt;/script&gt;
 </code></pre><p>Will compile to:</p><pre><code>&lt;script type = "text/javascript"&gt;
   window.JST['contact'] = 
     function(locals) { ... };
@@ -51,7 +51,7 @@ Thimble successfully built your application
   name : "Matt Mueller",
   age  : 22
 });
-</code></pre><blockquote><p>Note: By default, your templates are attached to the <code>window.JST</code> object.</p></blockquote><hr/><p>Embed also supports JSON files, so if I have the following file, <code>contact.json</code>:</p><pre><code>{
+</code></pre><blockquote><p>Note: By default, your templates are attached to the <code>window.JST</code> object.</p></blockquote><h4>JSON objects</h4><p>Embed also supports JSON files, so if I have the following file, <code>contact.json</code>:</p><pre><code>{
   "name" : "Matt Mueller",
   "age"  : 22
 }
