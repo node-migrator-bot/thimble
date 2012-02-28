@@ -21,3 +21,28 @@ That can be called by:
     });
 
 > Note: By default, your templates are attached to the `window.JST` object.
+
+Embed can also embed JSON files, so if I have the following file, `contact.json`:
+
+    {
+      "name" : "Matt Mueller",
+      "age"  : 22
+    }
+
+I can embed it using:
+
+    <script src="contact.json"></script>
+    
+That can be called by:
+  
+    window.JST['contact']['name']
+    
+If you'd like to change json files to use a key different than `options.template`, you can specify that in the embed options:
+
+    thimble.embed({
+      json : "testdata"
+    });
+
+This will allow the json object to be called by:
+  
+    window.testdata['contact']['name']

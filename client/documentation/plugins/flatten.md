@@ -28,3 +28,5 @@ And in `menu.html` you include `menu.css` that is relative to the `menu/` direct
     <link href = "menu.css" />
     
 This feature allows you to focus on one piece of your application, without worrying about the directory structure outside.
+
+> Note: If you include a directory, `index.html` will be the default file it loads
