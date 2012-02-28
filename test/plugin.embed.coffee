@@ -77,7 +77,7 @@ describe 'plugin', ->
       
       thimble.eval str, (err, content) ->
         return done(err) if err
-        
+        console.log content
         content.should.include "window.testdata['package']"
         content.should.include "JSON.parse("
         content.should.include "oh herro"
