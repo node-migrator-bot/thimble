@@ -22,7 +22,9 @@ That can be called by:
 
 > Note: By default, your templates are attached to the `window.JST` object.
 
-Embed can also embed JSON files, so if I have the following file, `contact.json`:
+---
+
+Embed also supports JSON files, so if I have the following file, `contact.json`:
 
     {
       "name" : "Matt Mueller",
