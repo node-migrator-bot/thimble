@@ -14,6 +14,10 @@ then run the tests:
     
     make test
 
+## Screencasts ##
+
+http://matthewmueller.github.com/thimble/#screencasts
+
 ## License ##
 
 (The MIT License)
