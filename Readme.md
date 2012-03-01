@@ -4,6 +4,10 @@ Painless web development for Node.js.
 
 For the documentation, see: http://matthewmueller.github.com/thimble/
 
+## Screencasts ##
+
+http://matthewmueller.github.com/thimble/#screencasts
+
 ## Running Tests ##
 
 To run the tests, you'll first need to install it's dependencies.
@@ -13,10 +17,6 @@ To run the tests, you'll first need to install it's dependencies.
 then run the tests:
     
     make test
-
-## Screencasts ##
-
-http://matthewmueller.github.com/thimble/#screencasts
 
 ## License ##
 
