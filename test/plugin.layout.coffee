@@ -13,7 +13,6 @@ describe 'plugin', ->
     
     beforeEach (done) ->
       thimble = thimble.create(options)
-      thimble.use thimble.layout()
       done()
     
     it 'should place content within <yield /> tag', (done) ->
@@ -23,6 +22,17 @@ describe 'plugin', ->
       thimble.eval str, options, (err, content) ->
         throw err if err
 
-        content.should.include "<html>hi there</html>"
+        content.should.equal "<html>hi there</html>"
+
+        done()
+
+    it 'should chain multiple layouts', (done) ->
+      str = 'hi there'
+      options.layout = ['layout.html', 'layout.html']
+
+      thimble.eval str, options, (err, content) ->
+        throw err if err
+        console.log(content);
+        content.should.equal "<html><html>hi there</html></html>"
 
         done()
