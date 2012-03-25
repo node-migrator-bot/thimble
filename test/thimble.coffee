@@ -42,6 +42,13 @@ describe 'thimble', ->
         content.should.include "cool story, man."
         
         done()
+
+    it 'should take a markdown file', (done) ->
+
+      thimble.render 'markdown.md', (err, content) ->
+        throw err if err
+        content.should.equal '<h1>Header 1</h1><p><strong>hi there</strong> this is a <em>cool</em></p>'
+        done()
   
   describe '.use', ->
     

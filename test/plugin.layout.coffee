@@ -1,4 +1,3 @@
-
 ###
   Tests for the layout plugin
 ###
@@ -32,7 +31,6 @@ describe 'plugin', ->
 
       thimble.eval str, options, (err, content) ->
         throw err if err
-        console.log(content);
         content.should.equal "<html><html>hi there</html></html>"
 
         done()
