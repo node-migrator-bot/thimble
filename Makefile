@@ -4,7 +4,7 @@ test:
 		--reporter list \
 		--growl
 
-mate:
-	@mate lib/ test/ examples/ bin/ package.json index.js
+subl:
+	@subl lib/ test/ examples/ bin/ package.json index.js
 
-.PHONY: test
+.PHONY: subl
