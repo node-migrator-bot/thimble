@@ -7,4 +7,4 @@ test:
 subl:
 	@subl lib/ test/ examples/ bin/ package.json index.js
 
-.PHONY: subl
+.PHONY: subl test
