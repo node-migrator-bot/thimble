@@ -20,10 +20,10 @@ describe('plugin', function() {
     });
 
     it('should place content within <yield /> tag', function(done) {
-      var str = 'hi there';
-      options.layout = 'layout.html';
+      var str = 'hi there',
+          locals = { layout : 'layout.html' };
 
-      thimble.eval(str, options, function(err, content) {
+      thimble.eval(str, locals, function(err, content) {
         if(err) return done(err);
 
         expect(content).to.equal("<html>hi there</html>");
@@ -33,10 +33,10 @@ describe('plugin', function() {
     });
 
     it('should chain multiple layouts', function(done) {
-      var str = 'hi there';
-      options.layout = ['layout.html', 'layout.html'];
+      var str = 'hi there',
+          locals = { layout : [ 'layout.html', 'layout.html' ]};
 
-      thimble.eval(str, options, function(err, content) {
+      thimble.eval(str, locals, function(err, content) {
         if(err) return done(err);
 
         expect(content).to.equal("<html><html>hi there</html></html>");
