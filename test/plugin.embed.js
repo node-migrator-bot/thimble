@@ -2,7 +2,8 @@
   Tests for the embed plugin
 */
 
-var thimble = require('../');
+var thimble = require('../'),
+    expect = require('expect.js');
 
 describe('plugin', function() {
   describe('.embed', function() {
@@ -41,7 +42,7 @@ describe('plugin', function() {
       thimble.eval(str, function(err, content) {
         if(err) return done(err);
 
-        expect(content).to.contain('src = "/template.mu"');
+        expect(content).to.contain('src="/template.mu"');
 
         expect(content).to.not.contain("Hogan.Template.prototype");
         expect(content).to.not.contain("window.JST['template']");
@@ -55,7 +56,7 @@ describe('plugin', function() {
       thimble.eval(str, function(err, content) {
         if(err) return done(err);
 
-        expect(content).to.contain('src = "/template.newb"');
+        expect(content).to.contain('src="/template.newb"');
 
         expect(content).to.not.contain("Hogan.Template.prototype");
         expect(content).to.not.contain("window.JST['template']");
