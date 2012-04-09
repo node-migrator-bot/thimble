@@ -1,10 +1,11 @@
 {
-    "name": "thimble"
-  , "version": "0.0.9"
-  , "description": "Painless web development for Node.js"
-  , "keywords": ["painless", "express", "connect", "web", "development"]
-  , "author": "Matt Mueller <mattmuelle@gmail.com>"
-  , "dependencies": {
+  "name": "thimble",
+  "version": "0.0.10",
+  "description": "Painless web development for Node.js",
+  "author": "Matt Mueller <mattmuelle@gmail.com>",
+  "keywords": ["painless", "express", "connect", "web", "development"],
+  "repository": "git://github.com/MatthewMueller/thimble",
+  "dependencies": {
     "cheerio" : "0.x",
     "underscore" : "1.x",
     "mime" : "1.x",
@@ -14,8 +15,8 @@
     "cssom" : "0.2.x",
     "clean-css" : "0.x",
     "uglify-js" : "1.x"
-  }
-  ,"devDependencies": {
+  },
+  "devDependencies": {
 		"mocha" : "*",
 		"expect.js" : "*",
 		"hogan.js" : "*",
@@ -24,8 +25,10 @@
 		"coffee-script" : "*",
 		"github-flavored-markdown" : "*",
 		"rimraf" : "*"
-	}
-  , "main": "index"
-  , "bin": { "thimble": "./bin/thimble"}
-  , "engine": "node >= 0.4.1"
+	},
+  "main": "index",
+  "bin": { "thimble": "./bin/thimble"},
+  "engines" : {
+    "node" : ">= 0.4.1 < 0.7.0"
+  }
 }
