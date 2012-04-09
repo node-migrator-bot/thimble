@@ -25,7 +25,7 @@ describe('plugin', function() {
     it('should merge two inline scripts', function(done) {
       var html = "<script type = \"text/javascript\">alert('one');</script>\n<script type = \"text/javascript\">alert('two');</script>\n<body></body>";
 
-      thimble.eval(html, {}, function(err, content) {
+      thimble.eval(html, function(err, content) {
         if(err) return done(err);
         var $ = cheerio.load(content);
 
@@ -40,7 +40,7 @@ describe('plugin', function() {
     it('should merge two inline styles', function(done) {
       var html = "<head></head>\n<style type = \"text/css\">h1 { background-color : red }</style>\n<style type = \"text/css\">h2 { background-color : blue }</style>";
 
-      thimble.eval(html, {}, function(err, content) {
+      thimble.eval(html, function(err, content) {
         if(err) return done(err);
         var $ = cheerio.load(content);
 
@@ -55,7 +55,7 @@ describe('plugin', function() {
     it('should bring in external scripts', function(done) {
       var html = "<head></head>\n<script type = \"text/template\" src = \"/script.js\"></script>\n<script type = \"text/javascript\" src = \"/script.js\"></script>\n<link type = \"text/css\" href = \"/style.css\" />\n<body></body>";
 
-      thimble.eval(html, {}, function(err, content) {
+      thimble.eval(html, function(err, content) {
         if(err) return done(err);
         var $ = cheerio.load(content),
             script = $('script[type="text/javascript"]'),
@@ -84,7 +84,7 @@ describe('plugin', function() {
     it('should compile assets like stylus and coffeescript', function(done) {
       var html = "<head></head>\n<script type = \"text/javascript\" src = \"/cool.coffee\"></script>\n<link type = \"text/css\" href = \"/style.styl\" />\n<body></body>";
 
-      thimble.eval(html, {}, function(err, content) {
+      thimble.eval(html, function(err, content) {
         if(err) return done(err);
         var $ = cheerio.load(content);
 
@@ -99,7 +99,7 @@ describe('plugin', function() {
     it('should maintain proper order', function(done) {
       var html = "<head></head>\n<script type = \"text/javascript\" src = \"/cool.coffee\"></script>\n<script type = \"text/javascript\">alert(\"hi world\");</script>\n<link type = \"text/css\" href = \"/style.styl\" />\n<style type = \"text/css\">h1 { background-color : red; }</style>\n<body></body>";
 
-      thimble.eval(html, {}, function(err, content) {
+      thimble.eval(html, function(err, content) {
         if(err) return done(err);
         var $ = cheerio.load(content),
             script = $('script').text(),
@@ -132,7 +132,7 @@ describe('plugin', function() {
     it('should ignore http://', function(done) {
       var html = "<head></head>\n<script type = \"text/javascript\" src = \"http://code.jquery.com/jquery-1.7.1.min.js\"></script>\n<link type = \"text/css\" href = \"http://yui.yahooapis.com/3.4.1/build/cssreset/cssreset-min.css\" />\n<body></body>";
 
-      thimble.eval(html, {}, function(err, content) {
+      thimble.eval(html, function(err, content) {
         if(err) return done(err);
         var $ = cheerio.load(content);
 

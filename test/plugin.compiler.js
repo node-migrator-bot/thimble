@@ -17,11 +17,11 @@ describe('plugin', function() {
 
     it('should compile stylus', function(done) {
 
-      thimble.render('style.styl', {}, function(err, str) {
+      thimble.render('style.styl', function(err, content) {
         if(err) return done(err);
 
         // Stylus should be compiled
-        expect(str).to.contain('color: #999;');
+        expect(content).to.contain('color: #999;');
 
         done();
       });
@@ -29,11 +29,11 @@ describe('plugin', function() {
 
     it('should compile coffeescript', function(done) {
 
-      thimble.render('cool.coffee', {}, function(err, str) {
+      thimble.render('cool.coffee', function(err, content) {
         if(err) return done(err);
 
         // Coffeescript should be compiled
-        expect(str).to.contain('return console.log("cool");');
+        expect(content).to.contain('return console.log("cool");');
 
         done();
       });
@@ -41,11 +41,11 @@ describe('plugin', function() {
 
     it('should compile jade', function(done) {
 
-      thimble.render('post.jade', {}, function(err, str) {
+      thimble.render('post.jade', function(err, content) {
         if(err) return done(err);
 
         // Jade should be compiled
-        expect(str).to.contain('<p>this is a post</p>');
+        expect(content).to.contain('<p>this is a post</p>');
 
         done();
       });
@@ -53,13 +53,13 @@ describe('plugin', function() {
 
     it('should compile markdown', function(done) {
 
-      thimble.render('markdown.md', {}, function(err, str) {
+      thimble.render('markdown.md', function(err, content) {
         if(err) return done(err);
 
         // Markdown should be compiled
-        expect(str).to.contain("<h1>Header 1</h1>");
-        expect(str).to.contain("<strong>hi there</strong>");
-        expect(str).to.contain("<em>cool</em>");
+        expect(content).to.contain("<h1>Header 1</h1>");
+        expect(content).to.contain("<strong>hi there</strong>");
+        expect(content).to.contain("<em>cool</em>");
 
         done();
       });
@@ -68,11 +68,11 @@ describe('plugin', function() {
     it('should render hogan in development', function(done) {
       var locals = { planet : 'Mars' };
 
-      thimble.render('template.mu', locals, function(err, str) {
+      thimble.render('template.mu', locals, function(err, content) {
         if(err) return done(err);
 
         // Mustache should be compiled
-        expect(str).to.contain("hello Mars!");
+        expect(content).to.contain("hello Mars!");
 
         done();
       });
