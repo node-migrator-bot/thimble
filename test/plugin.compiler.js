@@ -1,13 +1,12 @@
 var thimble = require('../'),
-    expect = require('expect.js');
+    expect = require('expect.js'),
+    fixtures = __dirname + '/fixtures';
 
 describe('plugin', function() {
   describe('.compile', function() {
-    var fixtures = __dirname + '/fixtures';
 
     var options = {
-      root: fixtures,
-      plugins: []
+      root: fixtures
     };
 
     beforeEach(function(done) {
