@@ -6,6 +6,6 @@ test:
 		--growl
 
 subl:
-	@subl lib/ test/ examples/ bin/ package.json index.js Makefile
+	@subl lib/ test/ examples/ bin/ package.json Makefile index.js
 
 .PHONY: subl test
