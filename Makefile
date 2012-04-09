@@ -8,4 +8,4 @@ test:
 subl:
 	@subl lib/ test/ examples/ bin/ package.json index.js Makefile
 
-.PHONY: subl
+.PHONY: subl test
