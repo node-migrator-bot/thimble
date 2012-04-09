@@ -50,6 +50,7 @@ describe('plugin', function() {
         done();
       });
     });
+
     it('should skip templates that it doesnt understand', function(done) {
       var str = '<script type = "text/template" src = "/template.newb">';
 
