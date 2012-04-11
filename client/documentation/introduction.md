@@ -1,6 +1,6 @@
 ## Introduction ##
 
-Thimble is middleware for [express](expressjs.com) that simplifies modern web development. 
+Thimble is middleware for [express](http://expressjs.com) that simplifies modern web development. 
 
 Our field moves fast. Every day there is some new language to learn or technique to apply. It seems like we're always adding tools to our workflow to take advantage of these new features. Generally, these tools help us build better products faster. 
 
