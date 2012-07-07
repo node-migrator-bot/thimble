@@ -5,7 +5,7 @@
 */
 var fs = require('fs'),
     path = require('path'),
-    existsSync = path.existsSync,
+    existsSync = fs.existsSync,
     resolve = path.resolve,
     join = path.join,
     thimble = require('../'),
